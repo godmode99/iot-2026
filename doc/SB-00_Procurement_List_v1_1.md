@@ -119,21 +119,23 @@
 
 ## 1.8 Domain & Digital
 
-| รายการ                   | สเปค                                                                                                                       | ราคา (THB/ปี)    | แหล่งซื้อ                        |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------- | -------------------------------- |
-| Domain name              | aquasense.io หรือ .co.th — ตรวจสอบ availability ก่อน — ซื้อผ่าน Cloudflare Registrar หรือ Namecheap ราคาถูกและไม่มี markup | ~500-800/ปี      | Cloudflare Registrar / Namecheap |
-| HiveMQ Cloud (Free tier) | Free plan — 100 connections, unlimited messages — ไม่ต้องจ่ายใน Phase 1                                                    | 0                | hivemq.com                       |
-| Vercel (Hobby Free)      | Free plan — ไม่ต้องจ่ายใน Phase 1                                                                                          | 0                | vercel.com                       |
-| Supabase (Free tier)     | Free plan — 500MB DB — ไม่ต้องจ่ายใน Phase 1                                                                               | 0                | supabase.com                     |
-| Upstash QStash           | Pay-per-use — ~$4/เดือน เริ่มจ่ายตั้งแต่วันแรก                                                                             | ~144/เดือน (~$4) | upstash.com                      |
+| รายการ                   | สเปค                                                                                                                                    | ค่าใช้จ่ายโดยประมาณ | แหล่งซื้อ                        |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | -------------------------------- |
+| Domain name              | aquasense.io หรือ .co.th — ตรวจสอบ availability ก่อน — ซื้อผ่าน Cloudflare Registrar หรือ Namecheap ราคาถูกและไม่มี markup              | ~500-800/ปี         | Cloudflare Registrar / Namecheap |
+| HiveMQ Cloud (Free tier) | Free plan — 100 connections, unlimited messages — ไม่ต้องจ่ายใน Phase 1                                                                 | 0                   | hivemq.com                       |
+| Vercel (Hobby Free)      | Free plan — ไม่ต้องจ่ายใน Phase 1                                                                                                       | 0                   | vercel.com                       |
+| Supabase (Free tier)     | Free plan — 500MB DB — ไม่ต้องจ่ายใน Phase 1                                                                                            | 0                   | supabase.com                     |
+| Upstash QStash           | Pay-per-use — ~$4/เดือน โดยจะเริ่มมีค่าใช้จ่ายเมื่อมี 2 active devices / parallel dev mode ใน Phase 1                                  | ~144/เดือน (~$4)    | upstash.com                      |
 
 > **หมายเหตุ:** แนวทาง Phase 1: พล ทดสอบ firmware logic บน ESP32-S3 DevKit + breadboard — เอ ทดสอบ hardware จริงบน FS-HCore-A7670C พร้อม sensor ประกอบ — ทำ parallel ได้โดยไม่รอกัน เพราะพลบัดกรีไม่เป็น ทั้งคู่ใช้ sensor คนละชุด
 
-> **หมายเหตุ:** ค่า SaaS รายเดือนที่ต้องจ่ายตั้งแต่ Phase 1: Upstash QStash ~144 THB/เดือน + Domain ~500-800 THB/ปี
+> **หมายเหตุ:** third-party pricing/limits ใน section 1.8 และ section 3.3 เป็น internal planning assumptions ที่ sync กับ [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) — ต้อง re-check ก่อน commercial launch
+
+> **หมายเหตุ:** ค่า SaaS รายเดือนที่คาดว่าจะต้องจ่ายใน Phase 1 คือ Upstash QStash ~144 THB/เดือน เพราะทีมใช้ 2 active devices แบบ parallel + Domain ~500-800 THB/ปี
 
 ## 1.9 สรุปงบ Phase 1
 
-**รวมทั้งหมด Phase 1: ~20,400 THB** (ฮาร์ดแวร์ พล ~3,363 + เอ ~15,963) + ค่า digital ~1,082 (domain + QStash 3 เดือน)
+**รวมทั้งหมด Phase 1: ~20,400 THB** (ฮาร์ดแวร์ พล ~3,363 + เอ ~15,963) + ค่า digital ~1,082 (domain + QStash 3 เดือน) — ยอดรวมเชิงคำนวณปัจจุบัน ~20,373 THB และปัดใช้ baseline ~20,400
 
 | หมวด                                                  | พล (THB)   | เอ (THB)    | รวม (THB)   | หมายเหตุ                                                    |
 | ----------------------------------------------------- | ---------- | ----------- | ----------- | ----------------------------------------------------------- |
@@ -152,7 +154,7 @@
 | Hot glue + silicone                                   | 0          | ~500        | ~500        | เอสั่ง — waterproof test                                    |
 | Domain name                                           | ~650       | 0           | ~650        | พลจัดการ — ใช้ตลอด project                                  |
 | Upstash QStash (3 เดือน)                              | ~432       | 0           | ~432        | พลจัดการ — ~144/เดือน                                       |
-| **รวม**                                               | **~4,445** | **~15,928** | **~20,373** |                                                             |
+| **รวม**                                               | **~4,445** | **~15,928** | **~20,373** | ใช้ rounded baseline ~20,400 ในเอกสารชุด v1.1             |
 
 > **หมายเหตุ:** งบรวม Phase 1 ต่ำกว่า estimate เดิม (~24,410) เพราะแยกของชัดเจนขึ้น ไม่ซื้อซ้ำซ้อน — ตัวเลขอาจเปลี่ยนตามราคาจริงตอนสั่ง
 
@@ -322,11 +324,13 @@
 
 ## 3.3 Digital Setup (SaaS & Payment)
 
+> **หมายเหตุ:** ราคาหรือ quota ของ third-party services ด้านล่างเป็น planning basis สำหรับเอกสาร v1.1 ไม่ใช่ live verified quote
+
 | รายการ                     | สเปค / หมายเหตุ                                                                                 | ราคา (THB)     | แหล่งซื้อ / ทำที่ไหน |
 | -------------------------- | ----------------------------------------------------------------------------------------------- | -------------- | -------------------- |
 | Stripe Account Setup       | สมัคร Stripe — ไม่มี setup fee — จ่าย transaction fee 3.65% ต่อครั้งเมื่อมีลูกค้าจ่ายเงิน       | 0              | stripe.com           |
 | Omise Account Setup        | สมัคร Omise — ไม่มี setup fee — จ่าย transaction fee 3.65% — รองรับ PromptPay                   | 0              | omise.co             |
-| LINE Official Account (OA) | สมัคร LINE OA — เริ่มจาก free tier ก่อน และตรวจราคา paid plan ปัจจุบันอีกครั้งก่อน commercial launch | 0 (free tier)  | manager.line.biz     |
+| LINE Official Account (OA) | สมัคร LINE OA — เริ่มจาก free tier ก่อน และตรวจ quota/ราคา paid plan ปัจจุบันอีกครั้งก่อน commercial launch | 0 (free tier)  | manager.line.biz     |
 | Vercel Pro Upgrade         | Upgrade เมื่อ hobby tier ไม่พอ — $20/เดือน — ยังไม่ต้องใน Phase 3 เว้นแต่ traffic สูง           | 0 (ยังไม่ต้อง) | vercel.com           |
 
 ## 3.4 สรุปงบ Phase 3
@@ -347,11 +351,11 @@
 
 | รายการ                            | ราคาประมาณ (THB)     | ทำเมื่อ                                      | หมายเหตุ                                                    |
 | --------------------------------- | -------------------- | -------------------------------------------- | ----------------------------------------------------------- |
-| กสทช. Type Approval Certification | ~15,000              | มียอดขายพอ + ต้องการ certificate             | ยื่นผ่านห้องแล็บที่ได้รับรอง — ใช้เวลา 8-16 สัปดาห์         |
+| กสทช. Type Approval Certification | ~15,000              | เริ่มเตรียมปลาย Phase 2 / ยื่นต้น Phase 3     | ยื่นผ่านห้องแล็บที่ได้รับรอง — commercial launch ทำหลัง approval |
 | IP67 Lab Testing (ห้องแล็บ)       | ~10,000              | ยื่นพร้อม กสทช.                              | self-test ก่อน ส่งห้องแล็บเมื่อยื่น กสทช.                   |
 | Marketing & Advertising           | ~10,000+             | Phase 3 เมื่อ product พร้อม                  | Facebook/LINE ads, YouTube content — ใช้ word of mouth ก่อน |
 | Vercel Pro Upgrade                | ~720/เดือน ($20)     | เมื่อ hobby tier ไม่พอ (>50 devices)         | ดู section 6.1.6 ในเอกสาร system design                     |
-| LINE OA Light Plan                | ~450/เดือน           | เมื่อ push message > 200/เดือน (>40 devices) |                                                             |
+| LINE OA Paid Plan                 | ตรวจราคาอีกครั้งก่อน launch | เมื่อ push message > 200/เดือน (>40 devices) | ราคา plan เปลี่ยนได้ — อย่าใช้ตัวเลขนี้เป็น live quote        |
 | HiveMQ Standard                   | ~900/เดือน ($25)     | เมื่อ connections > 100 devices              |                                                             |
 | Supabase Pro                      | ~900/เดือน ($25)     | เมื่อ DB > 500MB (~60 devices)               |                                                             |
 | IoT SIM Bulk Plan                 | ~20-25 THB/เดือน/ซิม | เมื่อมี 50+ devices                          | ติดต่อ AIS/TRUE ขอ bulk rate                                |

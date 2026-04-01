@@ -61,7 +61,28 @@
 | `/api/ota/push` `POST` | `JWT (owner/admin)` |
 | `/api/ota/push/batch` `POST` | `SVC` |
 
-## 7. การอ้างอิงในเอกสาร
+## 7. Provisioning Baseline
+
+- Phase 1 / MVP ใช้ `QR Code + Web/PWA provisioning page` เป็น flow หลัก
+- Phase 2+ ใช้ `BLE provisioning ผ่าน mobile browser/PWA (Web Bluetooth)` เป็น flow หลักบนอุปกรณ์ที่รองรับ
+- `Native mobile app` ไม่ถือเป็น baseline ของเอกสาร v1.1
+- ถ้าอุปกรณ์หรือ browser ไม่รองรับ BLE provisioning ให้ fallback เป็น `factory USB flash / QC tool`
+
+## 8. BOM Baseline
+
+| Area | Prototype / Phase 1 | Production / Phase 2+ | Note |
+| --- | --- | --- | --- |
+| MCU + 4G | FS-HCore-A7670C dev board | ESP32-S3 + `A7670E` บน custom PCB | `SIM7670E` เป็น sourcing fallback ถ้า footprint/AT command compatible |
+| GPS | `L76K` | `L76K` | `NEO-M8N` ใช้เมื่อ field test ชี้ว่า L76K ไม่พอ |
+| Turbidity | Analog sensor | `SEN0600 RS485` | Analog ใช้ dev/test เท่านั้น ไม่ใช่ production BOM |
+
+## 9. Third-Party Pricing Baseline
+
+- ตัวเลขราคาหรือ quota ของ third-party services ในเอกสาร v1.1 เป็น `internal planning assumptions` ที่ sync กันในรอบเอกสารนี้ ไม่ใช่ live verified quote
+- ถ้าต้องระบุราคาที่ vendor เปลี่ยนได้ง่าย เช่น `LINE OA`, `Vercel Pro`, `Upstash`, `HiveMQ`, `Supabase`, `Resend`, `Stripe`, `Omise` ให้ถือเป็น estimate จนกว่าจะ re-check ก่อน commercial launch
+- การคำนวณ trigger ของ free tier ให้ยึด `5-minute telemetry baseline` และ `จำนวน active devices จริง` ใน phase นั้น
+
+## 10. การอ้างอิงในเอกสาร
 
 ทุกเอกสารหลักควรอ้างถึงไฟล์นี้อย่างน้อยหนึ่งจุดใกล้ส่วนบนของเอกสาร เพื่อให้คนอ่านรู้ว่า:
 
@@ -69,3 +90,6 @@
 - ใช้ budget baseline ชุดเดียวกัน
 - ใช้ battery target ชุดเดียวกัน
 - ใช้ certification stance ชุดเดียวกัน
+- ใช้ provisioning flow ชุดเดียวกัน
+- ใช้ prototype/production BOM baseline ชุดเดียวกัน
+- ใช้ pricing assumptions ของ third-party services ชุดเดียวกัน

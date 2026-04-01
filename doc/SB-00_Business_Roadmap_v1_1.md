@@ -49,29 +49,43 @@
 
 ## 9.3 BOM ต้นทุนต่อเครื่อง
 
-> **หมายเหตุ:** BOM prices อ้างอิง ณ มีนาคม 2026 — ต้องอัพเดตทุก 6 เดือน เพราะราคา component เปลี่ยนตามตลาด โดยเฉพาะ chip และ battery
+> **หมายเหตุ:** section นี้แยก `Prototype Reference` ออกจาก `Production BOM` ชัดเจน เพื่อไม่ให้ใช้ dev board ไปปนกับต้นทุนขายจริง
+>
+> ราคาทั้งหมดเป็น internal planning assumptions อ้างอิงรอบเอกสารนี้ — ก่อน commercial launch ต้อง re-check ราคา component และ service ที่เปลี่ยนตามตลาดอีกครั้ง
 
-| Component                                           | ราคา (THB) | แหล่งซื้อ                                      |
-| --------------------------------------------------- | ---------- | ---------------------------------------------- |
-| FS-HCore-A7670C (ESP32-S3 + SIM7670C board)         | 550        | แทน LILYGO — ราคาถูกกว่า                       |
-| SIM7670E module                                     | 180        | LCSC / ร้านไทย                                 |
-| DS18B20 Waterproof x1                               | 70         | LCSC / Shopee                                  |
-| Turbidity Sensor (Production: SEN0600 RS485)        | 913        | DigiKey — Phase 1 ใช้ analog ~413 THB (Shopee) |
-| MAX485 transceiver                                  | 15         | LCSC                                           |
-| GPS Module (L76K)                                   | 150        | LCSC / AliExpress                              |
-| 18650 Battery x2                                    | 300        | ร้านไทย / Shopee                               |
-| Battery holder + charger (TP4056)                   | 80         | LCSC / Shopee                                  |
-| Bulk capacitor 470µF                                | 10         | LCSC / บางลำพู                                 |
-| PCB (custom, qty 100)                               | 60         | JLCPCB                                         |
-| Enclosure IP67 (3D print จากร้านรับ print — ASA/PC) | 200-400    | ร้านรับ print 3D ในไทย                         |
-| Cable glands, connectors, wiring                    | 100        | ร้านไทย                                        |
-| SIM card slot + antenna                             | 80         | LCSC                                           |
-| Misc (resistors, MOSFET, LDO, etc.)                 | 60         | LCSC / บางลำพู                                 |
-| Total BOM                                           | ~2,375     |                                                |
-| Assembly + testing labor                            | 350        |                                                |
-| Total COGS                                          | ~2,725     |                                                |
+### Prototype Reference (Phase 1 — ใช้ทดสอบ ไม่ใช้คิด COGS)
 
-> **หมายเหตุ:** Margin: ขาย 4,500-6,000 THB → gross margin 39-54% ก่อนหัก overhead — ที่ batch 500+ ชิ้น BOM ลดได้อีก ~15% จาก volume discount
+| Area | Baseline | หมายเหตุ |
+| --- | --- | --- |
+| MCU + 4G | FS-HCore-A7670C | dev board สำหรับ firmware/hardware test |
+| GPS | L76K | baseline เดียวกับ production |
+| Temperature | DS18B20 | ใช้ทั้ง prototype และ production |
+| Turbidity | Analog sensor | ใช้ dev/test เท่านั้น ไม่ใช่ production sensor |
+| Power | 18650 x2 + holder/charger | baseline เดียวกับ production |
+
+### Production BOM Reference (Phase 2+ — ใช้คำนวณ COGS)
+
+| Component                                           | ราคา (THB) | แหล่งซื้อ / หมายเหตุ                                                           |
+| --------------------------------------------------- | ---------- | ------------------------------------------------------------------------------ |
+| ESP32-S3 WROOM-1                                    | 120        | LCSC / JLCPCB                                                                   |
+| A7670E module                                       | 180        | production default — `SIM7670E` เป็น sourcing fallback ถ้าหาซื้อหรือ assembly สะดวกกว่า |
+| DS18B20 Waterproof x1                               | 70         | LCSC / Shopee                                                                  |
+| Turbidity Sensor (Production: SEN0600 RS485)        | 913        | production default — analog ใช้เฉพาะ Phase 1 dev/test                         |
+| MAX485 transceiver                                  | 15         | LCSC                                                                           |
+| GPS Module (L76K default)                           | 150        | production default — `NEO-M8N` ใช้เมื่อ field test ชี้ว่า L76K ไม่พอ            |
+| 18650 Battery x2                                    | 300        | ร้านไทย / Shopee                                                               |
+| Battery holder + charger (TP4056)                   | 80         | LCSC / Shopee                                                                  |
+| Bulk capacitor 470µF                                | 10         | LCSC / บางลำพู                                                                 |
+| PCB (custom, qty 100)                               | 60         | JLCPCB                                                                         |
+| Enclosure IP67 (3D print จากร้านรับ print — ASA/PC) | 200-400    | ร้านรับ print 3D ในไทย                                                         |
+| Cable glands, connectors, wiring                    | 100        | ร้านไทย                                                                        |
+| SIM card slot + antenna                             | 80         | LCSC                                                                           |
+| Misc (resistors, MOSFET, LDO, etc.)                 | 60         | LCSC / บางลำพู                                                                 |
+| Total BOM                                           | ~2,338-2,538 | ขึ้นกับ enclosure final size                                                  |
+| Assembly + testing labor                            | 350        |                                                                                |
+| Total COGS                                          | ~2,688-2,888 |                                                                                |
+
+> **หมายเหตุ:** Margin: ขาย 4,500-6,000 THB → gross margin ประมาณ 36-55% ก่อนหัก overhead ขึ้นกับ enclosure final size และต้นทุน production จริง — ที่ batch 500+ ชิ้น BOM ลดได้อีก ~15% จาก volume discount
 
 ## 9.4 Pricing Strategy & Justification
 
