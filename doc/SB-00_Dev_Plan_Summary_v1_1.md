@@ -1,6 +1,8 @@
 # SB-00 — Development Plan Summary
 
-**Version 1.1 | March 2026 | ใช้ประกอบกับ SB-00_Business_Roadmap_v1.0.md**
+**Version 1.1 | March 2026 | ใช้ประกอบกับ SB-00_Business_Roadmap_v1_1.md**
+
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
 
 ---
 
@@ -42,11 +44,11 @@
 
 ## Milestone Dates (เริ่ม April 2026)
 
-| Phase                           | ช่วงเวลา       | สัปดาห์ | งบ                                   | เป้าหมาย                             |
-| ------------------------------- | -------------- | ------- | ------------------------------------ | ------------------------------------ |
-| Phase 1 — Prototype & Full Test | Apr - Jun 2026 | 1-10    | ~20,400 THB (พล ~4,400 / เอ ~16,000) | ทุก function ผ่าน + field test 7 วัน |
-| Phase 2 — PCB Development       | Jun - Aug 2026 | 11-18   | ~4,000 THB                           | PCB production ready + batch 10 ชิ้น |
-| Phase 3 — Launch                | Sep - Oct 2026 | 19-26   | ~4,300 THB                           | 10 paying customers                  |
+| Phase                                      | ช่วงเวลา       | สัปดาห์ | งบ                                   | เป้าหมาย                                               |
+| ------------------------------------------ | -------------- | ------- | ------------------------------------ | ------------------------------------------------------ |
+| Phase 1 — Prototype & Full Test            | Apr - Jun 2026 | 1-10    | ~20,400 THB (พล ~4,400 / เอ ~16,000) | ทุก function ผ่าน + engineering field test 7 วัน       |
+| Phase 2 — PCB Development                  | Jun - Aug 2026 | 11-18   | ~4,000 THB                           | PCB production ready + batch 10 ชิ้น + ยื่น กสทช.      |
+| Phase 3 — Pilot & Launch Readiness         | Sep - Oct 2026 | 19-26   | ~4,300 THB                           | pilot 30 วัน + launch checklist ครบ + pipeline 10 farms |
 
 ### Phase 1 — สัปดาห์ละเอียด
 
@@ -56,7 +58,7 @@
 | 3-4     | 15-28 Apr 2026       | MQTT ขึ้น cloud + enclosure v1      |
 | 5-6     | 29 Apr - 12 May 2026 | Dashboard live + waterproof test    |
 | 7-8     | 13-26 May 2026       | OTA + alert + Figma review          |
-| 9-10    | 27 May - 9 Jun 2026  | Field test 7 วัน ✓ Phase 1 Complete |
+| 9-10    | 27 May - 9 Jun 2026  | Engineering field test 7 วัน ✓ Phase 1 Complete |
 
 ### Phase 2 — สัปดาห์ละเอียด
 
@@ -69,11 +71,11 @@
 
 ### Phase 3 — สัปดาห์ละเอียด
 
-| สัปดาห์ | วันที่              | เป้าหมาย                          |
-| ------- | ------------------- | --------------------------------- |
-| 19-20   | 1-14 Sep 2026       | Landing page + payment + assembly |
-| 20-22   | 15 Sep - 5 Oct 2026 | Beta test กับลูกค้า               |
-| 23-26   | 6-31 Oct 2026       | Public launch ✓ Phase 3 Complete  |
+| สัปดาห์ | วันที่              | เป้าหมาย                                        |
+| ------- | ------------------- | ----------------------------------------------- |
+| 19-20   | 1-14 Sep 2026       | Landing page + payment flow + assembly          |
+| 20-22   | 15 Sep - 5 Oct 2026 | Pilot / beta validation กับลูกค้า 30 วัน        |
+| 23-26   | 6-31 Oct 2026       | Launch readiness + waitlist 10 farms ✓ Phase 3 Complete |
 
 ---
 
@@ -93,7 +95,7 @@
 ### Critical Path
 
 ```
-อ่าน sensor → MQTT cloud → Dashboard → Field Test → PCB v1 → PCB v2 → Production → Beta → Launch
+อ่าน sensor → MQTT cloud → Dashboard → Engineering Field Test → PCB v1 → PCB v2 → Production → Pilot → Commercial Launch
 ```
 
 ถ้าขั้นตอนใดช้า 1 สัปดาห์ → ทุกอย่างหลังจากนั้นช้าตาม
@@ -108,7 +110,7 @@
 4. MQTT publish ผ่าน 4G TLS สำเร็จ
 5. Dashboard real-time + GPS map แสดงได้
 6. Deep sleep + wakeup ทำงาน 24 ชม. ไม่ crash
-7. Battery runtime ≥ 12 วัน @ 5 นาที interval
+7. Battery runtime ≥ 12 วัน @ 5 นาที interval (stretch goal 14-16 วัน)
 8. OTA update จาก dashboard สำเร็จ
 9. LINE alert ทำงานได้
 10. IP67 self-test ผ่าน (จุ่ม 1m 30 นาที แห้ง)
@@ -126,14 +128,15 @@
 
 ## Phase 3 — Definition of Done
 
-1. มีลูกค้าจ่ายเงิน ≥ 10 farms
-2. MRR ≥ 3,000 THB
-3. Customer satisfaction > 4/5
+1. มี pilot farms ใช้งานจริงอย่างน้อย 3 farms
+2. มี waitlist / pipeline พร้อมซื้อหลัง commercial launch ≥ 10 farms
+3. Customer satisfaction > 4/5 จาก pilot users
 4. Zero critical bugs 7 วัน (Sentry)
 5. OTA deploy ได้โดยไม่ downtime
 6. Dashboard ใช้ได้บน mobile
 7. ลูกค้าติดตั้งเองได้จากคู่มือ
 8. Support response < 24 ชม.
+9. Commercial launch จะทำหลัง กสทช. อนุมัติเท่านั้น
 
 ---
 
@@ -145,7 +148,7 @@
 | Component out of stock                        | เช็ค stock ก่อนสั่ง 2 สัปดาห์ มี LCSC backup part         |
 | PCB v1 bug เยอะ → ต้อง v3                     | ยอมรับได้ v3 = +500 THB งบยังพอ                           |
 | Analog turbidity sensor ไม่ทำงานที่ VBAT 3.7V | ใช้ MT3608 step-up 5V มีอยู่แล้วใน procurement            |
-| กสทช. ล่าช้า                                  | ไม่บล็อก launch — ทำทีหลัง                                |
+| กสทช. ล่าช้า                                  | ไม่บล็อก pilot — แต่บล็อก commercial launch                |
 | Burn out ทีม 2 คน                             | Weekly sync + milestone celebration + กำหนด working hours |
 
 ---

@@ -2,17 +2,19 @@
 
 **Version 1.1 | March 2026 | Confidential**
 
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+
 ---
 
 # สรุปงบประมาณทั้งหมด
 
-| Phase                           | ระยะเวลา                    | งบ (THB) | รายการหลัก                                          |
-| ------------------------------- | --------------------------- | -------- | --------------------------------------------------- |
-| Phase 1 — Prototype & Full Test | Apr - Jun 2026 (10 สัปดาห์) | ~18,400  | 3D Printer, dev board, sensors, tools, materials    |
-| Phase 2 — PCB Development       | Jun - Aug 2026 (8 สัปดาห์)  | ~4,000   | PCB x3 version, components 1 ชุด                    |
-| Phase 3 — Commercial Launch     | Sep - Oct 2026 (8 สัปดาห์)  | ~4,300   | PCB batch, components, 3D print 2 ชิ้น, setup       |
-| ยังไม่รวม                       | เมื่อพร้อม                  | ~25,000+ | กสทช. (~15,000), Marketing, IP67 lab test (~10,000) |
-| รวม Phase 1-3                   | Apr - Oct 2026              | ~26,700  |                                                     |
+| Phase                                | ระยะเวลา                    | งบ (THB) | รายการหลัก                                          |
+| ------------------------------------ | --------------------------- | -------- | --------------------------------------------------- |
+| Phase 1 — Prototype & Full Test      | Apr - Jun 2026 (10 สัปดาห์) | ~20,400  | 3D Printer, dev board, sensors, tools, materials    |
+| Phase 2 — PCB Development            | Jun - Aug 2026 (8 สัปดาห์)  | ~4,000   | PCB x3 version, components 1 ชุด                    |
+| Phase 3 — Pilot & Launch Readiness   | Sep - Oct 2026 (8 สัปดาห์)  | ~4,300   | PCB batch, components, 3D print 2 ชิ้น, setup       |
+| ยังไม่รวม                             | เมื่อพร้อม                  | ~25,000+ | กสทช. (~15,000), Marketing, IP67 lab test (~10,000) |
+| รวม Phase 1-3                         | Apr - Oct 2026              | ~28,700  |                                                     |
 
 > **หมายเหตุ:** หมายเหตุ: ราคาที่ระบุเป็นค่าประมาณ — ควรตรวจสอบราคาจริงก่อนสั่งซื้อ ราคา component อาจเปลี่ยนตามตลาด
 
@@ -131,7 +133,7 @@
 
 ## 1.9 สรุปงบ Phase 1
 
-**รวมทั้งหมด Phase 1: ~19,326 THB** (ฮาร์ดแวร์ พล ~3,363 + เอ ~15,963) + ค่า digital ~1,082 (domain + QStash 3 เดือน)
+**รวมทั้งหมด Phase 1: ~20,400 THB** (ฮาร์ดแวร์ พล ~3,363 + เอ ~15,963) + ค่า digital ~1,082 (domain + QStash 3 เดือน)
 
 | หมวด                                                  | พล (THB)   | เอ (THB)    | รวม (THB)   | หมายเหตุ                                                    |
 | ----------------------------------------------------- | ---------- | ----------- | ----------- | ----------------------------------------------------------- |
@@ -324,17 +326,17 @@
 | -------------------------- | ----------------------------------------------------------------------------------------------- | -------------- | -------------------- |
 | Stripe Account Setup       | สมัคร Stripe — ไม่มี setup fee — จ่าย transaction fee 3.65% ต่อครั้งเมื่อมีลูกค้าจ่ายเงิน       | 0              | stripe.com           |
 | Omise Account Setup        | สมัคร Omise — ไม่มี setup fee — จ่าย transaction fee 3.65% — รองรับ PromptPay                   | 0              | omise.co             |
-| LINE Official Account (OA) | สมัคร LINE OA — free plan รองรับ 500 push messages/เดือน — ถ้าเกินใช้ Light plan ~450 THB/เดือน | 0 (free tier)  | manager.line.biz     |
+| LINE Official Account (OA) | สมัคร LINE OA — เริ่มจาก free tier ก่อน และตรวจราคา paid plan ปัจจุบันอีกครั้งก่อน commercial launch | 0 (free tier)  | manager.line.biz     |
 | Vercel Pro Upgrade         | Upgrade เมื่อ hobby tier ไม่พอ — $20/เดือน — ยังไม่ต้องใน Phase 3 เว้นแต่ traffic สูง           | 0 (ยังไม่ต้อง) | vercel.com           |
 
 ## 3.4 สรุปงบ Phase 3
 
-**รวมทั้งหมด Phase 3: ~2,900 THB**
+**รวมทั้งหมด Phase 3: ~4,300 THB**
 
 | หมวด                                                 | รวม (THB) | หมายเหตุ                 |
 | ---------------------------------------------------- | --------- | ------------------------ |
 | PCB production batch 10 ชิ้น                         | ~500      |                          |
-| Components production 1 ชุด (รวม A7670E, GPS, 18650) | ~1,100    |                          |
+| Components production 1 ชุด (รวม A7670E, GPS, 18650) | ~2,500    |                          |
 | 3D Print enclosure จากร้าน 2 ชิ้น                    | ~800      | ประมาณ — ขึ้นกับขนาดจริง |
 | Stripe + Omise + LINE OA setup                       | 0         | ไม่มีค่าใช้จ่าย upfront  |
 | ค่าใช้จ่ายเบ็ดเตล็ด (shipping, packaging สินค้า)     | ~500      |                          |

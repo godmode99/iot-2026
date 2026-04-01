@@ -2,6 +2,8 @@
 
 **Version 1.1 | March 2026 | Confidential**
 
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+
 ---
 
 # 9. Business Model
@@ -92,13 +94,13 @@
 
 | รายการ                               | ค่าใช้จ่าย (THB) | หมายเหตุ                                                |
 | ------------------------------------ | ---------------- | ------------------------------------------------------- |
-| กสทช. certification                  | 15,000           | จำเป็นก่อน commercial launch                            |
+| กสทช. certification                  | 15,000           | จำเป็นก่อน commercial/public launch                     |
 | IP67 testing (ห้องแล็บ)              | 10,000           | ยังไม่รวมในงบ — ยื่นพร้อม กสทช. เมื่อพร้อม ทดสอบเองก่อน |
 | 3D Printer (ลงทุนครั้งเดียว Phase 1) | 10,000           | เอซื้อเองสำหรับ prototype รวม filament                  |
 | PCB batch 50-100 ชิ้น (JLCPCB PCBA)  | 25,000           |                                                         |
 | Marketing (website, content, ads)    | 20,000           | landing page + YouTube + ads เริ่มต้น                   |
 | Legal (terms, privacy policy)        | 0                | ใช้ template ฟรีออนไลน์ — ไม่จ้างทนายความ               |
-| รวม Upfront                          | ~26,700          | ไม่รวม กสทช. และ marketing — เพิ่มในภายหลัง             |
+| รวม Upfront                          | ~80,000          | เป็น deferred commercialization cost — คนละก้อนกับงบ Phase 1-3 (~28,700) |
 
 ### Monthly Fixed Costs (หลัง launch)
 
@@ -117,6 +119,8 @@
 | Hardware only (ไม่มี SaaS) | ~111 เครื่อง   | —                        | 225,000 ÷ 2,025 net/unit = ~111 เครื่อง |
 | Hardware + SaaS Basic      | ~75 เครื่อง    | 299 × 75 = 22,425 THB    | Upfront + monthly covered เร็วขึ้น      |
 | Realistic (mixed)          | ~80-90 เครื่อง | ~25,000-30,000 THB/เดือน | ภายใน 12-18 เดือนหลัง launch            |
+
+> **หมายเหตุ:** break-even table นี้ใช้ commercialization scenario เต็มรูปแบบ ไม่ใช่งบ prototype/pilot Phase 1-3
 
 ## 9.6 Customer Acquisition & Retention
 
@@ -178,7 +182,7 @@
 1. ถ่ายวิดีโอ case study + testimonial จากลูกค้าจริง
 1. สร้าง LINE Group สำหรับ beta users — community เริ่มต้น
 
-### Phase 3 (Commercial Launch): Scale
+### Phase 3 (Pilot / Launch Readiness): Demand Validation
 
 1. Landing page + SEO keywords: 'IoT หอยแครง', 'วัดคุณภาพน้ำ', 'sensor บ่อ'
 1. YouTube channel: วิดีโอติดตั้ง + case study + tips เลี้ยงหอยแครง
@@ -186,9 +190,9 @@
 1. ติดต่อสหกรณ์ประมง + กรมประมง — channel partnership
 1. Word of mouth: offer referral discount 200 THB ต่อการแนะนำลูกค้าใหม่
 
-| Channel              | เป้าหมาย (Phase 3)                   | KPI                   |
-| -------------------- | ------------------------------------ | --------------------- |
-| Direct sales         | 10 farms ใน 3 เดือนแรก               | conversion rate > 30% |
+| Channel              | เป้าหมาย (Phase 3)                         | KPI                   |
+| -------------------- | ------------------------------------------ | --------------------- |
+| Direct sales         | 10 farms ใน pipeline / waitlist หลัง pilot | conversion rate > 30% |
 | YouTube              | 1,000 subscribers ใน 6 เดือน         | view-to-lead rate     |
 | Facebook/LINE ads    | CAC < 1,500 THB                      | ROAS > 3x             |
 | Referral program     | 20% ของ new customers มาจาก referral | referral rate         |
@@ -210,13 +214,13 @@
 
 ## 10.0 Timeline Summary
 
-สมมติเริ่ม April 2026 — Phase 1-3 ใช้เวลา ~6.5 เดือน launch ได้ราว October 2026
+สมมติเริ่ม April 2026 — Phase 1-3 ใช้เวลา ~6.5 เดือน พร้อม pilot และ launch readiness ราว October 2026 โดย commercial launch ทำหลัง กสทช. อนุมัติ
 
-| Phase                           | ช่วงเวลา       | ระยะเวลา    | งบ (THB)                         | Strategy หลัก                                                                       | Milestone                                    |
-| ------------------------------- | -------------- | ----------- | -------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------- |
-| Phase 1 — Prototype & Full Test | Apr - Jun 2026 | 10 สัปดาห์  | ~20,400 (พล ~4,400 / เอ ~16,000) | พลใช้ ESP32-S3 DevKit ทดสอบ firmware + เอใช้ FS-HCore ทดสอบ hardware — parallel ได้ | ทุก function ผ่าน + field test 1 สัปดาห์     |
-| Phase 2 — PCB Development       | Jun - Aug 2026 | 8 สัปดาห์   | ~4,000                           | PCB v1→v2→v3 (10 ชิ้น/รุ่น ~500 THB) หลัง firmware นิ่ง — IP67 ทดสอบเองในบ่อ        | PCB production ready + batch 10 ชิ้น QC ผ่าน |
-| Phase 3 — Launch                | Sep - Oct 2026 | 8 สัปดาห์   | ~4,300                           | launch ก่อน ไม่รอ กสทช. — 3D print จากร้าน 2 ชิ้นวางแสดง — สั่ง PCB ตามออเดอร์จริง  | 10 paying customers                          |
+| Phase                                      | ช่วงเวลา       | ระยะเวลา    | งบ (THB)                         | Strategy หลัก                                                                                      | Milestone                                               |
+| ------------------------------------------ | -------------- | ----------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Phase 1 — Prototype & Full Test            | Apr - Jun 2026 | 10 สัปดาห์  | ~20,400 (พล ~4,400 / เอ ~16,000) | พลใช้ ESP32-S3 DevKit ทดสอบ firmware + เอใช้ FS-HCore ทดสอบ hardware — parallel ได้                | ทุก function ผ่าน + engineering field test 1 สัปดาห์    |
+| Phase 2 — PCB Development                  | Jun - Aug 2026 | 8 สัปดาห์   | ~4,000                           | PCB v1→v2→v3 (10 ชิ้น/รุ่น ~500 THB) หลัง firmware นิ่ง — IP67 ทดสอบเองในบ่อ + เริ่มยื่น กสทช.     | PCB production ready + batch 10 ชิ้น QC ผ่าน            |
+| Phase 3 — Pilot & Launch Readiness         | Sep - Oct 2026 | 8 สัปดาห์   | ~4,300                           | รัน pilot 30 วัน, ปิด bug, เตรียมเอกสารขาย, เก็บ waitlist — ยังไม่เปิด commercial/public sale ก่อน กสทช. | 3-5 pilot farms + waitlist / pipeline 10 farms          |
 | Phase 4 — Scale                 | Nov 2026+      | Ongoing     | ขึ้นกับ revenue                  | PWA + pH/DO sensor ก่อน — ตาม priority P1-P4                                        | P1 features ใน 3 เดือนแรก                    |
 | รวม Phase 1-3                   | Apr - Oct 2026 | ~26 สัปดาห์ | ~28,700                          | ไม่รวม กสทช. + marketing                                                            | Break-even ~16 เครื่อง                       |
 
@@ -252,7 +256,7 @@
 | Phase 3           | รวม Phase 3                                             | ~4,300           |                                                      |
 | รวมทั้งหมด        | Phase 1-3                                               | ~28,700          | ไม่รวม กสทช. + marketing — เพิ่มเมื่อพร้อม           |
 
-> **หมายเหตุ:** กสทช. (~15,000 THB) และ marketing ยังไม่รวมในงบนี้ — ยื่น กสทช. เมื่อมียอดขายพอ + marketing ใช้ word of mouth + ฟาร์มของตัวเองเป็น showcase ก่อน
+> **หมายเหตุ:** กสทช. (~15,000 THB) และ marketing ยังไม่รวมในงบนี้ — เริ่มเตรียม/ยื่น กสทช. ช่วงปลาย Phase 2 ถึงต้น Phase 3 ส่วน marketing ช่วงแรกใช้ word of mouth + ฟาร์มของตัวเองเป็น showcase ก่อน
 
 ## 10.1 Team & Responsibilities
 
@@ -277,7 +281,7 @@
 | 6-7     | Backend: alert system + command pipeline + calibration API                                  | ออกแบบ UI ใน Figma — dashboard, mobile-first layout                           | ทำ parallel ได้ |
 | 7-8     | Dashboard: alert UI + historical charts + LINE integration + provisioning                   | Review Figma กับพล + ปรับแก้จนพอใจ                                            | พลรอ Figma      |
 | 8-9     | Firmware: BLE provisioning + error recovery + payment API + self-pentest                    | Turbidity calibration (น้ำกลั่น reference) + ทดสอบ sensor ใน field            | ทำ parallel ได้ |
-| 9-10    | Field test 1 สัปดาห์ในบ่อจริง + fix bugs ทุกอย่าง + verify battery runtime                  | Field test + verify config A/B/C ในบ่อจริง + IP67 self-test ครั้งสุดท้าย      | ต้องทำพร้อมกัน  |
+| 9-10    | Engineering field test 1 สัปดาห์ในบ่อจริง + fix bugs ทุกอย่าง + verify battery runtime      | Field test + verify config A/B/C ในบ่อจริง + IP67 self-test ครั้งสุดท้าย      | ต้องทำพร้อมกัน  |
 
 ### Phase 1 Done Criteria — ต้องผ่านทั้งหมดก่อนเริ่มทำ PCB
 
@@ -285,12 +289,12 @@
 - Dashboard ครบ: real-time, GPS map, alert, interval config, LINE notification
 - Enclosure กันน้ำผ่าน IP67 self-test (จุ่ม 1 เมตร 30 นาที board ไม่เสีย) — ทดสอบเองในบ่อ
 - 3 configurations (ทุ่น / ไม้ปัก / ทุ่น+ไม้) ผ่านในบ่อจริง
-- Battery runtime ใกล้เคียง ~16 วัน
+- Battery runtime ผ่านขั้นต่ำ ≥ 12 วัน @ 5 นาที interval (stretch goal 14-16 วัน)
 - ไม่มี critical bug ค้างอยู่
 
 ## Phase 2 — PCB Development (สัปดาห์ที่ 11-18)
 
-> **หมายเหตุ:** เริ่มทำ PCB หลังจาก FS-HCore dev board ผ่านครบทุก function ใน Phase 1 แล้วเท่านั้น — PCB v1→v2→v3 รวมสูงสุด 3 version ครั้งละ 10 ชิ้น ~500 THB — IP67 ทดสอบเองในบ่อจริง ไม่ส่งห้องแล็บ — ไม่ยื่น กสทช. ในขั้นนี้ — งบ ~4,000 THB
+> **หมายเหตุ:** เริ่มทำ PCB หลังจาก FS-HCore dev board ผ่านครบทุก function ใน Phase 1 แล้วเท่านั้น — PCB v1→v2→v3 รวมสูงสุด 3 version ครั้งละ 10 ชิ้น ~500 THB — IP67 ทดสอบเองในบ่อจริง ไม่ส่งห้องแล็บในขั้นนี้ — พร้อมเตรียมเอกสาร/ยื่น กสทช. ช่วงปลาย Phase 2 — งบ ~4,000 THB
 
 | สัปดาห์ | พล (Server + Firmware)                                      | เอ (Hardware + Design)                                       | Dependency        |
 | ------- | ----------------------------------------------------------- | ------------------------------------------------------------ | ----------------- |
@@ -306,25 +310,25 @@
 - PCB final ทำงานได้ครบทุก function เหมือน FS-HCore dev board
 - ประกอบในกล่อง IP67 ได้ + waterproof self-test ผ่านในบ่อจริง
 - Production batch 10 ชิ้น QC ผ่านทั้งหมด
-- ยังไม่ยื่น กสทช. — ทำในภายหลังเมื่อพร้อม
+- กสทช. application ยื่นแล้ว
 
-## Phase 3 — Commercial Launch (สัปดาห์ที่ 19-26)
+## Phase 3 — Pilot & Launch Readiness (สัปดาห์ที่ 19-26)
 
-> **หมายเหตุ:** เป้าหมาย Phase 3: launch จริง มีลูกค้าจ่ายเงิน — งบ ~4,300 THB (PCB batch 10 ชิ้น + 3D print ASA 2 ชิ้นวางแสดง + misc) — ไม่รวม กสทช. และ marketing ยังไม่นำมาคิด — ใช้ word of mouth + ฟาร์มของตัวเองเป็น showcase ก่อน
+> **หมายเหตุ:** เป้าหมาย Phase 3: รัน pilot 30 วัน + ปิด launch checklist + เก็บ waitlist ลูกค้าที่พร้อมซื้อหลัง commercial launch — งบ ~4,300 THB (PCB batch 10 ชิ้น + 3D print ASA 2 ชิ้นวางแสดง + misc) — ไม่รวม กสทช. และ marketing
 
 | สัปดาห์ | พล (Server + Firmware)                                                 | เอ (Hardware + Design)                             | Dependency        |
 | ------- | ---------------------------------------------------------------------- | -------------------------------------------------- | ----------------- |
 | 19-20   | LINE Messaging API + subscription system + landing page + payment flow | 3D Print จากร้าน ASA 2 ชิ้น (วางแสดง) + QC         | 3D print ~3-5 วัน |
-| 20-21   | Payment flow test end-to-end + user management + provisioning flow     | Beta installation กับลูกค้าในฟาร์ม + เก็บ feedback | ต้องทำพร้อมกัน    |
-| 21-22   | Fix bugs จาก beta + optimize + db index tuning                         | คู่มือภาษาไทย (ภาพ + วิดีโอสั้น)                   | รอ feedback       |
-| 23-26   | Public launch + monitoring + customer support                          | สั่ง PCB batch เพิ่มตามออเดอร์ที่เข้ามา            | ไม่รอ กสทช.       |
+| 20-21   | Payment flow test end-to-end + user management + provisioning flow     | Pilot installation กับลูกค้าในฟาร์ม + เก็บ feedback | ต้องทำพร้อมกัน    |
+| 21-22   | Fix bugs จาก pilot + optimize + db index tuning                        | คู่มือภาษาไทย (ภาพ + วิดีโอสั้น)                    | รอ feedback       |
+| 23-26   | Launch readiness + monitoring + waitlist conversion prep               | สรุปผล pilot + เตรียม batch ถัดไป                   | Commercial launch รอ กสทช. |
 
 ### Phase 3 Done Criteria
 
-- มีลูกค้าจ่ายเงินอย่างน้อย 10 farms
-- Revenue > Monthly fixed costs
-- Customer satisfaction > 4/5 จาก beta users
-- กสทช. — ยื่นเมื่อพร้อม ไม่บล็อก launch
+- มี pilot farms ใช้งานจริงอย่างน้อย 3 farms
+- มี waitlist / pipeline พร้อมซื้อหลัง commercial launch อย่างน้อย 10 farms
+- Customer satisfaction > 4/5 จาก pilot users
+- กสทช. อยู่ในกระบวนการหรือยื่นแล้ว — commercial launch ทำหลัง approval
 
 ## Phase 4 — Scale (Nov 2026 onwards, priority order)
 
@@ -345,7 +349,7 @@
 | ---------------------------- | ---------------- | --------------------------------------- | ------------------------------------------- |
 | คนใดคนหนึ่งป่วย/ติดงาน       | สูง              | Phase ช้า 1-2 สัปดาห์                   | document งานดี + cross-train เบื้องต้น      |
 | PCB revision เพิ่ม (แก้ bug) | กลาง             | Phase 2 ช้า 2-3 สัปดาห์ + ค่า PCB เพิ่ม | ทำ schematic review ละเอียดก่อนสั่ง         |
-| กสทช. ล่าช้า                 | ต่ำ (ยังไม่ยื่น) | ไม่กระทบ launch — ยื่นทีหลัง            | launch ก่อนได้ รอ batch ใหญ่ค่อยยื่น กสทช.  |
+| กสทช. ล่าช้า                 | ต่ำ (อยู่ระหว่างยื่น) | ไม่กระทบ pilot — แต่บล็อก commercial launch | ทำ pilot / เก็บ waitlist ระหว่างรอ approval |
 | Firmware bug ใน field        | กลาง             | ต้อง recall หรือ OTA fix                | Field test 1 เดือนก่อน launch               |
 | Component shortage (chip)    | ต่ำ-กลาง         | production delay                        | สั่ง component สำรองล่วงหน้า 3 เดือน        |
 | ลูกค้า beta feedback เยอะมาก | กลาง             | scope creep — Phase 3 ช้า               | prioritize feedback ตาม impact/effort       |
@@ -372,7 +376,7 @@
 | ------------------------------------- | ----------------------- | --------------------------------------------------- |
 | เตรียมเอกสาร (schematic, BOM, manual) | 2-4 สัปดาห์             |                                                     |
 | ยื่นขอ กสทช.                          | 4-8 สัปดาห์             | ทำพร้อม Phase 3                                     |
-| IP67 Lab Testing                      | 1-2 สัปดาห์             | ห้องแล็บในไทย — ทำเมื่อยื่น กสทช. ไม่ใช่ก่อน launch |
+| IP67 Lab Testing                      | 1-2 สัปดาห์             | ห้องแล็บในไทย — ทำเมื่อยื่น กสทช. และต้องเสร็จก่อน commercial launch |
 | รับใบรับรอง                           | 1-2 สัปดาห์หลัง approve |                                                     |
 | รวม                                   | 8-16 สัปดาห์            | เริ่มยื่นตั้งแต่ Phase 2                            |
 
