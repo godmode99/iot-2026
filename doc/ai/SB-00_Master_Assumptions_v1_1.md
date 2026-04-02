@@ -77,11 +77,11 @@
 ## 7. Provisioning Baseline
 
 - Phase 1 / MVP ใช้ `QR Code + Web/PWA provisioning page` เป็น flow หลัก
-- Phase 2+ ใช้ `BLE provisioning ผ่าน mobile browser/PWA (Web Bluetooth)` เป็น flow หลักบนอุปกรณ์ที่รองรับ
-- baseline browser support สำหรับ `BLE provisioning` คือ `Android Chrome บน HTTPS` เท่านั้นในรอบ pilot เอกสาร v1.1
-- `iPhone/iPad` และ browser/device ที่ไม่มี Web Bluetooth ให้ fallback เป็น `QR Code + Web/PWA` หรือ `factory USB flash / QC tool`
+- Phase 2+ และรอบ pilot ของเอกสาร v1.1 ยังคงใช้ `QR Code + Web/PWA provisioning page` เป็น customer-facing flow เดียว
+- `BLE provisioning` ไม่ถือเป็น baseline ของ customer flow ในเอกสาร v1.1; ถ้าทดลองภายในให้ถือเป็น internal R&D เท่านั้นจนกว่าจะมี decision ใหม่
+- `iPhone/iPad`, Android, และ browser/device อื่นทั้งหมดต้องใช้ flow เดียวกัน คือ `QR Code + Web/PWA` เพื่อลดความสับสนของลูกค้าและ support
 - `Native mobile app` ไม่ถือเป็น baseline ของเอกสาร v1.1
-- ถ้าอุปกรณ์หรือ browser ไม่รองรับ BLE provisioning ให้ fallback เป็น `factory USB flash / QC tool`
+- `factory USB flash / QC tool` ใช้เฉพาะงานโรงงาน, QC, recovery, หรือ support ภายในทีม ไม่ใช่ flow หลักของลูกค้า
 
 ## 8. BOM Baseline
 
@@ -106,7 +106,7 @@
 | --- | --- | --- | --- | --- |
 | D-01 | Closed | ล็อก enclosure ภายนอก `150×100×60 mm` สำหรับ `PCB v1` และ `pilot batch`; ค่อย optimize หลัง pilot ถ้า field data บังคับ | เอ | 2026-04-02 |
 | D-02 | Closed | ใช้ `L76K` ต่อ และสลับเป็น `NEO-M8N` เฉพาะเมื่อ median TTFF หลัง wake > 60 วินาที, stationary open-sky error > 15 m มากกว่า 10% ของ sample, หรือ geofence false alert > 2 ครั้ง/เครื่อง/สัปดาห์ | พล + เอ | 2026-04-02 |
-| D-03 | Closed | Phase 2 BLE provisioning รองรับ `Android Chrome + HTTPS` เป็น baseline เดียวในรอบ pilot; iPhone/iPad และ browser อื่นใช้ `QR + Web/PWA` หรือ `factory USB/QC fallback` | พล | 2026-04-02 |
+| D-03 | Closed | ใช้ `QR + Web/PWA` เป็น provisioning baseline เดียวสำหรับ MVP และ pilot; `BLE provisioning` ไม่ใช่ customer baseline ในเอกสาร v1.1 | พล | 2026-04-02 |
 | D-04 | Closed | `A7670E` เป็น production default; ใช้ `SIM7670E` ได้เมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่านก่อน freeze BOM | เอ | 2026-04-02 |
 | D-05 | Closed | ใช้ `LINE free tier` ตลอด pilot และค่อย review paid plan เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch readiness review | พล | 2026-04-02 / review ก่อน commercial launch |
 

@@ -294,12 +294,12 @@
 | 5-6     | Firmware: OTA update + Flash Encryption + Secure Boot + watchdog + safe mode                | 3D print mounting hardware — ทุ่น + bracket + ไม้ปัก + ทดสอบ config A/B/C     | ทำ parallel ได้ |
 | 6-7     | Backend: alert system + command pipeline + calibration API                                  | ออกแบบ UI ใน Figma — dashboard, mobile-first layout                           | ทำ parallel ได้ |
 | 7-8     | Dashboard: alert UI + historical charts + LINE integration + provisioning                   | Review Figma กับพล + ปรับแก้จนพอใจ                                            | พลรอ Figma      |
-| 8-9     | Firmware: BLE provisioning + error recovery + payment API + self-pentest                    | Turbidity calibration (น้ำกลั่น reference) + ทดสอบ sensor ใน field            | ทำ parallel ได้ |
+| 8-9     | Firmware: provisioning hardening (QR/Web), error recovery + payment API + self-pentest      | Turbidity calibration (น้ำกลั่น reference) + ทดสอบ sensor ใน field            | ทำ parallel ได้ |
 | 9-10    | Engineering field test 1 สัปดาห์ในบ่อจริง + fix bugs ทุกอย่าง + verify battery runtime      | Field test + verify config A/B/C ในบ่อจริง + IP67 self-test ครั้งสุดท้าย      | ต้องทำพร้อมกัน  |
 
 ### Phase 1 Done Criteria — ต้องผ่านทั้งหมดก่อนเริ่มทำ PCB
 
-- Firmware ครบทุก function: sensor, MQTT, OTA, BLE, sleep, watchdog, buffer, safe mode
+- Firmware ครบทุก function: sensor, MQTT, OTA, sleep, watchdog, buffer, safe mode
 - Dashboard ครบ: real-time, GPS map, alert, interval config, LINE notification
 - Enclosure กันน้ำผ่าน IP67 self-test (จุ่ม 1 เมตร 30 นาที board ไม่เสีย) — ทดสอบเองในบ่อ
 - 3 configurations (ทุ่น / ไม้ปัก / ทุ่น+ไม้) ผ่านในบ่อจริง

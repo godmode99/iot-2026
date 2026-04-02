@@ -24,7 +24,7 @@
 | --- | --- |
 | Enclosure | `150×100×60 mm` สำหรับ PCB v1 และ pilot batch |
 | GPS | ใช้ `L76K` เป็น default; เปลี่ยนเป็น `NEO-M8N` เฉพาะเมื่อชน trigger ที่ล็อกไว้ |
-| BLE provisioning | baseline = `Android Chrome + HTTPS`; platform อื่นใช้ fallback |
+| Provisioning | `QR Code + Web/PWA` เป็น customer flow เดียวสำหรับ MVP และ pilot |
 | Production 4G | `A7670E` default; `SIM7670E` conditional fallback |
 | Phase 1 provisioning | `QR Code + Web/PWA` |
 | Battery pass target | `>= 12 วัน @ 5 นาที` |
@@ -73,10 +73,10 @@
 | EX-17 | เอ | ทำ PCB layout v1 ให้ fit ใน enclosure baseline `150×100×60 mm` และเตรียม Gerber/BOM/CPL | EX-16, EX-08 | DRC ผ่าน, manufacturing package ครบ, fit check ผ่าน |
 | EX-18 | พล + เอ | ทำ bench validation สำหรับ `SIM7670E` fallback path โดยทดสอบ power-up, MQTT TLS, OTA flow เทียบ `A7670E` baseline | EX-16 | สรุป compatibility note ชัดว่า fallback ใช้ได้หรือไม่ |
 | EX-19 | พล | ทำ secure provisioning/OTA production flow: signed firmware, release metadata, push auth, recovery path | EX-07, EX-11 | OTA test ผ่านบน dev hardware, rollback path documented |
-| EX-20 | พล | ทำ BLE provisioning Phase 2 เฉพาะ `Android Chrome + HTTPS` พร้อม fallback matrix | EX-11 | Android flow ใช้งานได้จริง, unsupported matrix documented |
+| EX-20 | พล | ประเมิน `BLE provisioning` เป็น internal R&D เท่านั้นหลัง pilot โดยไม่กระทบ customer flow หลัก | EX-11 | มี technical note ภายในว่าคุ้มทำต่อหรือไม่ โดยไม่มีผลกับคู่มือและ flow ลูกค้า |
 | EX-21 | เอ | สร้าง assembly + QC package สำหรับ pilot batch: visual, electrical, waterproof, provisioning checklist | EX-17, EX-19 | QC checklist ใช้งานหน้างานได้, serial/QR workflow ชัด |
 | EX-22 | พล | hardening backend สำหรับ pilot: monitoring, error logging, backups, retry jobs, export/report path | EX-09, EX-10, EX-19 | pilot ops checklist ผ่าน, logs/backup/retry ใช้งานได้ |
-| EX-23 | พล + เอ | ประกอบ pilot units ชุดแรกและทดสอบ onboarding end-to-end กับ flow จริง | EX-20, EX-21, EX-22 | device 3-5 เครื่อง onboard ได้ครบ, QC ผ่าน, dashboard/alert ใช้ได้ |
+| EX-23 | พล + เอ | ประกอบ pilot units ชุดแรกและทดสอบ onboarding end-to-end กับ flow จริง | EX-21, EX-22 | device 3-5 เครื่อง onboard ได้ครบ, QC ผ่าน, dashboard/alert ใช้ได้ |
 
 ## 6. Pilot Start Readiness
 

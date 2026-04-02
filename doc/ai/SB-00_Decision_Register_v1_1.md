@@ -20,7 +20,7 @@
 | --- | --- | --- | --- | --- |
 | D-01 | Final enclosure external size | Closed | เอ | 2026-04-02 |
 | D-02 | GPS fallback trigger (`L76K` -> `NEO-M8N`) | Closed | พล + เอ | 2026-04-02 |
-| D-03 | BLE provisioning support matrix | Closed | พล | 2026-04-02 |
+| D-03 | Provisioning baseline single flow | Closed | พล | 2026-04-02 |
 | D-04 | Production 4G sourcing fallback (`A7670E` / `SIM7670E`) | Closed | เอ | 2026-04-02 |
 | D-05 | LINE OA paid plan / notification budget trigger | Closed | พล | 2026-04-02 |
 
@@ -50,15 +50,15 @@
 | If delayed | ทีมจะคุยเรื่อง GPS กันคนละ assumption และ PCB v2 อาจต้องเผื่อเกินจำเป็น |
 | Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md) |
 
-## D-03 BLE Provisioning Support Matrix
+## D-03 Provisioning Baseline Single Flow
 
 | Item | Detail |
 | --- | --- |
-| Current baseline | MVP ใช้ `QR + Web/PWA`; Phase 2+ ใช้ `BLE ผ่าน mobile PWA/Web Bluetooth`; native app ไม่ใช่ baseline |
+| Current baseline | MVP และ pilot ใช้ `QR + Web/PWA` เป็น customer flow เดียว; native app ไม่ใช่ baseline |
 | Why it matters | กระทบ onboarding UX, support load, browser compatibility, และ recovery flow ตอน provisioning fail |
-| Options | `A)` รองรับเฉพาะ mobile PWA/Web Bluetooth + USB fallback, `B)` ทำ native app เพิ่ม, `C)` ยกเลิก BLE แล้วใช้ factory-only provisioning |
-| Final choice | Phase 2 รองรับ `Android Chrome + HTTPS` เป็น baseline เดียวสำหรับ BLE provisioning ในรอบ pilot; iPhone/iPad และ browser/device ที่ไม่มี Web Bluetooth ใช้ `QR + Web/PWA` หรือ `factory USB/QC fallback` |
-| Reasoning | สอดคล้องกับ roadmap ที่ดัน PWA ก่อน app และตัด scope ให้เหลือ browser matrix ที่รองรับได้จริงในรอบ pilot |
+| Options | `A)` ทำหลาย flow ตาม browser/device, `B)` ทำ native app เพิ่ม, `C)` ใช้ `QR + Web/PWA` เป็น customer flow เดียว และเก็บ USB/QC ไว้ใช้ภายใน |
+| Final choice | ใช้ `QR + Web/PWA` เป็น provisioning baseline เดียวสำหรับ MVP และ pilot; `BLE provisioning` ไม่เป็นส่วนหนึ่งของ customer flow ในเอกสาร v1.1 และถ้าทดลองให้ถือเป็น internal R&D เท่านั้น |
+| Reasoning | ลดความสับสนของลูกค้า, ลด support matrix, และทำให้ onboarding, คู่มือ, backend, QC, และ training ใช้ flow เดียวกันทุกอุปกรณ์ |
 | If delayed | ฝั่ง firmware, backend, และ onboarding docs จะกลับไปพูดคนละ flow |
 | Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md) |
 
@@ -94,6 +94,6 @@
 | --- | --- | --- | --- |
 | D-01 | 2026-04-02 | ล็อก enclosure `150×100×60 mm` สำหรับ PCB v1 + pilot batch | optimize หลัง pilot เท่านั้น |
 | D-02 | 2026-04-02 | ใช้ `L76K` ต่อ พร้อม trigger เปลี่ยนเป็น `NEO-M8N` แบบวัดผลได้ | trigger อยู่ใน Master Assumptions |
-| D-03 | 2026-04-02 | BLE provisioning baseline = `Android Chrome + HTTPS` | iPhone/iPad และ unsupported browsers ใช้ fallback |
+| D-03 | 2026-04-02 | provisioning baseline = `QR + Web/PWA` flow เดียว | USB/QC ใช้ภายในเท่านั้น; BLE ไม่ใช่ customer baseline |
 | D-04 | 2026-04-02 | `A7670E` default, `SIM7670E` conditional fallback | ต้อง bench validation ก่อน freeze BOM |
 | D-05 | 2026-04-02 | ใช้ `LINE free tier` ตลอด pilot | review ใหม่เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch |
