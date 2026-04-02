@@ -36,7 +36,7 @@
 | Recommendation | `A)` คง planning size เดิมไว้ก่อนจนกว่าจะมี PCB layout รอบแรก แล้วค่อยตัดสินใจรอบสุดท้าย |
 | Reasoning | ลดความเสี่ยง rework ในช่วงต้น และยังเปิดทางให้ย่อกล่องภายหลังเมื่อรู้ component placement จริง |
 | If delayed | enclosure, waterproof design, และ procurement จะค้างหลายจุดพร้อมกัน |
-| Related docs | [SB-00_Master_Assumptions_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Firmware_Hardware_v1_1.md) |
+| Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md) |
 
 ## D-02 GPS Fallback Trigger
 
@@ -48,7 +48,7 @@
 | Recommendation | `C)` ใช้ L76K ใน pilot และกำหนด trigger ชัดเจน เช่น fix time, accuracy, และ geofence false alert rate |
 | Reasoning | เก็บต้นทุนต่ำไว้ก่อน แต่ไม่ปล่อยให้ decision ค้างแบบไม่มีเกณฑ์ |
 | If delayed | ทีมจะคุยเรื่อง GPS กันคนละ assumption และ PCB v2 อาจต้องเผื่อเกินจำเป็น |
-| Related docs | [SB-00_Master_Assumptions_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Backend_Security_v1_1.md) |
+| Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md) |
 
 ## D-03 BLE Provisioning Support Matrix
 
@@ -60,7 +60,7 @@
 | Recommendation | `A)` รองรับ mobile PWA/Web Bluetooth เป็นหลัก และเขียน fallback matrix ให้ชัดว่า browser/device ไหนใช้ได้ |
 | Reasoning | สอดคล้องกับ roadmap ที่ดัน PWA ก่อน app และยังคุม scope ได้ |
 | If delayed | ฝั่ง firmware, backend, และ onboarding docs จะกลับไปพูดคนละ flow |
-| Related docs | [SB-00_Master_Assumptions_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Backend_Security_v1_1.md) |
+| Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md) |
 
 ## D-04 Production 4G Sourcing Fallback
 
@@ -72,7 +72,7 @@
 | Recommendation | `C)` ยึด A7670E เป็น default แต่ตรวจ footprint/assembly compatibility สำหรับ fallback ให้ครบก่อน freeze BOM |
 | Reasoning | ได้สมดุลระหว่าง supply-chain flexibility กับความชัดเจนของเอกสาร |
 | If delayed | Procurement กับ PCB design จะเสี่ยงต้องย้อนแก้เมื่อของขาดหรือ lead time เปลี่ยน |
-| Related docs | [SB-00_Master_Assumptions_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Firmware_Hardware_v1_1.md), [SB-00_Procurement_List_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Procurement_List_v1_1.md) |
+| Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Procurement_List_v1_1.md](./SB-00_Procurement_List_v1_1.md) |
 
 ## D-05 LINE OA Paid Plan / Notification Budget Trigger
 
@@ -84,7 +84,7 @@
 | Recommendation | `A)` ใช้ free tier ระหว่าง pilot และ review quota/price จริงอีกครั้งใน launch readiness review |
 | Reasoning | ลดค่าใช้จ่ายช่วง pilot และเลื่อนการตัดสินใจที่ขึ้นกับราคา live ไปใกล้เวลาที่ต้องใช้จริง |
 | If delayed | ไม่กระทบ pilot มาก แต่จะทำให้ forecast ต้นทุน commercial launch ไม่แม่น |
-| Related docs | [SB-00_Master_Assumptions_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Master_Assumptions_v1_1.md), [SB-00_Backend_Security_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Backend_Security_v1_1.md), [SB-00_Procurement_List_v1_1.md](C:\Users\iidogpon\Documents\GitHub\iot-2026\doc\SB-00_Procurement_List_v1_1.md) |
+| Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md), [SB-00_Procurement_List_v1_1.md](./SB-00_Procurement_List_v1_1.md) |
 
 ---
 
