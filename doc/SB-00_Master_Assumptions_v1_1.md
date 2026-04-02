@@ -94,6 +94,8 @@
 
 ## 10. Open Decisions
 
+> **Decision workflow:** ใช้ [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md) เป็น meeting-ready register สำหรับปิด decision เหล่านี้ แล้วค่อย sync กลับมาที่เอกสารชุดหลัก
+
 | Decision | Current baseline / question | Owner | Target date |
 | --- | --- | --- | --- |
 | Enclosure external size final | Current planning size ~150×100×60mm — confirm หลัง PCB layout | เอ | ก่อนสั่ง PCB v1 |
