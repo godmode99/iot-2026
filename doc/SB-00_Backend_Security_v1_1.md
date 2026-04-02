@@ -2,7 +2,7 @@
 
 **Version 1.1 | March 2026 | Confidential**
 
-> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) | **Last synced:** 2026-04-02
 
 ---
 

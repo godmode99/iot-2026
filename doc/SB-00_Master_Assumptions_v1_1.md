@@ -1,6 +1,6 @@
 # SB-00 — Master Assumptions
 
-**Version 1.1 | April 2026 | Canonical baseline for all SB-00 v1.1 documents**
+**Version 1.1 | April 2026 | Canonical baseline for all SB-00 v1.1 documents | Last synced: 2026-04-02**
 
 ---
 
@@ -10,6 +10,16 @@
 - ใช้ล็อกตัวเลขงบ baseline ให้ตรงกัน
 - ใช้ล็อก battery target, field-test stages, certification stance, และ OTA auth baseline
 - ถ้าเอกสารใดขัดกับไฟล์นี้ ให้ยึดไฟล์นี้ก่อนจนกว่าจะมีการอัปเดตเป็น version ใหม่
+
+## 0. Document Sync Status
+
+| Document | Version | Last synced | Status |
+| --- | --- | --- | --- |
+| `SB-00_Dev_Plan_Summary_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
+| `SB-00_Business_Roadmap_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
+| `SB-00_Backend_Security_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
+| `SB-00_Firmware_Hardware_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
+| `SB-00_Procurement_List_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
 
 ## 1. คำศัพท์มาตรฐาน
 
@@ -82,7 +92,17 @@
 - ถ้าต้องระบุราคาที่ vendor เปลี่ยนได้ง่าย เช่น `LINE OA`, `Vercel Pro`, `Upstash`, `HiveMQ`, `Supabase`, `Resend`, `Stripe`, `Omise` ให้ถือเป็น estimate จนกว่าจะ re-check ก่อน commercial launch
 - การคำนวณ trigger ของ free tier ให้ยึด `5-minute telemetry baseline` และ `จำนวน active devices จริง` ใน phase นั้น
 
-## 10. การอ้างอิงในเอกสาร
+## 10. Open Decisions
+
+| Decision | Current baseline / question | Owner | Target date |
+| --- | --- | --- | --- |
+| Enclosure external size final | Current planning size ~150×100×60mm — confirm หลัง PCB layout | เอ | ก่อนสั่ง PCB v1 |
+| GPS fallback trigger | เริ่มจาก L76K ก่อน — ใช้ NEO-M8N เฉพาะเมื่อ field test ชี้ว่า accuracy ไม่พอ | พล + เอ | ก่อน freeze PCB v2 |
+| BLE provisioning support matrix | ใช้ mobile PWA/Web Bluetooth เป็น baseline — ต้องสรุป browser/device fallback ที่รองรับจริง | พล | ก่อน implement onboarding Phase 2 |
+| Production 4G sourcing fallback | ใช้ A7670E เป็น default — confirm ว่าจะ fallback ไป SIM7670E หรือไม่ถ้า supply chain เปลี่ยน | เอ | ก่อน freeze production BOM |
+| LINE OA paid plan / notification cost | ใช้ free tier ก่อน — ต้อง re-check quota/price จริงก่อน commercial launch | พล | ก่อน launch readiness review |
+
+## 11. การอ้างอิงในเอกสาร
 
 ทุกเอกสารหลักควรอ้างถึงไฟล์นี้อย่างน้อยหนึ่งจุดใกล้ส่วนบนของเอกสาร เพื่อให้คนอ่านรู้ว่า:
 

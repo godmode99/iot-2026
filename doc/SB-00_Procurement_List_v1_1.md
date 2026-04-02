@@ -2,7 +2,7 @@
 
 **Version 1.1 | March 2026 | Confidential**
 
-> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) | **Last synced:** 2026-04-02
 
 ---
 
@@ -339,7 +339,7 @@
 
 | หมวด                                                 | รวม (THB) | หมายเหตุ                 |
 | ---------------------------------------------------- | --------- | ------------------------ |
-| PCB production batch 10 ชิ้น                         | ~500      |                          |
+| PCB pilot batch 10 ชิ้น                              | ~500      |                          |
 | Components production 1 ชุด (รวม A7670E, GPS, 18650) | ~2,500    |                          |
 | 3D Print enclosure จากร้าน 2 ชิ้น                    | ~800      | ประมาณ — ขึ้นกับขนาดจริง |
 | Stripe + Omise + LINE OA setup                       | 0         | ไม่มีค่าใช้จ่าย upfront  |

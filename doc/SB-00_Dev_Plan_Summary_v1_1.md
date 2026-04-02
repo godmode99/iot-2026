@@ -2,7 +2,7 @@
 
 **Version 1.1 | March 2026 | ใช้ประกอบกับ SB-00_Business_Roadmap_v1_1.md**
 
-> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) | **Last synced:** 2026-04-02
 
 ---
 
@@ -47,7 +47,7 @@
 | Phase                                      | ช่วงเวลา       | สัปดาห์ | งบ                                   | เป้าหมาย                                               |
 | ------------------------------------------ | -------------- | ------- | ------------------------------------ | ------------------------------------------------------ |
 | Phase 1 — Prototype & Full Test            | Apr - Jun 2026 | 1-10    | ~20,400 THB (พล ~4,400 / เอ ~16,000) | ทุก function ผ่าน + engineering field test 7 วัน       |
-| Phase 2 — PCB Development                  | Jun - Aug 2026 | 11-18   | ~4,000 THB                           | PCB production ready + batch 10 ชิ้น + ยื่น กสทช.      |
+| Phase 2 — PCB Development                  | Jun - Aug 2026 | 11-18   | ~4,000 THB                           | PCB pilot-batch ready + batch 10 ชิ้น + ยื่น กสทช.     |
 | Phase 3 — Pilot & Launch Readiness         | Sep - Oct 2026 | 19-26   | ~4,300 THB                           | pilot 30 วัน + launch checklist ครบ + pipeline 10 farms |
 
 ### Phase 1 — สัปดาห์ละเอียด
@@ -67,7 +67,7 @@
 | 11-12   | 10-23 Jun 2026       | PCB v1 design + สั่ง JLCPCB                 |
 | 12-13   | 24 Jun - 7 Jul 2026  | PCB v1 assembly + test                      |
 | 13-15   | 8-28 Jul 2026        | PCB v2 + IP67 final                         |
-| 16-18   | 29 Jul - 18 Aug 2026 | Production batch 10 ชิ้น ✓ Phase 2 Complete |
+| 16-18   | 29 Jul - 18 Aug 2026 | Pilot batch 10 ชิ้น ✓ Phase 2 Complete      |
 
 ### Phase 3 — สัปดาห์ละเอียด
 
@@ -123,7 +123,7 @@
 2. Test points TP1-TP6 ได้ค่าตาม spec
 3. IP67 self-test ผ่านใน enclosure จริง
 4. Production firmware + Flash Encryption build สำเร็จ
-5. Production batch 10 ชิ้น QC ผ่านทั้งหมด
+5. Pilot batch 10 ชิ้น QC ผ่านทั้งหมด
 6. กสทช. application ยื่นแล้ว
 
 ## Phase 3 — Definition of Done

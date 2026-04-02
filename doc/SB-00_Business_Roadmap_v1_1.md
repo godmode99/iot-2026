@@ -2,7 +2,7 @@
 
 **Version 1.1 | March 2026 | Confidential**
 
-> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+> **Reference baseline:** เอกสารนี้อ้างอิงสมมติฐานกลางใน [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) | **Last synced:** 2026-04-02
 
 ---
 
@@ -233,7 +233,7 @@
 | Phase                                      | ช่วงเวลา       | ระยะเวลา    | งบ (THB)                         | Strategy หลัก                                                                                      | Milestone                                               |
 | ------------------------------------------ | -------------- | ----------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | Phase 1 — Prototype & Full Test            | Apr - Jun 2026 | 10 สัปดาห์  | ~20,400 (พล ~4,400 / เอ ~16,000) | พลใช้ ESP32-S3 DevKit ทดสอบ firmware + เอใช้ FS-HCore ทดสอบ hardware — parallel ได้                | ทุก function ผ่าน + engineering field test 1 สัปดาห์    |
-| Phase 2 — PCB Development                  | Jun - Aug 2026 | 8 สัปดาห์   | ~4,000                           | PCB v1→v2→v3 (10 ชิ้น/รุ่น ~500 THB) หลัง firmware นิ่ง — IP67 ทดสอบเองในบ่อ + เริ่มยื่น กสทช.     | PCB production ready + batch 10 ชิ้น QC ผ่าน            |
+| Phase 2 — PCB Development                  | Jun - Aug 2026 | 8 สัปดาห์   | ~4,000                           | PCB v1→v2→v3 (10 ชิ้น/รุ่น ~500 THB) หลัง firmware นิ่ง — IP67 ทดสอบเองในบ่อ + เริ่มยื่น กสทช.     | PCB pilot-batch ready + batch 10 ชิ้น QC ผ่าน           |
 | Phase 3 — Pilot & Launch Readiness         | Sep - Oct 2026 | 8 สัปดาห์   | ~4,300                           | รัน pilot 30 วัน, ปิด bug, เตรียมเอกสารขาย, เก็บ waitlist — ยังไม่เปิด commercial/public sale ก่อน กสทช. | 3-5 pilot farms + waitlist / pipeline 10 farms          |
 | Phase 4 — Scale                 | Nov 2026+      | Ongoing     | ขึ้นกับ revenue                  | PWA + pH/DO sensor ก่อน — ตาม priority P1-P4                                        | P1 features ใน 3 เดือนแรก                    |
 | รวม Phase 1-3                   | Apr - Oct 2026 | ~26 สัปดาห์ | ~28,700                          | ไม่รวม กสทช. + marketing                                                            | Break-even ~16 เครื่อง                       |
@@ -316,14 +316,14 @@
 | 12-13   | ทดสอบ firmware บน PCB v1 ทุก pin + identify issues          | สั่ง PCB v1 JLCPCB (10 ชิ้น ~500 THB) + ประกอบ + ตรวจ solder | รอ PCB ~7 วัน     |
 | 13-14   | Fix firmware issues จาก PCB v1                              | แก้ schematic PCB v2 + สั่ง JLCPCB (10 ชิ้น ~500 THB)        | รอผล v1 ก่อน      |
 | 14-15   | ทดสอบ firmware PCB v2 ครบทุก function + verify = dev board  | ประกอบ PCB v2 + ใส่ enclosure + IP67 self-test ในบ่อจริง     | รอ PCB ~7 วัน     |
-| 15-16   | ถ้า v2 ผ่าน → production ready / ถ้าไม่ → PCB v3 (~500 THB) | PCB v3 ถ้าจำเป็น — ประกอบ + ทดสอบซ้ำ                         | ขึ้นกับผล v2      |
-| 16-18   | เตรียม production firmware build + sign + documentation     | Assembly production batch 10 ชิ้น + QC ทุกเครื่อง            | ทำ parallel ได้   |
+| 15-16   | ถ้า v2 ผ่าน → pilot-batch ready / ถ้าไม่ → PCB v3 (~500 THB) | PCB v3 ถ้าจำเป็น — ประกอบ + ทดสอบซ้ำ                         | ขึ้นกับผล v2      |
+| 16-18   | เตรียม pilot firmware build + sign + documentation          | Assembly pilot batch 10 ชิ้น + QC ทุกเครื่อง                 | ทำ parallel ได้   |
 
 ### Phase 2 Done Criteria
 
 - PCB final ทำงานได้ครบทุก function เหมือน FS-HCore dev board
 - ประกอบในกล่อง IP67 ได้ + waterproof self-test ผ่านในบ่อจริง
-- Production batch 10 ชิ้น QC ผ่านทั้งหมด
+- Pilot batch 10 ชิ้น QC ผ่านทั้งหมด
 - กสทช. application ยื่นแล้ว
 
 ## Phase 3 — Pilot & Launch Readiness (สัปดาห์ที่ 19-26)
