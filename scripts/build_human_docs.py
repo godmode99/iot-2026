@@ -18,7 +18,7 @@ HUMAN_DIR = ROOT / "doc" / "human"
 SKIP_FILES = {"README.md"}
 GENERATED_ON = date.today().isoformat()
 
-INLINE_PATTERN = re.compile(r"(\*\*.+?\*\*|__.+?__|`.+?`|\*.+?\*|_.+?_)", re.DOTALL)
+INLINE_PATTERN = re.compile(r"(\*\*.+?\*\*|__.+?__|`.+?`|\*[^*\n][^*\n]*\*)", re.DOTALL)
 HORIZONTAL_RULE_PATTERN = re.compile(r"^[-*_]{3,}$")
 ORDER_LINE_PATTERN = re.compile(r"^\d+\.\s+`(?P<name>[^`]+)`\s*$")
 
@@ -173,10 +173,6 @@ def add_markdown_runs(
         elif part.startswith("*") and part.endswith("*"):
             content = part[1:-1]
             italic = True
-        elif part.startswith("_") and part.endswith("_"):
-            content = part[1:-1]
-            italic = True
-
         if not content:
             continue
 
@@ -410,10 +406,18 @@ def render_markdown(md_path: Path, output_path: Path) -> tuple[str, str | None]:
             last_blank = False
             continue
 
-        if stripped.startswith("> "):
+        if stripped == ">":
+            if not last_blank:
+                doc.add_paragraph("")
+                last_blank = True
+            continue
+
+        if stripped.startswith(">"):
             para = doc.add_paragraph()
             para.paragraph_format.left_indent = Inches(0.25)
-            add_markdown_runs(para, stripped[2:], font_name="TH Sarabun New", size_pt=16)
+            quote_text = stripped[1:].lstrip()
+            if quote_text:
+                add_markdown_runs(para, quote_text, font_name="TH Sarabun New", size_pt=16)
             last_blank = False
             continue
 
@@ -483,7 +487,7 @@ def build_human_index(doc_infos: list[dict[str, str]], output_path: Path):
 
     for item in [
         "เริ่มจาก Master Assumptions เพื่อดู baseline กลาง",
-        "ใช้ Decision Register สำหรับรายการที่ยังต้องปิดมติ",
+        "ใช้ Decision Register เพื่อดู final choice ของ decision สำคัญที่ล็อกแล้ว",
         "อ่าน Dev Plan และ Business Roadmap ก่อนลงรายละเอียดเชิงเทคนิค",
         "เปิด Backend, Firmware, และ Procurement ตามหัวข้อที่ต้องการลงลึก",
     ]:

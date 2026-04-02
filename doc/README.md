@@ -5,6 +5,7 @@
 - `doc/ai/`
   - source of truth สำหรับ AI assistants เช่น Codex, Claude
   - ใช้ไฟล์ Markdown ที่อ้างอิงกันชัด อ่านง่าย และเหมาะกับ diff/review
+  - มีทั้ง baseline docs, decision register, pricing baseline, และ execution task list
 - `doc/human/`
   - เอกสาร `.docx` สำหรับคนอ่าน
   - สร้างจากชุด `doc/ai/` เพื่อให้รูปแบบอ่านง่ายขึ้นใน Word

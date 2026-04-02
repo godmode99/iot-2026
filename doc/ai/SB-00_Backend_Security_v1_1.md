@@ -695,7 +695,7 @@ Response format สำหรับ list routes:
 | ขั้นตอน         | รายละเอียด                                                                                          |
 | --------------- | --------------------------------------------------------------------------------------------------- |
 | Generate        | Server generate unique username + password ต่อ device ตอน provisioning — ใช้ crypto.randomBytes(32) |
-| Deliver         | ส่งผ่าน BLE provisioning บน mobile PWA/Web Bluetooth (encrypted) หรือ flash ตอนผลิตด้วย USB — ห้ามส่งผ่าน HTTP plaintext |
+| Deliver         | ส่งผ่าน BLE provisioning บน `Android Chrome + HTTPS` (encrypted) หรือ flash ตอนผลิตด้วย USB — `iPhone/iPad` และ unsupported browsers ใช้ QR/Web หรือ factory USB fallback — ห้ามส่งผ่าน HTTP plaintext |
 | Store on device | เก็บใน NVS partition ที่ Flash Encrypted — ไม่สามารถ read ได้ถ้าไม่มี encryption key                |
 | Store on server | เก็บใน Supabase devices table (hashed) + HiveMQ Cloud — ไม่เก็บ plaintext password                  |
 | Rotate          | ถ้า device ถูก compromise → revoke credentials ผ่าน HiveMQ REST API + provision ใหม่ผ่าน dashboard  |
@@ -936,6 +936,7 @@ Response format สำหรับ list routes:
 - คู่มือภาพ (PDF): step-by-step พร้อมรูปถ่ายจริง ภาษาง่าย
 - LINE OA Chatbot: ถามตอบปัญหาเบื้องต้น
 - ช่วงแรก: โทรหาลูกค้าหลังติดตั้ง 1 สัปดาห์ เก็บ feedback
+- สำหรับ BLE provisioning ในรอบ pilot ให้ support เฉพาะ `Android Chrome + HTTPS`; ถ้าเป็น `iPhone/iPad` หรือ browser ที่ไม่มี Web Bluetooth ให้ใช้ `QR + Web/PWA` หรือ factory fallback
 
 # 18. SIM & Connectivity Management
 

@@ -17,10 +17,12 @@
 | --- | --- | --- | --- |
 | `SB-00_Dev_Plan_Summary_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
 | `SB-00_Business_Roadmap_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
+| `SB-00_Decision_Register_v1_1.md` | 1.1 | 2026-04-02 | closed decisions synced to baseline |
 | `SB-00_Backend_Security_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
 | `SB-00_Firmware_Hardware_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
 | `SB-00_Procurement_List_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
 | `SB-00_Third_Party_Pricing_Baseline_v1_1.md` | 1.1 | 2026-04-02 | canonical pricing/limits table |
+| `SB-00_Execution_Task_List_v1_1.md` | 1.1 | 2026-04-02 | derived from locked baseline + closed decisions |
 
 ## 1. คำศัพท์มาตรฐาน
 
@@ -76,6 +78,8 @@
 
 - Phase 1 / MVP ใช้ `QR Code + Web/PWA provisioning page` เป็น flow หลัก
 - Phase 2+ ใช้ `BLE provisioning ผ่าน mobile browser/PWA (Web Bluetooth)` เป็น flow หลักบนอุปกรณ์ที่รองรับ
+- baseline browser support สำหรับ `BLE provisioning` คือ `Android Chrome บน HTTPS` เท่านั้นในรอบ pilot เอกสาร v1.1
+- `iPhone/iPad` และ browser/device ที่ไม่มี Web Bluetooth ให้ fallback เป็น `QR Code + Web/PWA` หรือ `factory USB flash / QC tool`
 - `Native mobile app` ไม่ถือเป็น baseline ของเอกสาร v1.1
 - ถ้าอุปกรณ์หรือ browser ไม่รองรับ BLE provisioning ให้ fallback เป็น `factory USB flash / QC tool`
 
@@ -83,8 +87,8 @@
 
 | Area | Prototype / Phase 1 | Production / Phase 2+ | Note |
 | --- | --- | --- | --- |
-| MCU + 4G | FS-HCore-A7670C dev board | ESP32-S3 + `A7670E` บน custom PCB | `SIM7670E` เป็น sourcing fallback ถ้า footprint/AT command compatible |
-| GPS | `L76K` | `L76K` | `NEO-M8N` ใช้เมื่อ field test ชี้ว่า L76K ไม่พอ |
+| MCU + 4G | FS-HCore-A7670C dev board | ESP32-S3 + `A7670E` บน custom PCB | `SIM7670E` เป็น sourcing fallback เฉพาะเมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่าน |
+| GPS | `L76K` | `L76K` | `NEO-M8N` ใช้เมื่อ Stage A/B field test ชี้ว่า L76K ไม่ผ่าน trigger ที่ล็อกไว้ |
 | Turbidity | Analog sensor | `SEN0600 RS485` | Analog ใช้ dev/test เท่านั้น ไม่ใช่ production BOM |
 
 ## 9. Third-Party Pricing Baseline
@@ -94,17 +98,17 @@
 - ถ้าต้องระบุราคาที่ vendor เปลี่ยนได้ง่าย เช่น `LINE OA`, `Vercel Pro`, `Upstash`, `HiveMQ`, `Supabase`, `Resend`, `Stripe`, `Omise` ให้ถือเป็น estimate จนกว่าจะ re-check ก่อน commercial launch
 - การคำนวณ trigger ของ free tier ให้ยึด `5-minute telemetry baseline` และ `จำนวน active devices จริง` ใน phase นั้น
 
-## 10. Open Decisions
+## 10. Decision Status
 
-> **Decision workflow:** ใช้ [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md) เป็น meeting-ready register สำหรับปิด decision เหล่านี้ แล้วค่อย sync กลับมาที่เอกสารชุดหลัก
+> **Decision workflow:** final choice แบบละเอียดและเหตุผลเต็มอยู่ใน [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md) เอกสารนี้เก็บเฉพาะ baseline ที่ล็อกแล้วสำหรับให้ทุกไฟล์อ้างอิงตรงกัน
 
-| Decision | Current baseline / question | Owner | Target date |
-| --- | --- | --- | --- |
-| Enclosure external size final | Current planning size ~150×100×60mm — confirm หลัง PCB layout | เอ | ก่อนสั่ง PCB v1 |
-| GPS fallback trigger | เริ่มจาก L76K ก่อน — ใช้ NEO-M8N เฉพาะเมื่อ field test ชี้ว่า accuracy ไม่พอ | พล + เอ | ก่อน freeze PCB v2 |
-| BLE provisioning support matrix | ใช้ mobile PWA/Web Bluetooth เป็น baseline — ต้องสรุป browser/device fallback ที่รองรับจริง | พล | ก่อน implement onboarding Phase 2 |
-| Production 4G sourcing fallback | ใช้ A7670E เป็น default — confirm ว่าจะ fallback ไป SIM7670E หรือไม่ถ้า supply chain เปลี่ยน | เอ | ก่อน freeze production BOM |
-| LINE OA paid plan / notification cost | ใช้ free tier ก่อน — ต้อง re-check quota/price จริงก่อน commercial launch | พล | ก่อน launch readiness review |
+| ID | Status | Locked baseline | Owner | Closed on / Review point |
+| --- | --- | --- | --- | --- |
+| D-01 | Closed | ล็อก enclosure ภายนอก `150×100×60 mm` สำหรับ `PCB v1` และ `pilot batch`; ค่อย optimize หลัง pilot ถ้า field data บังคับ | เอ | 2026-04-02 |
+| D-02 | Closed | ใช้ `L76K` ต่อ และสลับเป็น `NEO-M8N` เฉพาะเมื่อ median TTFF หลัง wake > 60 วินาที, stationary open-sky error > 15 m มากกว่า 10% ของ sample, หรือ geofence false alert > 2 ครั้ง/เครื่อง/สัปดาห์ | พล + เอ | 2026-04-02 |
+| D-03 | Closed | Phase 2 BLE provisioning รองรับ `Android Chrome + HTTPS` เป็น baseline เดียวในรอบ pilot; iPhone/iPad และ browser อื่นใช้ `QR + Web/PWA` หรือ `factory USB/QC fallback` | พล | 2026-04-02 |
+| D-04 | Closed | `A7670E` เป็น production default; ใช้ `SIM7670E` ได้เมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่านก่อน freeze BOM | เอ | 2026-04-02 |
+| D-05 | Closed | ใช้ `LINE free tier` ตลอด pilot และค่อย review paid plan เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch readiness review | พล | 2026-04-02 / review ก่อน commercial launch |
 
 ## 11. การอ้างอิงในเอกสาร
 
