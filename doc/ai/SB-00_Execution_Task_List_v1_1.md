@@ -65,6 +65,8 @@
 6. เอกำหนดส่วนของ enclosure ที่เปลี่ยนได้เฉพาะ battery bay หรือฝาหลัง โดยไม่แตะ sealing strategy หลัก
 7. ทั้งคู่สรุป service procedure ว่า `Long-Life` เป็น service-upgradeable ไม่ใช่ customer-openable
 8. ทั้งคู่สรุป BOM delta ระหว่าง `Standard` กับ `Long-Life` เป็นหน้าเดียวใช้ประกอบการตัดสินใจ pilot
+9. Output ที่ต้องได้: interface spec 1 หน้า + battery profile table 1 หน้า + BOM delta 1 หน้า
+10. Sign-off: พล approve firmware/backend fields, เอ approve connector/enclosure interface
 
 ## 4. Phase 1 Completion — Prototype To Stage A Field Test
 

@@ -77,6 +77,16 @@
 | TP4056 Charging Module with USB-C | TP4056 module พร้อม protection (DW01+FS8205A) — input USB-C 5V — charge current 1A (RPROG 1.2kΩ) — มี indicator LED — ตรวจสอบว่ามี protection circuit ด้วย ไม่ใช่แค่ TP4056 เปล่า | 1     | 40-80            | 50        | Shopee / AliExpress                        |
 | USB-C Cable (ชาร์จทดสอบ)          | USB-C to USB-A หรือ USB-C to USB-C 1 เมตร — 5V/2A minimum                                                                                                                         | 1     | 50-100           | 50        | Shopee / ร้านทั่วไป                        |
 
+### Long-Life Battery Module Add-ons
+
+| รายการ | สเปค / หมายเหตุ | จำนวน | ราคาโดยประมาณ | แหล่งซื้อ |
+| --- | --- | --- | --- | --- |
+| Additional 18650 cells | เพิ่มจาก Standard ให้ครบ 8-10 ก้อนรวมทั้ง pack | 6-8 | ~900-1,250 THB | Shopee Official / Verified |
+| Battery fuse / resettable fuse | ป้องกัน short/current surge ใน battery module | 1 ชุด | ~20-80 THB | LCSC / Shopee |
+| Battery connector with lock | connector มาตรฐานเดียว ใช้ร่วม Standard/Long-Life และกันเสียบกลับขั้ว | 1 ชุด | ~20-100 THB | LCSC / Shopee |
+| Battery tray / service frame | ใช้ยึด Long-Life pack ให้ถอดเปลี่ยนโดยช่างได้ | 1 ชุด | TBD | custom print / fabrication |
+| Long-Life enclosure extension | housing section หรือ battery bay ที่เพิ่มความลึก | 1 ชุด | TBD | custom print / fabrication |
+
 ## 1.5 Passive Components & Connectors
 
 | รายการ                        | สเปค / รุ่นแนะนำ                                                                                                                     | จำนวน | ราคา (THB) | แหล่งซื้อ               |
@@ -311,6 +321,7 @@
 | Components Production ชุด (LCSC) | Components ครบชุดสำหรับ 1 เครื่อง production — ดู list Phase 2 section 2.2 | 1 ชุด   | ~650 (รวม shipping) | lcsc.com          |
 | SIMCom A7670E (production unit)  | module สำหรับ production board                                             | 1       | ~180                | LCSC / AliExpress |
 | 18650 Samsung 35E (production)   | 2 ก้อนสำหรับ production unit                                               | 2       | ~120/ก้อน           | Shopee Official   |
+| 18650 Samsung 35E (Long-Life)    | เพิ่มให้ครบ 8-10 ก้อนต่อ unit เมื่อทำรุ่น Long-Life                         | 8-10    | ~120/ก้อน           | Shopee Official   |
 | GPS L76K (production)            | module สำหรับ production unit                                              | 1       | ~150                | LCSC / Shopee     |
 
 ## 3.2 Enclosure (3D Print จากร้าน)
@@ -319,8 +330,9 @@
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ------------------------------------------------------------------- |
 | 3D Print Enclosure ASA — วางแสดง | ASA filament — สี Gray หรือ White — ความหนาผนัง 3mm — baseline ขนาด 150×100×60mm สำหรับ pilot — ขอใบเสนอราคาก่อน ราคาขึ้นกับขนาดจริง | 2 ชิ้น | ~300-500/ชิ้น (ประมาณ) | ร้านรับ print 3D ในไทย เช่น craftlabs3d.com, maliev.com หรือ Shopee |
 | 3D Print Enclosure Lid ASA       | ฝาปิดกล่อง — ASA เหมือนกัน                                                                                           | 2 ชิ้น | รวมในราคาข้างบน        | ร้านเดียวกัน                                                        |
+| Long-Life battery bay / enclosure extension | ชิ้นส่วนเพิ่มความลึกสำหรับ Long-Life โดยใช้จุดยึด core เดิม | 2 ชิ้น | TBD | ร้านเดียวกัน / custom print |
 
-> **หมายเหตุ:** ราคา 3D print ขึ้นกับขนาดและน้ำหนักไฟล์จริง — baseline ปัจจุบันยึด enclosure `150×100×60mm` สำหรับ pilot และค่อย optimize หลัง pilot หาก buoyancy/thermal/assembly data บังคับ
+> **หมายเหตุ:** ราคา 3D print ขึ้นกับขนาดและน้ำหนักไฟล์จริง — baseline ปัจจุบันยึด enclosure `150×100×60mm` สำหรับ `Standard` pilot และค่อย optimize หลัง pilot หาก buoyancy/thermal/assembly data บังคับ; รุ่น `Long-Life` ต้องขอราคาแยกตาม battery bay ที่เพิ่มขึ้น
 
 ## 3.3 Digital Setup (SaaS & Payment)
 

@@ -31,10 +31,10 @@
 
 | Item | Detail |
 | --- | --- |
-| Current baseline | Current planning size ประมาณ `150 × 100 × 60 mm` |
+| Current baseline | Current planning size ประมาณ `150 × 100 × 60 mm` สำหรับ `Standard` baseline |
 | Why it matters | กระทบ PCB outline, 3D print cost, น้ำหนักรวม, buoyancy, การจัดวาง antenna, และ assembly |
 | Options | `A)` คงขนาดประมาณ 150×100×60mm ไว้ก่อน, `B)` ลด footprint หลัง PCB layout รอบแรก, `C)` ขยายให้ service/assembly ง่ายขึ้น |
-| Final choice | ล็อกขนาด `150 × 100 × 60 mm` เป็น baseline สำหรับ `PCB v1` และ `pilot batch` |
+| Final choice | ล็อกขนาด `150 × 100 × 60 mm` เป็น baseline สำหรับ `Standard` `PCB v1` และ `pilot batch`; รุ่น `Long-Life` ใช้ footprint core เดิมแต่ขยายเฉพาะ battery bay ได้ตาม D-06 |
 | Reasoning | ลดความเสี่ยง rework ในช่วงต้น และยังเปิดทางให้ optimize footprint หลัง pilot ถ้าข้อมูล buoyancy, thermal, และ assembly บอกว่าควรย่อ |
 | If delayed | enclosure, waterproof design, และ procurement จะค้างหลายจุดพร้อมกัน |
 | Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md) |

@@ -12,7 +12,8 @@
 
 | Stream            | รายละเอียด                                 | ราคา                     | Cost                   | Margin  |
 | ----------------- | ------------------------------------------ | ------------------------ | ---------------------- | ------- |
-| Hardware          | SB-00 Node (เครื่อง + sensors + enclosure) | 4,500-6,000 THB/unit     | ~2,725 THB (COGS)      | 39-54%  |
+| Hardware Standard | SB-00 Node Standard (เครื่อง + sensors + enclosure) | 4,500-6,000 THB/unit     | ~2,725 THB (COGS)      | 39-54%  |
+| Hardware Long-Life | SB-00 Node Long-Life (เครื่อง + sensors + enclosure + battery module ใหญ่ขึ้น) | 6,500-9,000+ THB/unit | TBD หลังปิด BOM | TBD |
 | SaaS Basic        | Dashboard, alerts, 90-day data             | 299 THB/mo/farm          | ~54 THB/mo (infra)     | ~82%    |
 | SaaS Pro          | + Analytics, API, 1-year data, multi-user  | 599 THB/mo/farm          | ~54 THB/mo (infra)     | ~91%    |
 | SIM Data          | 4G IoT SIM (resell bulk AIS/TRUE)          | 99-199 THB/mo            | ~25 THB/mo (bulk rate) | ~60-87% |
@@ -87,6 +88,13 @@
 | Total COGS                                          | ~2,688-2,888 |                                                                                |
 
 > **หมายเหตุ:** Margin: ขาย 4,500-6,000 THB → gross margin ประมาณ 36-55% ก่อนหัก overhead ขึ้นกับ enclosure final size และต้นทุน production จริง — ที่ batch 500+ ชิ้น BOM ลดได้อีก ~15% จาก volume discount
+
+### SKU Strategy
+
+| SKU | Positioning | Battery | Runtime target | หมายเหตุ |
+| --- | --- | --- | --- | --- |
+| Standard | รุ่นหลัก | 18650 x2 baseline | `>= 12 วัน @ 5 นาที` | ใช้ baseline pricing/cogs ปัจจุบัน |
+| Long-Life | รุ่นอัปเกรด | battery module ใหญ่ขึ้น | `>= 30 วัน @ 5 นาที` หรือ `>= 60 วัน @ 10 นาที` | final price/cogs ปิดหลัง battery pack + enclosure spec ชัด |
 
 ## 9.4 Pricing Strategy & Justification
 
