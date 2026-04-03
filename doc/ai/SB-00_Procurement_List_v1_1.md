@@ -72,8 +72,8 @@
 
 | รายการ                            | สเปค / รุ่นแนะนำ                                                                                                                                                                  | จำนวน | ราคา/หน่วย (THB) | รวม (THB) | แหล่งซื้อ                                  |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ---------------- | --------- | ------------------------------------------ |
-| 18650 Li-ion Battery              | Samsung INR18650-35E 3,500mAh หรือ Panasonic NCR18650B 3,400mAh — ซื้อจากร้านที่ verified ไม่ซื้อ generic ไม่มียี่ห้อ — ตรวจสอบ capacity จริงด้วย battery tester ก่อนใช้          | 2     | 100-150          | 250       | Shopee (ร้าน Official / Verified) / Lazada |
-| 18650 Battery Holder 2S Parallel  | Battery holder แบบ parallel (ขนาน) 2 ก้อน — output เป็น 3.7V nominal — มีสาย JST หรือ bare wire, ขนาด fit 18650 ได้พอดี                                                           | 1     | 50-80            | 60        | Shopee / AliExpress                        |
+| 18650 Li-ion Battery              | Samsung INR18650-35E 3,500mAh หรือ Panasonic NCR18650B 3,400mAh — ซื้อจากร้านที่ verified ไม่ซื้อ generic ไม่มียี่ห้อ — ตรวจสอบ capacity จริงด้วย battery tester ก่อนใช้          | 2 (Standard baseline) / 8-10 (Long-Life dev) | 100-150 | 250 (Standard) / 1,200-1,500 (Long-Life cells) | Shopee (ร้าน Official / Verified) / Lazada |
+| 18650 Battery Holder / Battery Pack Hardware | Standard: battery holder แบบ parallel 2 ก้อน — output เป็น 3.7V nominal; Long-Life: ออกแบบเป็น battery module / welded pack / service tray ตาม enclosure variant | 1 ชุด | 50-80 (Standard) / TBD (Long-Life) | 60+ | Shopee / AliExpress / custom assembly |
 | TP4056 Charging Module with USB-C | TP4056 module พร้อม protection (DW01+FS8205A) — input USB-C 5V — charge current 1A (RPROG 1.2kΩ) — มี indicator LED — ตรวจสอบว่ามี protection circuit ด้วย ไม่ใช่แค่ TP4056 เปล่า | 1     | 40-80            | 50        | Shopee / AliExpress                        |
 | USB-C Cable (ชาร์จทดสอบ)          | USB-C to USB-A หรือ USB-C to USB-C 1 เมตร — 5V/2A minimum                                                                                                                         | 1     | 50-100           | 50        | Shopee / ร้านทั่วไป                        |
 
@@ -183,8 +183,8 @@
 | เครื่องมือ | Logic Analyzer USB 8ch                    | 1        | 500              |
 | เครื่องมือ | USB-TTL Adapter (CP2102/CH340)            | 1        | 80               |
 | เครื่องมือ | ESD Wrist Strap                           | 1        | 80               |
-| Power      | 18650 Li-ion Battery                      | 2        | 250              |
-| Power      | 18650 Battery Holder 2S Parallel          | 1        | 60               |
+| Power      | 18650 Li-ion Battery (Standard baseline)  | 2        | 250              |
+| Power      | 18650 Battery Holder / Pack Hardware      | 1        | 60+              |
 | Power      | TP4056 Charging Module USB-C              | 1        | 50               |
 | Power      | USB-C Cable                               | 1        | 50               |
 | Digital    | Domain name                               | 1        | 650/ปี           |

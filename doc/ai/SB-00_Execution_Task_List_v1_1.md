@@ -25,6 +25,7 @@
 | Enclosure | `150×100×60 mm` สำหรับ PCB v1 และ pilot batch |
 | GPS | ใช้ `L76K` เป็น default; เปลี่ยนเป็น `NEO-M8N` เฉพาะเมื่อชน trigger ที่ล็อกไว้ |
 | Provisioning | `QR Code + Web/PWA` เป็น customer flow เดียวสำหรับ MVP และ pilot |
+| Battery Platform | `Standard` เป็น baseline; `Long-Life` เป็น optional upgrade โดยใช้ core module เดียวกัน |
 | Production 4G | `A7670E` default; `SIM7670E` conditional fallback |
 | Phase 1 provisioning | `QR Code + Web/PWA` |
 | Battery pass target | `>= 12 วัน @ 5 นาที` |
@@ -52,6 +53,7 @@
 | EX-06 | พล | สร้าง Supabase schema/migrations + RLS ตาม backend doc สำหรับ farms/devices/telemetry/alerts/command_log | EX-01 | migration รันได้, table หลักครบ, RLS policy หลักใช้ได้ |
 | EX-07 | พล | ทำ ingest path จาก MQTT -> backend -> DB และเก็บ latest device status | EX-05, EX-06 | telemetry จาก device เข้า DB จริง, latest status/dashboard query ได้ |
 | EX-08 | เอ | ล็อก enclosure CAD v1 ตาม baseline `150×100×60 mm` พร้อมตำแหน่ง antenna, cable gland, battery, และ mounting holes | D-01 closed | มี CAD/STL draft v1, component placement fit check ผ่าน |
+| EX-08A | พล + เอ | นิยาม battery platform สำหรับ `Standard` และ `Long-Life`: connector, battery profile, service procedure, และ enclosure interface | EX-01 | มี interface spec 1 ชุด ใช้ร่วมกันได้ทั้งสอง variant |
 
 ## 4. Phase 1 Completion — Prototype To Stage A Field Test
 
@@ -71,6 +73,7 @@
 | --- | --- | --- | --- | --- |
 | EX-16 | เอ | ทำ schematic PCB v1 ตาม locked BOM: `ESP32-S3 + A7670E + L76K + MAX17048 + SEN0600 path + power switching` | EX-15 | schematic review ผ่าน, footprints/critical nets ถูกต้อง |
 | EX-17 | เอ | ทำ PCB layout v1 ให้ fit ใน enclosure baseline `150×100×60 mm` และเตรียม Gerber/BOM/CPL | EX-16, EX-08 | DRC ผ่าน, manufacturing package ครบ, fit check ผ่าน |
+| EX-17A | เอ | ออกแบบ enclosure interface ให้รองรับ battery module 2 ขนาด โดยไม่เปลี่ยน core board mount และ sealing strategy หลัก | EX-08, EX-08A | มี CAD concept สำหรับ `Standard` และ `Long-Life` พร้อม service access plan |
 | EX-18 | พล + เอ | ทำ bench validation สำหรับ `SIM7670E` fallback path โดยทดสอบ power-up, MQTT TLS, OTA flow เทียบ `A7670E` baseline | EX-16 | สรุป compatibility note ชัดว่า fallback ใช้ได้หรือไม่ |
 | EX-19 | พล | ทำ secure provisioning/OTA production flow: signed firmware, release metadata, push auth, recovery path | EX-07, EX-11 | OTA test ผ่านบน dev hardware, rollback path documented |
 | EX-20 | พล | ประเมิน `BLE provisioning` เป็น internal R&D เท่านั้นหลัง pilot โดยไม่กระทบ customer flow หลัก | EX-11 | มี technical note ภายในว่าคุ้มทำต่อหรือไม่ โดยไม่มีผลกับคู่มือและ flow ลูกค้า |
@@ -112,6 +115,6 @@
 5. EX-04 sensor drivers
 6. EX-05 4G + MQTT TLS
 7. EX-07 ingest path
-8. EX-08 enclosure CAD v1
-9. EX-09 dashboard MVP
-10. EX-11 QR + Web provisioning MVP
+8. EX-08A battery platform interface spec
+9. EX-08 enclosure CAD v1
+10. EX-09 dashboard MVP

@@ -61,7 +61,7 @@
 | GPS | L76K | baseline เดียวกับ production |
 | Temperature | DS18B20 | ใช้ทั้ง prototype และ production |
 | Turbidity | Analog sensor | ใช้ dev/test เท่านั้น ไม่ใช่ production sensor |
-| Power | 18650 x2 + holder/charger | baseline เดียวกับ production |
+| Power | `Standard`: 18650 x2 + holder/charger / `Long-Life`: optional larger battery module | ใช้ core module เดียวกัน |
 
 ### Production BOM Reference (Phase 2+ — ใช้คำนวณ COGS)
 
@@ -73,7 +73,8 @@
 | Turbidity Sensor (Production: SEN0600 RS485)        | 913        | production default — analog ใช้เฉพาะ Phase 1 dev/test                         |
 | MAX485 transceiver                                  | 15         | LCSC                                                                           |
 | GPS Module (L76K default)                           | 150        | production default — `NEO-M8N` ใช้เมื่อ field test ชี้ว่า L76K ไม่พอ            |
-| 18650 Battery x2                                    | 300        | ร้านไทย / Shopee                                                               |
+| 18650 Battery x2 (Standard baseline)                | 300        | ร้านไทย / Shopee                                                               |
+| Long-Life battery cells / module (optional upgrade) | 1,200-1,500+ | ร้านไทย / Shopee / custom pack                                                |
 | Battery holder + charger (TP4056)                   | 80         | LCSC / Shopee                                                                  |
 | Bulk capacitor 470µF                                | 10         | LCSC / บางลำพู                                                                 |
 | PCB (custom, qty 100)                               | 60         | JLCPCB                                                                         |
@@ -81,7 +82,7 @@
 | Cable glands, connectors, wiring                    | 100        | ร้านไทย                                                                        |
 | SIM card slot + antenna                             | 80         | LCSC                                                                           |
 | Misc (resistors, MOSFET, LDO, etc.)                 | 60         | LCSC / บางลำพู                                                                 |
-| Total BOM                                           | ~2,338-2,538 | ขึ้นกับ enclosure final size                                                  |
+| Total BOM (Standard)                                | ~2,338-2,538 | ขึ้นกับ enclosure final size                                                  |
 | Assembly + testing labor                            | 350        |                                                                                |
 | Total COGS                                          | ~2,688-2,888 |                                                                                |
 
