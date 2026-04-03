@@ -1,114 +1,154 @@
-# SB-00 — Battery Platform Interface Spec
-
-**Version 1.0 | April 2026 | Working interface spec for EX-08A | Last synced: 2026-04-03**
-
-> **Reference baseline:** ใช้คู่กับ [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md), และ [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
-
+---
+id: SB-00-BATTERY-INTERFACE
+type: spec
+status: active
+owners: [Pon, A]
+depends_on: [SB-00-MASTER, SB-00-DECISIONS, SB-00-TASKS]
+source_of_truth: true
+last_updated: 2026-04-03
+language: English-first
+audience: ai
 ---
 
-## 1. Purpose
+# SB-00 Battery Platform Interface Spec
 
-เอกสารนี้ใช้ล็อก interface กลางสำหรับ `EX-08A` เพื่อให้ฝั่ง firmware/backend (`พล`) และ hardware/enclosure (`เอ`) ใช้กติกาชุดเดียวกันในการรองรับ battery 2 variants:
+## Purpose
+
+This file defines the shared interface for `EX-08A`.
+
+It exists to keep firmware, backend, battery module, and enclosure work aligned across two battery variants:
 
 - `Standard`
 - `Long-Life`
 
-หลักการคือใช้ `core module เดียว` แล้วแยกเฉพาะ `battery module` และ `battery bay / enclosure section` โดยไม่แตกเป็นคนละ product line
+## Scope
 
-## 2. Variant Definition
+This spec covers only the interface contract between shared core architecture and battery-specific parts.
 
-| Variant | เป้าหมาย | Runtime Target | หมายเหตุ |
-| --- | --- | --- | --- |
-| `Standard` | รุ่นหลัก | `>= 12 วัน @ 5 นาที` | baseline สำหรับ prototype/pilot |
-| `Long-Life` | รุ่นอัปเกรด | `>= 30 วัน @ 5 นาที` หรือ `>= 60 วัน @ 10 นาที` | service-upgradeable option |
+It does not replace:
 
-## 3. Shared Interface Rules
+- detailed hardware CAD
+- detailed BOM costing
+- detailed firmware implementation
 
-สิ่งต่อไปนี้ต้องเหมือนกันทั้ง `Standard` และ `Long-Life`
+## Source Of Truth Rules
 
-1. core board mounting points
-2. battery connector family และ polarity orientation
-3. antenna bulkhead positions
-4. sensor cable exits / cable gland positions
-5. QR label position และ provisioning flow
-6. firmware codebase หลัก
-7. backend schema หลัก
-8. dashboard device model / runtime logic framework
+- Use this file for the battery-platform interface contract.
+- Use the decision register for why the two-variant strategy was chosen.
+- Use the task list for delivery sequence and sign-off flow.
 
-## 4. Variant-Specific Parts
+## Dependencies
 
-สิ่งที่เปลี่ยนได้ตาม variant
+- [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
+- [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+- [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+- [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
 
-1. battery cell count / battery pack capacity
-2. battery tray / service frame
-3. enclosure depth หรือ battery bay extension
-4. usable battery capacity ที่ใช้ใน runtime estimator
-5. charging / service instructions เฉพาะรุ่น
+## Variant Definition
 
-## 5. Firmware Interface
+| Variant | Role | Runtime target |
+| --- | --- | --- |
+| `Standard` | default prototype and pilot baseline | `>= 12 days @ 5-minute interval` |
+| `Long-Life` | optional service-upgradeable runtime variant | `>= 30 days @ 5-minute interval` or `>= 60 days @ 10-minute interval` |
 
-firmware ต้องรองรับ field ต่อไปนี้
+## Shared Interface Rules
 
-| Field | Type | Example | ใช้ทำอะไร |
-| --- | --- | --- | --- |
-| `battery_variant` | enum | `standard`, `long_life` | บอกรุ่นแบตของเครื่อง |
-| `battery_profile_version` | string | `v1` | ใช้อ้างอิง profile ที่ active |
-| `usable_capacity_mah` | uint32 | `5600`, `23200` | ใช้คำนวณ runtime |
-| `service_only_upgrade` | bool | `true` | ระบุว่างานเปลี่ยนแบตเป็นงานช่าง |
+The following must remain shared across both variants:
 
-ขั้นต่ำ firmware ต้องทำได้:
+- core board mounting points
+- battery connector family and orientation
+- antenna bulkhead positions
+- sensor cable exit positions
+- QR label and customer provisioning flow
+- shared firmware codebase
+- shared backend schema
+- shared dashboard logic framework
 
-1. อ่าน `battery_variant`
-2. map ไปยัง `battery_profile`
-3. ใช้ `usable_capacity_mah` ใน runtime estimator
-4. ใช้ battery thresholds ตาม profile
+## Variant-Specific Parts
 
-## 6. Backend / Dashboard Interface
+The following may change by variant:
 
-backend/devices metadata ต้องเก็บอย่างน้อย:
+- battery capacity
+- battery tray or service frame
+- battery bay depth or rear housing section
+- usable battery capacity value
+- service instructions
 
-1. `battery_variant`
-2. `battery_profile_version`
-3. `usable_capacity_mah`
+## Firmware Interface
 
-dashboard ต้องแสดงอย่างน้อย:
+Firmware must support these fields:
 
-1. battery variant
-2. battery percentage
-3. interval ปัจจุบัน
-4. estimated runtime remaining
+| Field | Type | Purpose |
+| --- | --- | --- |
+| `battery_variant` | enum | identifies `standard` or `long_life` |
+| `battery_profile_version` | string | identifies active profile revision |
+| `usable_capacity_mah` | integer | used for runtime estimation |
+| `service_only_upgrade` | boolean | indicates service-only battery swap policy |
 
-## 7. Hardware / Enclosure Interface
+Firmware must:
 
-ฝั่ง hardware ต้องล็อกกติกาต่อไปนี้:
+1. read `battery_variant`
+2. map it to a `battery_profile`
+3. use profile values for runtime estimator
+4. use profile thresholds for warnings and alerts
 
-1. battery connector ต้องใช้แบบเดียวทั้ง 2 variants
-2. connector ต้องกันเสียบกลับขั้ว
-3. core board mount ต้องคงเดิม
-4. `Long-Life` ต้องเปลี่ยนเฉพาะ battery zone / battery bay / rear housing section
-5. sealing strategy หลักต้องไม่เปลี่ยนเพราะ variant
-6. `Long-Life` เป็น `service-upgradeable` ไม่ใช่ `user-openable`
+## Backend And Dashboard Interface
 
-## 8. Deliverables For EX-08A
+Backend device metadata must store:
 
-เมื่อจบ `EX-08A` ต้องได้เอกสาร/ผลลัพธ์ 3 ชิ้น:
+- `battery_variant`
+- `battery_profile_version`
+- `usable_capacity_mah`
 
-1. interface spec 1 หน้า
-2. battery profile table 1 หน้า
-3. BOM delta ระหว่าง `Standard` และ `Long-Life` 1 หน้า
+Dashboard must display:
 
-## 9. Sign-off
+- battery variant
+- battery percentage
+- current reporting interval
+- estimated runtime remaining
 
-| ฝั่ง | รับผิดชอบ sign-off |
+## Hardware And Enclosure Interface
+
+Hardware constraints:
+
+1. both variants must use the same battery connector family
+2. reverse insertion must be prevented
+3. core board mount must remain unchanged
+4. `Long-Life` may change battery zone, battery bay, or rear housing section only
+5. main sealing strategy must remain shared
+6. `Long-Life` must be service-upgradeable, not customer-openable
+
+## EX-08A Deliverables
+
+`EX-08A` is complete only when these outputs exist:
+
+1. one-page interface spec
+2. one-page battery profile table
+3. one-page BOM delta between `Standard` and `Long-Life`
+
+## Sign-Off
+
+| Area | Owner |
 | --- | --- |
-| `พล` | firmware fields, backend fields, runtime assumptions |
-| `เอ` | connector, enclosure interface, service procedure |
+| firmware fields, backend fields, runtime assumptions | Pon |
+| connector choice, enclosure interface, service procedure | A |
 
----
+## Acceptance Criteria
 
-## 10. Non-Negotiables
+- Both battery variants fit the same shared core architecture.
+- Firmware and backend can identify the active battery variant.
+- Mechanical changes for `Long-Life` are limited to battery-specific sections.
+- Customer flow remains identical across variants.
 
-1. ห้ามแยก firmware เป็นคนละสายสำหรับ `Standard` กับ `Long-Life`
-2. ห้ามทำ customer provisioning คนละ flow ตาม variant
-3. ห้ามย้าย core board mount เพราะเปลี่ยน battery variant
-4. ถ้ายังไม่มี service-safe enclosure design สำหรับ `Long-Life` ห้ามเปิดให้ลูกค้าเปลี่ยนเอง
+## Open Questions
+
+- Whether the final connector choice should live here or in a downstream hardware appendix.
+- Whether `Long-Life` should have one capacity profile or multiple approved sub-variants.
+
+## Related Docs
+
+- [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+- [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+- [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
+- [SB-00_Battery_Profile_Table_v1_0.md](./SB-00_Battery_Profile_Table_v1_0.md)
+- [SB-00_BOM_Delta_Standard_vs_LongLife_v1_0.md](./SB-00_BOM_Delta_Standard_vs_LongLife_v1_0.md)
