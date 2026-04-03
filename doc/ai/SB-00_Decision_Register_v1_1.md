@@ -23,7 +23,7 @@
 | D-03 | Provisioning baseline single flow | Closed | พล | 2026-04-02 |
 | D-04 | Production 4G sourcing fallback (`A7670E` / `SIM7670E`) | Closed | เอ | 2026-04-02 |
 | D-05 | LINE OA paid plan / notification budget trigger | Closed | พล | 2026-04-02 |
-| D-06 | Battery platform modular upgrade path | Proposed | พล + เอ | 2026-04-03 |
+| D-06 | Battery platform modular upgrade path | Closed | พล + เอ | 2026-04-03 |
 
 ---
 
@@ -94,10 +94,10 @@
 | Current baseline | battery baseline ปัจจุบันยึด `18650 x2 parallel` เป็นชุดเดียวและ enclosure baseline ขนาด `150 × 100 × 60 mm` |
 | Why it matters | กระทบ runtime target, BOM, enclosure size, waterproofing, serviceability, และ product packaging |
 | Options | `A)` ใช้ battery pack เดียวกับทุกเครื่อง, `B)` แยกเป็นคนละ product line คนละบอร์ด, `C)` ใช้ core module เดียว แล้วแยก `Standard` / `Long-Life` battery module |
-| Proposed choice | ใช้ `core module เดียว + battery module 2 variants` โดย `Standard` เป็น baseline หลัก และ `Long-Life` เป็น service-upgradeable option สำหรับลูกค้าที่ต้องการ runtime สูงขึ้น |
+| Final choice | ใช้ `core module เดียว + battery module 2 variants` โดย `Standard` เป็น baseline หลัก และ `Long-Life` เป็น service-upgradeable option สำหรับลูกค้าที่ต้องการ runtime สูงขึ้น |
 | Reasoning | ลดการแตก product line, คุม firmware/backend/provisioning ให้เป็นชุดเดียว, และเปิดทาง upsell รุ่นแบตอึดโดยไม่บวมต้นทุนทุกเครื่อง |
 | Required constraints | battery connector ต้องเป็นมาตรฐานเดียว, board mounting เดียว, firmware ต้องมี `battery_profile`, enclosure ต้องแยกชิ้นส่วนเฉพาะส่วน battery ได้, และการอัปเกรดภาคสนามควรเป็น service-upgradeable ไม่ใช่ user-openable |
-| Review point | ปิด decision ก่อน freeze PCB v1, enclosure v1, และ procurement ของ pilot |
+| Review point | ปิดแล้วใน 2026-04-03; ใช้เป็น baseline ก่อน freeze PCB v1, enclosure v1, และ procurement ของ pilot |
 | Related docs | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md), [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md), [SB-00_Procurement_List_v1_1.md](./SB-00_Procurement_List_v1_1.md), [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md) |
 
 ---
@@ -111,4 +111,4 @@
 | D-03 | 2026-04-02 | provisioning baseline = `QR + Web/PWA` flow เดียว | USB/QC ใช้ภายในเท่านั้น; BLE ไม่ใช่ customer baseline |
 | D-04 | 2026-04-02 | `A7670E` default, `SIM7670E` conditional fallback | ต้อง bench validation ก่อน freeze BOM |
 | D-05 | 2026-04-02 | ใช้ `LINE free tier` ตลอด pilot | review ใหม่เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch |
-| D-06 | 2026-04-03 | proposed: `core module เดียว + 2 battery variants` | ต้องปิดก่อน freeze PCB/enclosure |
+| D-06 | 2026-04-03 | `core module เดียว + 2 battery variants` | ใช้เป็น baseline ก่อน freeze PCB/enclosure |

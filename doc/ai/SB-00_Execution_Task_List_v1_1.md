@@ -55,6 +55,17 @@
 | EX-08 | เอ | ล็อก enclosure CAD v1 ตาม baseline `150×100×60 mm` พร้อมตำแหน่ง antenna, cable gland, battery, และ mounting holes | D-01 closed | มี CAD/STL draft v1, component placement fit check ผ่าน |
 | EX-08A | พล + เอ | นิยาม battery platform สำหรับ `Standard` และ `Long-Life`: connector, battery profile, service procedure, และ enclosure interface | EX-01 | มี interface spec 1 ชุด ใช้ร่วมกันได้ทั้งสอง variant |
 
+### EX-08A Working Checklist
+
+1. พลกำหนด `battery_profile` ใน firmware อย่างน้อย `standard` และ `long_life`
+2. พลกำหนด field ใน backend/devices metadata สำหรับเก็บ battery variant และ usable capacity
+3. พลสรุป charging/runtime assumptions ของแต่ละ variant เป็นตารางเดียว
+4. เอกำหนด battery connector มาตรฐานเดียวที่ใช้ได้ทั้งสอง variant และกันเสียบกลับขั้ว
+5. เอกำหนดตำแหน่งยึด core board, antenna bulkhead, และ sensor exits ให้คงเดิมทั้งสอง variant
+6. เอกำหนดส่วนของ enclosure ที่เปลี่ยนได้เฉพาะ battery bay หรือฝาหลัง โดยไม่แตะ sealing strategy หลัก
+7. ทั้งคู่สรุป service procedure ว่า `Long-Life` เป็น service-upgradeable ไม่ใช่ customer-openable
+8. ทั้งคู่สรุป BOM delta ระหว่าง `Standard` กับ `Long-Life` เป็นหน้าเดียวใช้ประกอบการตัดสินใจ pilot
+
 ## 4. Phase 1 Completion — Prototype To Stage A Field Test
 
 | ID | Owner | Task | Depends on | Definition of done |

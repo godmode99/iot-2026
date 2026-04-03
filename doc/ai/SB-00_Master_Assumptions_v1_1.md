@@ -114,7 +114,7 @@
 | D-03 | Closed | ใช้ `QR + Web/PWA` เป็น provisioning baseline เดียวสำหรับ MVP และ pilot; `BLE provisioning` ไม่ใช่ customer baseline ในเอกสาร v1.1 | พล | 2026-04-02 |
 | D-04 | Closed | `A7670E` เป็น production default; ใช้ `SIM7670E` ได้เมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่านก่อน freeze BOM | เอ | 2026-04-02 |
 | D-05 | Closed | ใช้ `LINE free tier` ตลอด pilot และค่อย review paid plan เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch readiness review | พล | 2026-04-02 / review ก่อน commercial launch |
-| D-06 | Proposed | ใช้ `core module เดียว + battery module 2 variants (Standard / Long-Life)`; battery/enclosure อัปเกรดได้โดยไม่แยก firmware หรือ customer flow | พล + เอ | review ใน Phase 1 ก่อน freeze PCB/enclosure |
+| D-06 | Closed | ใช้ `core module เดียว + battery module 2 variants (Standard / Long-Life)`; battery/enclosure อัปเกรดได้โดยไม่แยก firmware หรือ customer flow | พล + เอ | 2026-04-03 |
 
 ## 11. การอ้างอิงในเอกสาร
 
