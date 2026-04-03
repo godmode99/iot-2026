@@ -1,129 +1,186 @@
-# SB-00 — Master Assumptions
-
-**Version 1.1 | April 2026 | Canonical baseline for all SB-00 v1.1 documents | Last synced: 2026-04-02**
-
+---
+id: SB-00-MASTER
+type: master
+status: active
+owners: [Pon]
+depends_on: []
+source_of_truth: true
+last_updated: 2026-04-03
+language: English-first
+audience: ai
 ---
 
-เอกสารนี้เป็น baseline กลางสำหรับเอกสารชุด SB-00 v1.1 ทุกไฟล์
+# SB-00 Master Assumptions
 
-- ใช้ล็อกคำศัพท์ phase/launch ให้ตรงกัน
-- ใช้ล็อกตัวเลขงบ baseline ให้ตรงกัน
-- ใช้ล็อก battery target, field-test stages, certification stance, และ OTA auth baseline
-- ถ้าเอกสารใดขัดกับไฟล์นี้ ให้ยึดไฟล์นี้ก่อนจนกว่าจะมีการอัปเดตเป็น version ใหม่
+## Purpose
 
-## 0. Document Sync Status
+This file is the canonical baseline for SB-00 v1.1.
+
+Use it to keep all planning, specification, execution, and costing documents aligned on:
+
+- terminology
+- scope boundaries
+- budget baseline
+- battery/runtime targets
+- provisioning baseline
+- compliance stance
+- product variant assumptions
+
+## Scope
+
+This document covers the shared assumptions that other SB-00 documents must follow.
+
+It does not replace:
+
+- decision rationale in [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+- execution sequencing in [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
+- implementation detail in system specs
+
+## Source Of Truth Rules
+
+- If another AI document conflicts with this file, treat this file as the baseline until an explicit update is made here.
+- Closed decisions in the decision register must be reflected here.
+- Reference-only documents may explain or estimate, but they cannot override this baseline.
+
+## Dependencies
+
+- [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
+- [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+- [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
+
+## Document Sync Status
 
 | Document | Version | Last synced | Status |
 | --- | --- | --- | --- |
-| `SB-00_Dev_Plan_Summary_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
-| `SB-00_Business_Roadmap_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
-| `SB-00_Decision_Register_v1_1.md` | 1.1 | 2026-04-02 | closed decisions synced to baseline |
-| `SB-00_Backend_Security_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
-| `SB-00_Firmware_Hardware_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
-| `SB-00_Procurement_List_v1_1.md` | 1.1 | 2026-04-02 | aligned to master assumptions |
-| `SB-00_Third_Party_Pricing_Baseline_v1_1.md` | 1.1 | 2026-04-02 | canonical pricing/limits table |
-| `SB-00_Execution_Task_List_v1_1.md` | 1.1 | 2026-04-02 | derived from locked baseline + closed decisions |
+| `SB-00_Dev_Plan_Summary_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Business_Roadmap_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Decision_Register_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Backend_Security_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Firmware_Hardware_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Procurement_List_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Third_Party_Pricing_Baseline_v1_1.md` | 1.1 | 2026-04-03 | aligned |
+| `SB-00_Execution_Task_List_v1_1.md` | 1.1 | 2026-04-03 | aligned |
 
-## 1. คำศัพท์มาตรฐาน
+## Terminology
 
-| คำ | ความหมาย |
+| Term | Meaning |
 | --- | --- |
-| Engineering Field Test (7 วัน) | การทดสอบปลาย Phase 1 ในบ่อจริง 7 วัน เพื่อ validate firmware, enclosure, connectivity และการใช้งานจริงเบื้องต้น เป็นงานภายใน/ไม่ใช่ commercial sale |
-| Pilot / Beta Validation (30 วัน) | การทดสอบ 3-5 เครื่องกับฟาร์มคัดเลือกก่อนเปิดขายจริง ใช้เก็บ feedback, reliability data, และ launch checklist เป็นงาน non-commercial หรือ pilot agreement เท่านั้น |
-| Commercial Launch | การเปิดขายแบบมีลูกค้าจ่ายเงินจริงต่อสาธารณะในไทย ต้องทำหลังผ่าน regulatory minimum readiness สำหรับการจำหน่าย |
-| Public Launch | ใช้ความหมายเดียวกับ Commercial Launch ไม่แยกอีกคำในเอกสาร v1.1 |
+| Engineering Field Test | Internal 7-day real-pond validation at the end of Phase 1 |
+| Pilot / Beta Validation | 30-day validation with 3-5 pilot units before commercial sales |
+| Commercial Launch | Paid public sales in Thailand after minimum regulatory readiness is met |
+| Public Launch | Same meaning as Commercial Launch in SB-00 v1.1 |
 
-> **หลักการใช้งาน:** ในเอกสาร planning ช่วง Sep-Oct 2026 ให้ใช้คำว่า `Pilot & Launch Readiness` แทน `Commercial Launch` จนกว่าจะผ่านเงื่อนไขการจำหน่าย
+## Budget Baseline
 
-## 2. งบ Baseline
-
-| Phase | Baseline Budget |
+| Phase | Baseline budget |
 | --- | --- |
-| Phase 1 — Prototype & Full Test | ~20,400 THB |
-| Phase 2 — PCB Development | ~4,000 THB |
-| Phase 3 — Pilot & Launch Readiness | ~4,300 THB |
-| รวม Phase 1-3 | ~28,700 THB |
+| Phase 1 - Prototype and full test | ~20,400 THB |
+| Phase 2 - PCB development | ~4,000 THB |
+| Phase 3 - Pilot and launch readiness | ~4,300 THB |
+| Total Phase 1-3 | ~28,700 THB |
 
-> **หมายเหตุ:** งบ baseline นี้ยังไม่รวม กสทช., IP67 lab test, และ marketing
+Notes:
 
-## 3. Battery Baseline
+- This baseline excludes NBTC approval cost, IP67 lab testing, and marketing.
 
-- Default telemetry interval สำหรับ baseline คือ `5 นาที`
-- เกณฑ์ผ่านขั้นต่ำของเอกสาร planning/DoD คือ `battery runtime >= 12 วัน`
-- เป้าหมายหลัง optimize PSM + battery-aware interval control คือ `14-16 วัน`
-- battery platform สำหรับเอกสาร v1.1 ใช้ `core module เดียว + battery module 2 variants` คือ `Standard` และ `Long-Life`
-- `Standard` เป็น baseline หลักสำหรับ prototype/pilot และต้องผ่าน `>= 12 วัน @ 5 นาที`
-- `Long-Life` เป็น optional upgrade path โดยตั้งเป้าเชิงสถาปัตย์ให้รองรับ `>= 30 วัน @ 5 นาที` หรือ `>= 60 วัน @ 10 นาที` ด้วย battery pack และ enclosure ที่ใหญ่ขึ้น
-- firmware, backend, dashboard, provisioning, และ sensor stack ต้องใช้ร่วมกันได้ทั้งสอง variants โดยไม่แตกเป็นคนละ product line
-- ตัวเลขคำนวณ conservative ที่ต่ำกว่านี้ถือเป็น diagnostic reference ไม่ใช่ acceptance criteria หลัก
+## Battery Baseline
 
-## 4. Field Validation Stages
+| Item | Baseline |
+| --- | --- |
+| Default telemetry interval | 5 minutes |
+| Minimum pass target | runtime >= 12 days |
+| Stretch target after optimization | 14-16 days |
+| Battery platform strategy | single core module plus two battery variants |
+| Standard variant target | >= 12 days at 5-minute interval |
+| Long-Life variant target | >= 30 days at 5-minute interval or >= 60 days at 10-minute interval |
 
-| Stage | ระยะเวลา | ใช้เมื่อ |
+Constraints:
+
+- `Standard` is the default prototype and pilot baseline.
+- `Long-Life` is an optional upgrade path, not a separate product architecture.
+- Firmware, backend, dashboard, provisioning, and sensor stack must stay shared across both variants.
+- Runtime calculations below the baseline are diagnostic references, not acceptance criteria.
+
+## Field Validation Stages
+
+| Stage | Duration | Use case |
 | --- | --- | --- |
-| Stage A — Engineering Field Test | 7 วัน | ปลาย Phase 1 |
-| Stage B — Pilot / Beta Validation | 30 วัน | ก่อน Commercial Launch |
+| Stage A - Engineering Field Test | 7 days | End of Phase 1 |
+| Stage B - Pilot / Beta Validation | 30 days | Before commercial launch |
 
-## 5. Certification & Sales Stance
+## Certification And Sales Stance
 
-- Pilot / beta สามารถทำก่อน กสทช. ได้ ถ้าเป็น non-commercial evaluation
-- Commercial / public paid sales ในไทย เริ่มหลังผ่าน approval ที่จำเป็นสำหรับการจำหน่าย
-- เอกสาร Phase 2 ต้องสะท้อนว่าเริ่มเตรียมและยื่น กสทช. ตั้งแต่ช่วงปลาย Phase 2 หรือต้น Phase 3 ไม่ใช่เลื่อนไปหลังการขายจริง
+- Pilot and beta evaluation may happen before NBTC approval if the activity is non-commercial.
+- Paid public sales in Thailand start only after required approval is complete.
+- Phase 2 and Phase 3 documents should assume regulatory preparation begins before launch, not after it.
 
-## 6. OTA Auth Baseline
+## OTA Authentication Baseline
 
-| Route | Auth Baseline |
+| Route | Required auth |
 | --- | --- |
 | `/api/ota/releases` `POST` | `SVC` |
 | `/api/ota/push` `POST` | `JWT (owner/admin)` |
 | `/api/ota/push/batch` `POST` | `SVC` |
 
-## 7. Provisioning Baseline
+## Provisioning Baseline
 
-- Phase 1 / MVP ใช้ `QR Code + Web/PWA provisioning page` เป็น flow หลัก
-- Phase 2+ และรอบ pilot ของเอกสาร v1.1 ยังคงใช้ `QR Code + Web/PWA provisioning page` เป็น customer-facing flow เดียว
-- `BLE provisioning` ไม่ถือเป็น baseline ของ customer flow ในเอกสาร v1.1; ถ้าทดลองภายในให้ถือเป็น internal R&D เท่านั้นจนกว่าจะมี decision ใหม่
-- `iPhone/iPad`, Android, และ browser/device อื่นทั้งหมดต้องใช้ flow เดียวกัน คือ `QR Code + Web/PWA` เพื่อลดความสับสนของลูกค้าและ support
-- `Native mobile app` ไม่ถือเป็น baseline ของเอกสาร v1.1
-- `factory USB flash / QC tool` ใช้เฉพาะงานโรงงาน, QC, recovery, หรือ support ภายในทีม ไม่ใช่ flow หลักของลูกค้า
+| Area | Baseline |
+| --- | --- |
+| Customer provisioning flow | `QR Code + Web/PWA` only |
+| MVP and pilot behavior | same single customer flow |
+| BLE provisioning | not part of customer baseline in v1.1 |
+| BLE status | internal R&D only until a new decision is closed |
+| Native mobile app | not part of baseline |
+| Factory USB / QC tool | internal-only factory, QC, recovery, or support tool |
 
-## 8. BOM Baseline
+Rules:
 
-| Area | Prototype / Phase 1 | Production / Phase 2+ | Note |
+- All customer devices, including iPhone/iPad and Android devices, must use the same provisioning flow.
+- Do not introduce a second customer-facing provisioning path without updating the decision register and this master file first.
+
+## BOM Baseline
+
+| Area | Prototype / Phase 1 | Production / Phase 2+ | Notes |
 | --- | --- | --- | --- |
-| MCU + 4G | FS-HCore-A7670C dev board | ESP32-S3 + `A7670E` บน custom PCB | `SIM7670E` เป็น sourcing fallback เฉพาะเมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่าน |
-| GPS | `L76K` | `L76K` | `NEO-M8N` ใช้เมื่อ Stage A/B field test ชี้ว่า L76K ไม่ผ่าน trigger ที่ล็อกไว้ |
-| Turbidity | Analog sensor | `SEN0600 RS485` | Analog ใช้ dev/test เท่านั้น ไม่ใช่ production BOM |
-| Battery Platform | `Standard` battery module | `Standard` + optional `Long-Life` battery module | core module, firmware, และ provisioning flow ต้องใช้ร่วมกันได้ |
+| MCU + 4G | FS-HCore-A7670C dev board | ESP32-S3 + `A7670E` custom PCB | `SIM7670E` is a conditional fallback only |
+| GPS | `L76K` | `L76K` | `NEO-M8N` only when D-02 trigger is hit |
+| Turbidity | analog sensor | `SEN0600 RS485` | analog path is dev/test only |
+| Battery platform | `Standard` battery module | `Standard` + optional `Long-Life` | core module and provisioning remain shared |
 
-## 9. Third-Party Pricing Baseline
+## Third-Party Pricing Baseline
 
-- single source of truth สำหรับ pricing/limits/upgrade trigger อยู่ที่ [SB-00_Third_Party_Pricing_Baseline_v1_1.md](./SB-00_Third_Party_Pricing_Baseline_v1_1.md)
-- ตัวเลขราคาหรือ quota ของ third-party services ในเอกสาร v1.1 เป็น `internal planning assumptions` ที่ sync กันในรอบเอกสารนี้ ไม่ใช่ live verified quote
-- ถ้าต้องระบุราคาที่ vendor เปลี่ยนได้ง่าย เช่น `LINE OA`, `Vercel Pro`, `Upstash`, `HiveMQ`, `Supabase`, `Resend`, `Stripe`, `Omise` ให้ถือเป็น estimate จนกว่าจะ re-check ก่อน commercial launch
-- การคำนวณ trigger ของ free tier ให้ยึด `5-minute telemetry baseline` และ `จำนวน active devices จริง` ใน phase นั้น
+- The single planning reference for third-party pricing is [SB-00_Third_Party_Pricing_Baseline_v1_1.md](./SB-00_Third_Party_Pricing_Baseline_v1_1.md).
+- Values for services such as `LINE OA`, `Vercel Pro`, `Upstash`, `HiveMQ`, `Supabase`, `Resend`, `Stripe`, and `Omise` are planning assumptions until re-verified before commercial launch.
+- Free-tier and upgrade calculations should use the 5-minute telemetry baseline and the current active device count.
 
-## 10. Decision Status
+## Decision Status Summary
 
-> **Decision workflow:** final choice แบบละเอียดและเหตุผลเต็มอยู่ใน [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md) เอกสารนี้เก็บเฉพาะ baseline ที่ล็อกแล้วสำหรับให้ทุกไฟล์อ้างอิงตรงกัน
-
-| ID | Status | Locked baseline | Owner | Closed on / Review point |
+| ID | Status | Locked baseline | Owner | Closed on |
 | --- | --- | --- | --- | --- |
-| D-01 | Closed | ล็อก enclosure ภายนอก `150×100×60 mm` สำหรับ `PCB v1` และ `pilot batch`; ค่อย optimize หลัง pilot ถ้า field data บังคับ | เอ | 2026-04-02 |
-| D-02 | Closed | ใช้ `L76K` ต่อ และสลับเป็น `NEO-M8N` เฉพาะเมื่อ median TTFF หลัง wake > 60 วินาที, stationary open-sky error > 15 m มากกว่า 10% ของ sample, หรือ geofence false alert > 2 ครั้ง/เครื่อง/สัปดาห์ | พล + เอ | 2026-04-02 |
-| D-03 | Closed | ใช้ `QR + Web/PWA` เป็น provisioning baseline เดียวสำหรับ MVP และ pilot; `BLE provisioning` ไม่ใช่ customer baseline ในเอกสาร v1.1 | พล | 2026-04-02 |
-| D-04 | Closed | `A7670E` เป็น production default; ใช้ `SIM7670E` ได้เมื่อ `A7670E` unavailable, lead time > 14 วัน, หรือ price delta > 20% และ bench validation ผ่านก่อน freeze BOM | เอ | 2026-04-02 |
-| D-05 | Closed | ใช้ `LINE free tier` ตลอด pilot และค่อย review paid plan เมื่อ forecast > 200 msg/mo หรือก่อน commercial launch readiness review | พล | 2026-04-02 / review ก่อน commercial launch |
-| D-06 | Closed | ใช้ `core module เดียว + battery module 2 variants (Standard / Long-Life)`; battery/enclosure อัปเกรดได้โดยไม่แยก firmware หรือ customer flow | พล + เอ | 2026-04-03 |
+| D-01 | Closed | `150 x 100 x 60 mm` external size for `Standard` PCB v1 and pilot batch | A | 2026-04-02 |
+| D-02 | Closed | `L76K` stays default unless measurable fallback trigger is hit | Pon + A | 2026-04-02 |
+| D-03 | Closed | `QR + Web/PWA` is the only customer provisioning flow | Pon | 2026-04-02 |
+| D-04 | Closed | `A7670E` default with conditional `SIM7670E` fallback | A | 2026-04-02 |
+| D-05 | Closed | `LINE free tier` through pilot, then review | Pon | 2026-04-02 |
+| D-06 | Closed | single core module plus two battery variants | Pon + A | 2026-04-03 |
 
-## 11. การอ้างอิงในเอกสาร
+## Acceptance Criteria
 
-ทุกเอกสารหลักควรอ้างถึงไฟล์นี้อย่างน้อยหนึ่งจุดใกล้ส่วนบนของเอกสาร เพื่อให้คนอ่านรู้ว่า:
+- Other SB-00 AI docs can reference this file for the shared baseline without redefining it.
+- Provisioning baseline is unambiguous.
+- Battery platform baseline is unambiguous.
+- Regulatory stance is unambiguous.
+- Decision summary matches the decision register.
 
-- ใช้ phase definitions ชุดเดียวกัน
-- ใช้ budget baseline ชุดเดียวกัน
-- ใช้ battery target ชุดเดียวกัน
-- ใช้ certification stance ชุดเดียวกัน
-- ใช้ provisioning flow ชุดเดียวกัน
-- ใช้ prototype/production BOM baseline ชุดเดียวกัน
-- ใช้ pricing assumptions ของ third-party services ชุดเดียวกัน
+## Open Questions
+
+- Whether to split this master file into versioned subdocuments after implementation starts.
+- Whether to add front-matter linting to the doc build pipeline.
+
+## Related Docs
+
+- [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
+- [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+- [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
+- [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md)
+- [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md)
