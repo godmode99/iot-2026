@@ -15,7 +15,7 @@ from docx.shared import Inches, Mm, Pt
 ROOT = Path(__file__).resolve().parents[1]
 AI_DIR = ROOT / "doc" / "ai"
 HUMAN_DIR = ROOT / "doc" / "human"
-SKIP_FILES = {"README.md"}
+SKIP_FILES = {"README.md", "HUMAN_README.md"}
 GENERATED_ON = date.today().isoformat()
 
 INLINE_PATTERN = re.compile(r"(\*\*.+?\*\*|__.+?__|`.+?`|\*[^*\n][^*\n]*\*)", re.DOTALL)
@@ -444,8 +444,8 @@ def render_markdown(md_path: Path, output_path: Path) -> tuple[str, str | None]:
     return title, metadata
 
 
-def get_document_order() -> list[str]:
-    readme_path = AI_DIR / "README.md"
+def get_document_order(readme_name: str) -> list[str]:
+    readme_path = AI_DIR / readme_name
     if not readme_path.exists():
         return []
 
@@ -524,7 +524,7 @@ def build_human_index(doc_infos: list[dict[str, str]], output_path: Path):
 def main():
     HUMAN_DIR.mkdir(parents=True, exist_ok=True)
 
-    ordered_names = get_document_order()
+    ordered_names = get_document_order("HUMAN_README.md")
     available_files = {path.name: path for path in AI_DIR.glob("*.md") if path.name not in SKIP_FILES}
 
     ordered_paths: list[Path] = []
@@ -535,14 +535,24 @@ def main():
             ordered_paths.append(path)
             seen.add(name)
 
-    for name in sorted(available_files):
-        if name not in seen:
-            ordered_paths.append(available_files[name])
+    if not ordered_paths:
+        ordered_names = get_document_order("README.md")
+        for name in ordered_names:
+            path = available_files.get(name)
+            if path and name not in seen:
+                ordered_paths.append(path)
+                seen.add(name)
+
+        for name in sorted(available_files):
+            if name not in seen:
+                ordered_paths.append(available_files[name])
 
     doc_infos: list[dict[str, str]] = []
+    generated_names: set[str] = set()
     for md_path in ordered_paths:
         output_path = HUMAN_DIR / f"{md_path.stem}.docx"
         title, metadata = render_markdown(md_path, output_path)
+        generated_names.add(output_path.name)
         doc_infos.append(
             {
                 "source_name": md_path.name,
@@ -556,6 +566,13 @@ def main():
     index_path = HUMAN_DIR / "SB-00_Document_Index_v1_1.docx"
     build_human_index(doc_infos, index_path)
     print(f"generated {index_path}")
+    generated_names.add(index_path.name)
+
+    for existing in HUMAN_DIR.glob("*.docx"):
+        if existing.name.startswith("~$"):
+            continue
+        if existing.name not in generated_names:
+            existing.unlink()
 
 
 if __name__ == "__main__":

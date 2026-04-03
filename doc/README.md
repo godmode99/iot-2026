@@ -8,14 +8,14 @@
   - มีทั้ง baseline docs, decision register, pricing baseline, และ execution task list
 - `doc/human/`
   - เอกสาร `.docx` สำหรับคนอ่าน
-  - สร้างจากชุด `doc/ai/` เพื่อให้รูปแบบอ่านง่ายขึ้นใน Word
+  - สร้างจากชุด grouped docs ใน `doc/ai/` เพื่อให้จำนวนไฟล์น้อยลงและอ่านง่ายขึ้นใน Word
   - มีไฟล์ index กลางคือ `SB-00_Document_Index_v1_1.docx`
 
 ## Workflow
 
 1. แก้ไขเอกสารต้นฉบับใน `doc/ai/`
 2. รัน `python scripts/build_human_docs.py`
-3. เปิด `doc/human/SB-00_Document_Index_v1_1.docx` เพื่อเริ่มอ่านชุดเอกสาร
+3. เปิด `doc/human/SB-00_Document_Index_v1_1.docx` เพื่อเริ่มอ่านชุด grouped docs
 4. ถ้าต้องการ refresh สารบัญหรือเลขหน้า ให้เปิดไฟล์ใน Microsoft Word แล้วกด `Update Field`
 
 ## Notes
