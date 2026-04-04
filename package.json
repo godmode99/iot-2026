@@ -11,6 +11,8 @@
     "start:dashboard": "pnpm --dir dashboard start",
     "build:firmware": "powershell -ExecutionPolicy Bypass -File scripts/idf-build.ps1",
     "bench:soak": "node scripts/ex12-soak.mjs",
+    "power:estimate": "node scripts/ex13-runtime-report.mjs",
+    "field:report": "node scripts/ex15-field-report.mjs",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:lint": "supabase db lint"

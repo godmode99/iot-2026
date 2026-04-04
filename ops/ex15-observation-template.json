@@ -1,0 +1,80 @@
+{
+  "setup": {
+    "device_id": "sb00-devkit-01",
+    "serial_number": "SB00-BOOTSTRAP",
+    "battery_variant": "standard",
+    "interval_profile": "5_minute_default",
+    "deployment_site": "sample_pond_a",
+    "start_at": "2026-04-10T08:00:00+07:00",
+    "end_at": "2026-04-17T08:00:00+07:00"
+  },
+  "daily_checks": [
+    {
+      "day": 1,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 2,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 3,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 4,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 5,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 6,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    },
+    {
+      "day": 7,
+      "telemetry_ok": true,
+      "online_state_ok": true,
+      "battery_trend_ok": true,
+      "alert_noise_ok": true,
+      "issues": []
+    }
+  ],
+  "summary": {
+    "runtime_behavior": "acceptable",
+    "connectivity_behavior": "acceptable",
+    "gps_behavior": "acceptable",
+    "sensor_behavior": "acceptable",
+    "alert_usefulness": "useful_with_minor_tuning"
+  },
+  "next_actions": [
+    "Capture real dashboard screenshots for the final report",
+    "Add one note about GPS drift if observed in the real deployment"
+  ]
+}

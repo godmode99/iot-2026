@@ -1,0 +1,29 @@
+{
+  "measurement_name": "bench_sample_v1",
+  "notes": "Placeholder values until real bench current measurements are captured.",
+  "phases": {
+    "boot": {
+      "current_ma": 120,
+      "duration_sec": 4
+    },
+    "sensor": {
+      "current_ma": 65,
+      "duration_sec": 8
+    },
+    "network_attach": {
+      "current_ma": 280,
+      "duration_sec": 12
+    },
+    "publish": {
+      "current_ma": 320,
+      "duration_sec": 6
+    },
+    "sleep": {
+      "current_ma": 1.5
+    }
+  },
+  "overrides": {
+    "reconnect_penalty_mah_per_day": 12,
+    "reboot_penalty_mah_per_day": 4
+  }
+}
