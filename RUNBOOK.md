@@ -71,6 +71,26 @@ This helper script pins the working `ESP-IDF v5.4.3` tool paths for this machine
 
 The firmware app prints a bootstrap banner and boot summary.
 
+## Database
+
+Start the local Supabase stack:
+
+```powershell
+pnpm db:start
+```
+
+Apply migrations locally:
+
+```powershell
+pnpm db:reset
+```
+
+Lint schema SQL:
+
+```powershell
+pnpm db:lint
+```
+
 ## Workspace Outputs
 
 `EX-01` currently provides:
@@ -79,6 +99,7 @@ The firmware app prints a bootstrap banner and boot summary.
 - starter shared contracts
 - secret checklist
 - MQTT topic baseline
+- local Supabase workflow and first migration path
 - bootable backend and dashboard placeholders
 - buildable firmware skeleton
 

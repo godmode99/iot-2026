@@ -1,0 +1,2 @@
+-- EX-06 seed file intentionally starts empty.
+-- Add dashboard demo rows later if we decide to support local seeded screenshots.

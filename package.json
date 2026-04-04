@@ -9,6 +9,9 @@
     "dev:dashboard": "pnpm --dir dashboard dev",
     "start:backend": "pnpm --dir backend start",
     "start:dashboard": "pnpm --dir dashboard start",
-    "build:firmware": "powershell -ExecutionPolicy Bypass -File scripts/idf-build.ps1"
+    "build:firmware": "powershell -ExecutionPolicy Bypass -File scripts/idf-build.ps1",
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "db:lint": "supabase db lint"
   }
 }
