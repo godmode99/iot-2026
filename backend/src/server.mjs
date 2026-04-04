@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { evaluateOfflineAlerts } from "./alerts/service.mjs";
 import { getBackendConfig } from "./config.mjs";
 import { ingestTelemetryEnvelope } from "./ingest/service.mjs";
@@ -17,9 +18,10 @@ import {
 } from "./read-models.mjs";
 
 const config = getBackendConfig();
-const telemetrySchemaPath = resolve(process.cwd(), "..", "shared", "contracts", "telemetry.schema.json");
-const deviceIdentitySchemaPath = resolve(process.cwd(), "..", "shared", "contracts", "device-identity.schema.json");
-const batteryProfilePath = resolve(process.cwd(), "..", "shared", "contracts", "battery-profile.json");
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const telemetrySchemaPath = resolve(currentDir, "..", "..", "shared", "contracts", "telemetry.schema.json");
+const deviceIdentitySchemaPath = resolve(currentDir, "..", "..", "shared", "contracts", "device-identity.schema.json");
+const batteryProfilePath = resolve(currentDir, "..", "..", "shared", "contracts", "battery-profile.json");
 
 function sendJson(response, statusCode, body) {
   response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });

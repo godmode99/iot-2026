@@ -9,4 +9,4 @@ firmware/build/
 firmware/sdkconfig
 eim_config.toml
 *.log
-
+artifacts/
