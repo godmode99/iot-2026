@@ -17,28 +17,49 @@
       "type": "string"
     },
     "timestamp": {
-      "type": "string",
-      "format": "date-time"
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        }
+      ]
     },
     "temperature_c": {
-      "type": "number"
+      "type": ["number", "null"]
     },
     "turbidity_raw": {
-      "type": "number"
+      "type": ["number", "null"]
     },
     "battery_percent": {
-      "type": "number"
+      "type": ["number", "null"]
     },
     "battery_mv": {
-      "type": "number"
+      "type": ["number", "null"]
     },
     "lat": {
-      "type": "number"
+      "type": ["number", "null"]
     },
     "lng": {
-      "type": "number"
+      "type": ["number", "null"]
+    },
+    "firmware_version": {
+      "type": ["string", "null"]
+    },
+    "signal_quality": {
+      "type": ["number", "null"]
+    },
+    "gps_fix_state": {
+      "type": ["string", "null"]
+    },
+    "battery_variant": {
+      "type": ["string", "null"]
     }
   },
   "additionalProperties": true
 }
-

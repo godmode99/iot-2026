@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "app_battery.h"
+#include "app_connectivity.h"
 #include "app_config.h"
 #include "app_health.h"
 #include "app_sensors.h"
@@ -16,5 +17,6 @@ void app_log_boot_summary(
     const app_battery_profile_t *profile
 );
 void app_log_sensor_status(const app_sensors_t *sensors);
+void app_log_connectivity_status(const app_connectivity_t *connectivity);
 void app_log_scheduler_phase(const char *phase);
 void app_log_telemetry_sample(const app_telemetry_t *telemetry);

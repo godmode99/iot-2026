@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "node --watch src/server.mjs",
     "start": "node src/server.mjs"
+  },
+  "dependencies": {
+    "postgres": "^3.4.8"
   }
 }
-

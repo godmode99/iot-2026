@@ -38,14 +38,15 @@ static void app_scheduler_feed_watchdog(void)
 esp_err_t app_scheduler_run_bootstrap_cycle(
     const app_config_t *config,
     const app_battery_profile_t *profile,
-    app_sensors_t *sensors
+    app_sensors_t *sensors,
+    app_connectivity_t *connectivity
 )
 {
     app_health_snapshot_t health = {0};
     app_sensor_sample_t sample = {0};
     app_telemetry_t telemetry = {0};
 
-    if (config == NULL || profile == NULL || sensors == NULL) {
+    if (config == NULL || profile == NULL || sensors == NULL || connectivity == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -59,6 +60,12 @@ esp_err_t app_scheduler_run_bootstrap_cycle(
     app_scheduler_feed_watchdog();
     app_log_scheduler_phase("publish_sample");
     app_log_telemetry_sample(&telemetry);
+    ESP_RETURN_ON_ERROR(
+        app_connectivity_publish_telemetry(connectivity, config, &telemetry),
+        TAG,
+        "connectivity_publish_failed"
+    );
+    app_log_connectivity_status(connectivity);
     vTaskDelay(pdMS_TO_TICKS(10));
 
     app_scheduler_feed_watchdog();

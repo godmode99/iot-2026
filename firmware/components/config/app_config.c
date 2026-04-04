@@ -27,6 +27,7 @@ app_config_t app_config_default(void)
     strncpy(config.battery_variant, "standard", sizeof(config.battery_variant) - 1);
     strncpy(config.battery_profile_version, "v1", sizeof(config.battery_profile_version) - 1);
     strncpy(config.mqtt_topic_prefix, "sb00/devices", sizeof(config.mqtt_topic_prefix) - 1);
+    strncpy(config.mqtt_broker_uri, "mqtts://broker.placeholder.local:8883", sizeof(config.mqtt_broker_uri) - 1);
     config.usable_capacity_mah = 5600;
     config.publish_interval_sec = 300;
     config.night_interval_sec = 900;
@@ -88,6 +89,13 @@ bool app_config_validate(const app_config_t *config, char *reason, size_t reason
     if (!app_config_text_has_value(config->mqtt_topic_prefix)) {
         if (reason != NULL && reason_len > 0) {
             snprintf(reason, reason_len, "mqtt_topic_prefix missing");
+        }
+        return false;
+    }
+
+    if (!app_config_text_has_value(config->mqtt_broker_uri)) {
+        if (reason != NULL && reason_len > 0) {
+            snprintf(reason, reason_len, "mqtt_broker_uri missing");
         }
         return false;
     }

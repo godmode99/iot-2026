@@ -3,6 +3,7 @@
 
 #include "app_battery.h"
 #include "app_config.h"
+#include "app_connectivity.h"
 #include "app_health.h"
 #include "app_logging.h"
 #include "app_scheduler.h"
@@ -30,6 +31,7 @@ void app_main(void)
     app_config_load_result_t config_result = {0};
     app_battery_profile_t battery_profile = {0};
     app_health_snapshot_t health = {0};
+    app_connectivity_t connectivity = {0};
     app_sensors_t sensors = {0};
     bool saved_defaults = false;
 
@@ -60,8 +62,11 @@ void app_main(void)
     err = app_sensors_init(&sensors);
     ESP_ERROR_CHECK(err);
     app_log_sensor_status(&sensors);
+    err = app_connectivity_init(&config, &connectivity);
+    ESP_ERROR_CHECK(err);
+    app_log_connectivity_status(&connectivity);
 
-    err = app_scheduler_run_bootstrap_cycle(&config, &battery_profile, &sensors);
+    err = app_scheduler_run_bootstrap_cycle(&config, &battery_profile, &sensors, &connectivity);
     ESP_ERROR_CHECK(err);
 
     ESP_LOGI(TAG, "bootstrap_cycle_complete");

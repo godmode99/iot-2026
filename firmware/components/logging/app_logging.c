@@ -63,6 +63,7 @@ void app_log_boot_summary(
     ESP_LOGI(TAG, "publish_interval_sec=%" PRIu32, config->publish_interval_sec);
     ESP_LOGI(TAG, "night_interval_sec=%" PRIu32, config->night_interval_sec);
     ESP_LOGI(TAG, "mqtt_topic_prefix=%s", config->mqtt_topic_prefix);
+    ESP_LOGI(TAG, "mqtt_broker_uri=%s", config->mqtt_broker_uri);
 }
 
 void app_log_scheduler_phase(const char *phase)
@@ -83,6 +84,24 @@ void app_log_sensor_status(const app_sensors_t *sensors)
         app_sensor_driver_status_label(&sensors->turbidity_adc),
         app_sensor_driver_status_label(&sensors->max17048),
         app_sensor_driver_status_label(&sensors->l76k)
+    );
+}
+
+void app_log_connectivity_status(const app_connectivity_t *connectivity)
+{
+    if (connectivity == NULL) {
+        return;
+    }
+
+    ESP_LOGI(
+        TAG,
+        "connectivity_status mode=%s modem=%s network=%s time_sync=%s mqtt=%s buffered=%" PRIu32,
+        connectivity->mock_mode ? "mock" : "real",
+        connectivity->modem_ready ? "ready" : "pending",
+        connectivity->network_attached ? "attached" : "detached",
+        connectivity->time_synced ? "synced" : "pending",
+        connectivity->mqtt_connected ? "connected" : "disconnected",
+        connectivity->buffered_count
     );
 }
 

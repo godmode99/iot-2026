@@ -6,7 +6,7 @@
 
 #include "esp_err.h"
 
-#define APP_CONFIG_VERSION 1U
+#define APP_CONFIG_VERSION 2U
 
 typedef struct {
     uint32_t config_version;
@@ -19,6 +19,7 @@ typedef struct {
     uint32_t publish_interval_sec;
     uint32_t night_interval_sec;
     char mqtt_topic_prefix[64];
+    char mqtt_broker_uri[96];
 } app_config_t;
 
 typedef enum {
