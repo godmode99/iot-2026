@@ -4,7 +4,9 @@
 
 #include "app_health.h"
 #include "app_logging.h"
+#include "app_sensors.h"
 #include "app_telemetry.h"
+#include "esp_check.h"
 #include "esp_log.h"
 #include "esp_task_wdt.h"
 #include "freertos/FreeRTOS.h"
@@ -35,25 +37,28 @@ static void app_scheduler_feed_watchdog(void)
 
 esp_err_t app_scheduler_run_bootstrap_cycle(
     const app_config_t *config,
-    const app_battery_profile_t *profile
+    const app_battery_profile_t *profile,
+    app_sensors_t *sensors
 )
 {
     app_health_snapshot_t health = {0};
+    app_sensor_sample_t sample = {0};
     app_telemetry_t telemetry = {0};
 
-    if (config == NULL || profile == NULL) {
+    if (config == NULL || profile == NULL || sensors == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
 
     app_scheduler_feed_watchdog();
     app_log_scheduler_phase("read");
     app_health_get_snapshot(&health);
-    app_telemetry_make_placeholder(config, profile, &health, &telemetry);
+    ESP_RETURN_ON_ERROR(app_sensors_read(sensors, &sample), TAG, "sensor_read_failed");
+    app_telemetry_from_sensor_sample(config, profile, &health, &sample, &telemetry);
     vTaskDelay(pdMS_TO_TICKS(10));
 
     app_scheduler_feed_watchdog();
-    app_log_scheduler_phase("publish_placeholder");
-    app_log_telemetry_placeholder(&telemetry);
+    app_log_scheduler_phase("publish_sample");
+    app_log_telemetry_sample(&telemetry);
     vTaskDelay(pdMS_TO_TICKS(10));
 
     app_scheduler_feed_watchdog();

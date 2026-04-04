@@ -6,6 +6,7 @@
 #include "app_health.h"
 #include "app_logging.h"
 #include "app_scheduler.h"
+#include "app_sensors.h"
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
@@ -29,6 +30,7 @@ void app_main(void)
     app_config_load_result_t config_result = {0};
     app_battery_profile_t battery_profile = {0};
     app_health_snapshot_t health = {0};
+    app_sensors_t sensors = {0};
     bool saved_defaults = false;
 
     app_log_boot_banner();
@@ -55,8 +57,11 @@ void app_main(void)
     app_health_get_snapshot(&health);
     app_log_config_status(&config_result, saved_defaults);
     app_log_boot_summary(&config, &health, &battery_profile);
+    err = app_sensors_init(&sensors);
+    ESP_ERROR_CHECK(err);
+    app_log_sensor_status(&sensors);
 
-    err = app_scheduler_run_bootstrap_cycle(&config, &battery_profile);
+    err = app_scheduler_run_bootstrap_cycle(&config, &battery_profile, &sensors);
     ESP_ERROR_CHECK(err);
 
     ESP_LOGI(TAG, "bootstrap_cycle_complete");

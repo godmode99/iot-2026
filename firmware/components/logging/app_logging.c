@@ -22,7 +22,7 @@ static const char *app_config_status_label(app_config_load_status_t status)
 
 void app_log_boot_banner(void)
 {
-    ESP_LOGI(TAG, "SB-00 firmware skeleton ready for EX-03");
+    ESP_LOGI(TAG, "SB-00 firmware sensor bootstrap ready for EX-04");
 }
 
 void app_log_config_status(const app_config_load_result_t *result, bool saved_defaults)
@@ -70,24 +70,67 @@ void app_log_scheduler_phase(const char *phase)
     ESP_LOGI(TAG, "scheduler_phase=%s", phase);
 }
 
-void app_log_telemetry_placeholder(const app_telemetry_t *telemetry)
+void app_log_sensor_status(const app_sensors_t *sensors)
 {
-    if (telemetry == NULL) {
+    if (sensors == NULL) {
         return;
     }
 
     ESP_LOGI(
         TAG,
-        "telemetry_sample ts=%" PRIu32 " temp=%.2f turbidity=%" PRIi32 " battery_pct=%.2f battery_mv=%" PRIu32
-        " signal=%u gps_fix=%s lat=%.6f lng=%.6f",
+        "sensor_status ds18b20=%s turbidity=%s max17048=%s l76k=%s",
+        app_sensor_driver_status_label(&sensors->ds18b20),
+        app_sensor_driver_status_label(&sensors->turbidity_adc),
+        app_sensor_driver_status_label(&sensors->max17048),
+        app_sensor_driver_status_label(&sensors->l76k)
+    );
+}
+
+void app_log_telemetry_sample(const app_telemetry_t *telemetry)
+{
+    char temp_text[24] = "na";
+    char turbidity_text[24] = "na";
+    char battery_percent_text[24] = "na";
+    char battery_mv_text[24] = "na";
+    char signal_text[24] = "na";
+    char lat_text[24] = "na";
+    char lng_text[24] = "na";
+
+    if (telemetry == NULL) {
+        return;
+    }
+
+    if (telemetry->has_temperature_c) {
+        snprintf(temp_text, sizeof(temp_text), "%.2f", telemetry->temperature_c);
+    }
+    if (telemetry->has_turbidity_raw) {
+        snprintf(turbidity_text, sizeof(turbidity_text), "%" PRIi32, telemetry->turbidity_raw);
+    }
+    if (telemetry->has_battery_percent) {
+        snprintf(battery_percent_text, sizeof(battery_percent_text), "%.2f", telemetry->battery_percent);
+    }
+    if (telemetry->has_battery_mv) {
+        snprintf(battery_mv_text, sizeof(battery_mv_text), "%" PRIu32, telemetry->battery_mv);
+    }
+    if (telemetry->has_signal_quality) {
+        snprintf(signal_text, sizeof(signal_text), "%u", telemetry->signal_quality);
+    }
+    if (telemetry->has_location) {
+        snprintf(lat_text, sizeof(lat_text), "%.6f", telemetry->lat);
+        snprintf(lng_text, sizeof(lng_text), "%.6f", telemetry->lng);
+    }
+
+    ESP_LOGI(
+        TAG,
+        "telemetry_sample ts=%" PRIu32 " temp=%s turbidity=%s battery_pct=%s battery_mv=%s signal=%s gps_fix=%s lat=%s lng=%s",
         telemetry->recorded_at_unix,
-        telemetry->temperature_c,
-        telemetry->turbidity_raw,
-        telemetry->battery_percent,
-        telemetry->battery_mv,
-        telemetry->signal_quality,
+        temp_text,
+        turbidity_text,
+        battery_percent_text,
+        battery_mv_text,
+        signal_text,
         telemetry->gps_fix_state,
-        telemetry->lat,
-        telemetry->lng
+        lat_text,
+        lng_text
     );
 }
