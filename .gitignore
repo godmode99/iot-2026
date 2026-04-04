@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.local
+backend/node_modules/
+dashboard/node_modules/
+backend/.env
+dashboard/.env
+firmware/build/
+firmware/sdkconfig
+eim_config.toml
+*.log
+

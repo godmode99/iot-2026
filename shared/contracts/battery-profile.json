@@ -1,0 +1,23 @@
+{
+  "standard": {
+    "battery_variant": "standard",
+    "battery_profile_version": "v1",
+    "usable_capacity_mah": 5600,
+    "default_interval_sec": 300,
+    "night_interval_sec": 900,
+    "low_battery_warn_pct": 15,
+    "low_battery_critical_pct": 10,
+    "service_only_upgrade": true
+  },
+  "long_life": {
+    "battery_variant": "long_life",
+    "battery_profile_version": "v1",
+    "usable_capacity_mah": 23200,
+    "default_interval_sec": 300,
+    "night_interval_sec": 1800,
+    "low_battery_warn_pct": 20,
+    "low_battery_critical_pct": 10,
+    "service_only_upgrade": true
+  }
+}
+

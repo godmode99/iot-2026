@@ -1,0 +1,14 @@
+{
+  "name": "iot-2026",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "dev": "node scripts/dev-all.mjs",
+    "dev:backend": "pnpm --dir backend dev",
+    "dev:dashboard": "pnpm --dir dashboard dev",
+    "start:backend": "pnpm --dir backend start",
+    "start:dashboard": "pnpm --dir dashboard start",
+    "build:firmware": "powershell -ExecutionPolicy Bypass -File scripts/idf-build.ps1"
+  }
+}

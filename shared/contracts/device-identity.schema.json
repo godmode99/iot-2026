@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DeviceIdentity",
+  "type": "object",
+  "required": [
+    "device_id",
+    "serial_number",
+    "firmware_version",
+    "battery_variant",
+    "battery_profile_version"
+  ],
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "serial_number": {
+      "type": "string"
+    },
+    "firmware_version": {
+      "type": "string"
+    },
+    "battery_variant": {
+      "type": "string",
+      "enum": ["standard", "long_life"]
+    },
+    "battery_profile_version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
+

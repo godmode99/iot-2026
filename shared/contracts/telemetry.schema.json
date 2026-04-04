@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TelemetryPayload",
+  "type": "object",
+  "required": [
+    "device_id",
+    "timestamp",
+    "temperature_c",
+    "turbidity_raw",
+    "battery_percent",
+    "battery_mv",
+    "lat",
+    "lng"
+  ],
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "temperature_c": {
+      "type": "number"
+    },
+    "turbidity_raw": {
+      "type": "number"
+    },
+    "battery_percent": {
+      "type": "number"
+    },
+    "battery_mv": {
+      "type": "number"
+    },
+    "lat": {
+      "type": "number"
+    },
+    "lng": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": true
+}
+
