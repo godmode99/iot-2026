@@ -78,7 +78,7 @@ export default async function ProvisionPage({ searchParams }) {
   return (
     <AppShell currentPath="/provision" ariaLabel="Provisioning navigation" className="page-shell placeholder-layout">
       {!authConfigured ? (
-        <section className="notice">{t(messages, "dashboard.authPending")}</section>
+        <section className="notice">{t(messages, "auth.setupPending")}</section>
       ) : null}
 
       {error ? <section className="notice">Provisioning error: {error}</section> : null}

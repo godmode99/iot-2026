@@ -53,7 +53,7 @@
   },
   "placeholder": {
     "provisionTitle": "เพิ่มอุปกรณ์",
-    "provisionBody": "หน้านี้จะย้าย QR provisioning เดิมเข้ามาเป็น Next.js mobile-first flow ในเฟสถัดไป",
+    "provisionBody": "สแกนหรือวาง QR payload ตรวจสอบอุปกรณ์ เลือกฟาร์มที่คุณเป็นเจ้าของ แล้วผูกอุปกรณ์ผ่าน flow ที่ตรวจสิทธิ์แล้ว",
     "opsTitle": "Ops overview",
     "opsBody": "หน้านี้จะย้าย operator dashboard, alerts, commands และ OTA controls เข้ามาใน Next.js",
     "deviceTitle": "รายละเอียดอุปกรณ์",

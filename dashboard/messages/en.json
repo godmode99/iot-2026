@@ -108,7 +108,7 @@
   },
   "placeholder": {
     "provisionTitle": "Provision device",
-    "provisionBody": "This page will migrate the QR provisioning MVP into a mobile-first Next.js flow next.",
+    "provisionBody": "Scan or paste the QR payload, confirm the device, choose an owned farm, and bind it through the secured provisioning flow.",
     "opsTitle": "Ops overview",
     "opsBody": "This page will migrate the operator dashboard, alerts, commands, and OTA controls into Next.js.",
     "deviceTitle": "Device detail",

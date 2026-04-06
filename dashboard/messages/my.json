@@ -53,7 +53,7 @@
   },
   "placeholder": {
     "provisionTitle": "စက်ထည့်ရန်",
-    "provisionBody": "ဤစာမျက်နှာတွင် QR provisioning MVP ကို mobile-first Next.js flow အဖြစ် နောက်တစ်ဆင့်တွင်ရွှေ့ပါမည်။",
+    "provisionBody": "QR payload ကို scan သို့မဟုတ် paste လုပ်ပြီး စက်ကိုစစ်ဆေးပါ၊ သင်ပိုင်သော farm ကိုရွေးပြီး လုံခြုံသော provisioning flow ဖြင့် ချိတ်ဆက်ပါ။",
     "opsTitle": "Ops overview",
     "opsBody": "ဤစာမျက်နှာတွင် operator dashboard, alerts, commands နှင့် OTA controls ကို Next.js သို့ရွှေ့ပါမည်။",
     "deviceTitle": "စက်အသေးစိတ်",
