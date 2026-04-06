@@ -104,5 +104,23 @@
     "noAlerts": "ยังไม่มีแจ้งเตือนของอุปกรณ์นี้",
     "commandLog": "ประวัติคำสั่ง",
     "noCommands": "ยังไม่มีกิจกรรมคำสั่ง"
+  },
+  "ops": {
+    "eyebrow": "Operator console",
+    "title": "Fleet operations",
+    "body": "ติดตามสุขภาพ fleet, alert ที่เปิดอยู่, activity ของคำสั่ง และ contact สำหรับแจ้งเตือน",
+    "notAuthorized": "หน้านี้ใช้ได้เฉพาะ admin/operator",
+    "farms": "ฟาร์ม",
+    "devices": "อุปกรณ์",
+    "online": "online",
+    "attention": "ต้องดูแล",
+    "fleetSnapshot": "ภาพรวม fleet",
+    "noDevices": "session operator นี้ยังไม่เห็นอุปกรณ์",
+    "openAlerts": "แจ้งเตือนที่เปิดอยู่",
+    "noAlerts": "ไม่มีแจ้งเตือนที่เปิดอยู่",
+    "recentCommands": "คำสั่งล่าสุด",
+    "noCommands": "ยังไม่มีกิจกรรมคำสั่ง",
+    "notificationContacts": "ช่องทางแจ้งเตือน",
+    "noFarms": "session operator นี้ยังไม่เห็นฟาร์ม"
   }
 }

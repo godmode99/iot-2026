@@ -104,5 +104,23 @@
     "noAlerts": "No alerts found for this device.",
     "commandLog": "Command log",
     "noCommands": "No command activity yet."
+  },
+  "ops": {
+    "eyebrow": "Operator console",
+    "title": "Fleet operations",
+    "body": "Monitor fleet health, open alerts, command activity, and notification contact coverage.",
+    "notAuthorized": "This page is available only to admin/operator users.",
+    "farms": "farms",
+    "devices": "devices",
+    "online": "online",
+    "attention": "needs attention",
+    "fleetSnapshot": "Fleet snapshot",
+    "noDevices": "No devices are visible to this operator session.",
+    "openAlerts": "Open alerts",
+    "noAlerts": "No open alerts.",
+    "recentCommands": "Recent commands",
+    "noCommands": "No command activity yet.",
+    "notificationContacts": "Notification contacts",
+    "noFarms": "No farms are visible to this operator session."
   }
 }
