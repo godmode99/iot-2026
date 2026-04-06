@@ -13,11 +13,48 @@
     "settings": "Settings"
   },
   "home": {
-    "eyebrow": "Farm monitoring platform",
-    "title": "Monitor farms from the phone first",
-    "body": "A production Next.js shell for customers, resellers, and operators with Auth, RBAC, and provisioning ready to migrate route by route.",
+    "eyebrow": "Farm monitoring portal",
+    "title": "Field status, built for the phone in your hand",
+    "body": "Monitor farms, bind devices, act on alerts, and give resellers scoped support access without exposing customer data.",
     "primary": "Open dashboard",
-    "secondary": "Log in"
+    "secondary": "Log in",
+    "panelLabel": "Portal coverage",
+    "panelEyebrow": "Production surface",
+    "panelTitle": "One protected workspace for farms, devices, alerts, and field support.",
+    "proof": {
+      "roles": {
+        "value": "4 roles",
+        "label": "Customer, member, reseller, operator"
+      },
+      "mobile": {
+        "value": "Mobile-first",
+        "label": "Provisioning and monitoring"
+      },
+      "secure": {
+        "value": "RLS scoped",
+        "label": "Farm data stays inside its boundary"
+      }
+    },
+    "lanesLabel": "Portal lanes",
+    "lanes": {
+      "customers": {
+        "title": "Customers monitor and act",
+        "body": "Farm owners can see device status, acknowledge alerts, invite members, and provision hardware from the same portal."
+      },
+      "resellers": {
+        "title": "Resellers support within scope",
+        "body": "Reseller access is assigned per farm, audited, and limited so support work does not become customer data ownership."
+      },
+      "operators": {
+        "title": "Operators keep the fleet healthy",
+        "body": "Ops users can review open alerts, command history, notification readiness, and device health from one console."
+      }
+    },
+    "ctaEyebrow": "Start clean",
+    "ctaTitle": "Create an account, then add a farm before binding the first device.",
+    "ctaBody": "The production flow keeps identity, farm membership, notification settings, and provisioning in the same permission model.",
+    "ctaPrimary": "Create account",
+    "ctaSecondary": "Provision device"
   },
   "auth": {
     "loginTitle": "Log in",
