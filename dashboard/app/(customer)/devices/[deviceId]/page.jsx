@@ -43,6 +43,14 @@ function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
 
+function batteryLabel(status) {
+  if (!status?.battery_percent && status?.battery_percent !== 0) {
+    return "battery N/A";
+  }
+
+  return `${Number(status.battery_percent).toFixed(0)}% battery`;
+}
+
 function MiniHistory({ history }) {
   if (!history.length) {
     return <p className="muted">No telemetry history yet.</p>;
@@ -86,20 +94,44 @@ export default async function DeviceDetailPage({ params, searchParams }) {
   const canSendAnyCommand = detail?.permissions.canSendSafeCommand || detail?.permissions.canSendOtaApply;
   const safeCommands = ["reboot", "config_refresh", "ota_check", "telemetry_flush"];
   const commandOptions = detail?.permissions.canSendOtaApply ? [...safeCommands, "ota_apply"] : safeCommands;
+  const latestTelemetry = detail?.history.at(-1) ?? null;
+  const openAlerts = detail?.alerts.filter((alert) => alert.status === "open") ?? [];
+  const criticalAlerts = openAlerts.filter((alert) => alert.severity === "critical");
 
   return (
     <AppShell currentPath={`/devices/${deviceId}`} ariaLabel="Device detail navigation">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
       {feedback.length ? <section className="notice">{feedback.join(" / ")}</section> : null}
 
-      <section className="card dashboard-card">
-        <p className="eyebrow">{t(messages, "deviceDetail.eyebrow")}</p>
-        <h1 className="page-title">{device?.serial_number ?? deviceId}</h1>
-        <p className="lede">
-          {device ? t(messages, "deviceDetail.body") : t(messages, "deviceDetail.notFoundBody")}
-        </p>
-        {device?.farms ? (
-          <Link className="pill" href={`/farms/${device.farm_id}`}>{device.farms.name}</Link>
+      <section className="device-hero dashboard-card">
+        <div>
+          <p className="eyebrow">{t(messages, "deviceDetail.eyebrow")}</p>
+          <h1 className="page-title">{device?.serial_number ?? deviceId}</h1>
+          <p className="lede">
+            {device ? t(messages, "deviceDetail.body") : t(messages, "deviceDetail.notFoundBody")}
+          </p>
+          <div className="inline-actions">
+            {device?.farms ? (
+              <Link className="pill" href={`/farms/${device.farm_id}`}>{device.farms.name}</Link>
+            ) : null}
+            {device ? <span className={`pill ${statusClass(status?.online_state)}`}>{label(status?.online_state)}</span> : null}
+            {criticalAlerts.length ? (
+              <span className="pill is-offline">{criticalAlerts.length} {t(messages, "deviceDetail.criticalAlerts")}</span>
+            ) : null}
+          </div>
+        </div>
+
+        {device ? (
+          <div className="device-hero-panel">
+            <span className="muted">{t(messages, "deviceDetail.lastSeen")}</span>
+            <strong>{formatDate(status?.last_seen_at)}</strong>
+            <div className="device-health-strip">
+              <span className="health-chip">{batteryLabel(status)}</span>
+              <span className="health-chip">{t(messages, "deviceDetail.signal")}: {formatValue(status?.signal_quality, "%")}</span>
+              <span className="health-chip">{t(messages, "deviceDetail.firmware")}: {formatValue(device.firmware_version)}</span>
+              <span className="health-chip">{t(messages, "deviceDetail.interval")}: {device.publish_interval_sec}s</span>
+            </div>
+          </div>
         ) : null}
       </section>
 
@@ -125,8 +157,8 @@ export default async function DeviceDetailPage({ params, searchParams }) {
             <article className="card">
               <h2>{t(messages, "deviceDetail.latestTelemetry")}</h2>
               <div className="metric-grid compact-grid">
-                <Metric labelText="Temperature" value={formatValue(detail.history.at(-1)?.temperature_c, " C")} />
-                <Metric labelText="Turbidity" value={formatValue(detail.history.at(-1)?.turbidity_raw)} />
+                <Metric labelText={t(messages, "deviceDetail.temperature")} value={formatValue(latestTelemetry?.temperature_c, " C")} />
+                <Metric labelText={t(messages, "deviceDetail.turbidity")} value={formatValue(latestTelemetry?.turbidity_raw)} />
                 <Metric labelText="GPS" value={status?.last_lat && status?.last_lng ? `${Number(status.last_lat).toFixed(5)}, ${Number(status.last_lng).toFixed(5)}` : "N/A"} />
               </div>
               <MiniHistory history={detail.history} />
