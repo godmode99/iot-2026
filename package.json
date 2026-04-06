@@ -16,6 +16,7 @@
     "field:report": "node scripts/ex15-field-report.mjs",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "db:lint": "supabase db lint"
+    "db:lint": "supabase db lint",
+    "db:smoke:rbac": "node backend/scripts/rbac-smoke.mjs"
   }
 }

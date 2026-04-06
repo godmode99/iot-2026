@@ -46,6 +46,8 @@ Backend production notes:
 - `NOTIFICATION_MODE=stub` keeps local alert delivery in console-only mode
 - Farm-scoped notification contacts on `public.farms` are preferred over `.env` fallback recipients
 - Set `ADMIN_API_TOKEN` before exposing admin command or audit routes
+- Supabase Auth/RBAC now has farm-scoped owner/member/reseller helpers in local migrations
+- Reseller support access must come from `public.reseller_farms`; do not infer it from email/domain alone
 - OTA manifest is served from `OTA_RELEASES_PATH` and should be backed by real artifact URLs plus checksums
 - Run backend tests with `pnpm test:backend`
 
@@ -104,6 +106,12 @@ Lint schema SQL:
 
 ```powershell
 pnpm db:lint
+```
+
+Smoke-test local RBAC/RLS expectations:
+
+```powershell
+pnpm db:smoke:rbac
 ```
 
 ## Workspace Outputs
