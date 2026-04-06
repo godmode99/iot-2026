@@ -50,5 +50,15 @@
     "opsBody": "This page will migrate the operator dashboard, alerts, commands, and OTA controls into Next.js.",
     "deviceTitle": "Device detail",
     "deviceBody": "This page will connect device history, map, alerts, and command log through production APIs next."
+  },
+  "provision": {
+    "qrLabel": "QR payload or device ID",
+    "resolveAction": "Check device",
+    "state": "State",
+    "stateBody": "Device and farm scope are checked before binding.",
+    "resolvedDevice": "Resolved device",
+    "chooseFarm": "Choose farm",
+    "bindAction": "Bind device",
+    "noOwnedFarms": "This account has no owner-scoped farm available for binding yet."
   }
 }

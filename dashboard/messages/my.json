@@ -50,5 +50,15 @@
     "opsBody": "ဤစာမျက်နှာတွင် operator dashboard, alerts, commands နှင့် OTA controls ကို Next.js သို့ရွှေ့ပါမည်။",
     "deviceTitle": "စက်အသေးစိတ်",
     "deviceBody": "ဤစာမျက်နှာတွင် device history, map, alerts နှင့် command log ကို production APIs ဖြင့် နောက်တစ်ဆင့်တွင်ချိတ်ပါမည်။"
+  },
+  "provision": {
+    "qrLabel": "QR payload သို့မဟုတ် device ID",
+    "resolveAction": "စက်စစ်ရန်",
+    "state": "အခြေအနေ",
+    "stateBody": "Bind မလုပ်မီ စက်နှင့် ဖားမ် scope ကို စစ်ဆေးပါမည်။",
+    "resolvedDevice": "တွေ့ရှိသော စက်",
+    "chooseFarm": "ဖားမ်ရွေးရန်",
+    "bindAction": "စက်ချိတ်ရန်",
+    "noOwnedFarms": "ဤအကောင့်တွင် bind ပြုလုပ်နိုင်သော owner-scoped farm မရှိသေးပါ။"
   }
 }

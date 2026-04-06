@@ -50,5 +50,15 @@
     "opsBody": "หน้านี้จะย้าย operator dashboard, alerts, commands และ OTA controls เข้ามาใน Next.js",
     "deviceTitle": "รายละเอียดอุปกรณ์",
     "deviceBody": "หน้านี้จะต่อ device history, map, alerts และ command log ด้วย API production ต่อไป"
+  },
+  "provision": {
+    "qrLabel": "QR payload หรือ device ID",
+    "resolveAction": "ตรวจอุปกรณ์",
+    "state": "สถานะ",
+    "stateBody": "ระบบจะตรวจอุปกรณ์และสิทธิ์ของฟาร์มก่อน bind",
+    "resolvedDevice": "อุปกรณ์ที่ตรวจพบ",
+    "chooseFarm": "เลือกฟาร์ม",
+    "bindAction": "ผูกอุปกรณ์",
+    "noOwnedFarms": "บัญชีนี้ยังไม่มีฟาร์มในสิทธิ์ owner สำหรับ bind อุปกรณ์"
   }
 }

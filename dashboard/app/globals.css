@@ -55,7 +55,8 @@ a {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -326,7 +327,8 @@ h2 {
   font-weight: 750;
 }
 
-.form input {
+.form input,
+.form select {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
