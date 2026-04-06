@@ -26,7 +26,14 @@
     "loginAction": "ဝင်ရန်",
     "signupAction": "အကောင့်ဖွင့်ရန်",
     "forgotPassword": "စကားဝှက်မေ့နေပါသလား",
-    "setupPending": "Frontend အတွက် Supabase Auth env မသတ်မှတ်ရသေးပါ"
+    "setupPending": "Frontend အတွက် Supabase Auth env မသတ်မှတ်ရသေးပါ",
+    "forgotPasswordBody": "Enter your email and we will send a secure password reset link.",
+    "sendResetAction": "Send reset link",
+    "resetPassword": "Reset password",
+    "resetPasswordBody": "Set a new password after opening the secure reset link from your email.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePasswordAction": "Update password"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

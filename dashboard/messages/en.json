@@ -26,7 +26,14 @@
     "loginAction": "Log in",
     "signupAction": "Sign up",
     "forgotPassword": "Forgot password",
-    "setupPending": "Supabase Auth env is not configured for the frontend yet"
+    "setupPending": "Supabase Auth env is not configured for the frontend yet",
+    "forgotPasswordBody": "Enter your email and we will send a secure password reset link.",
+    "sendResetAction": "Send reset link",
+    "resetPassword": "Reset password",
+    "resetPasswordBody": "Set a new password after opening the secure reset link from your email.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePasswordAction": "Update password"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

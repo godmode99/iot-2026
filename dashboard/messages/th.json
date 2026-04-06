@@ -26,7 +26,14 @@
     "loginAction": "เข้าสู่ระบบ",
     "signupAction": "สมัครใช้งาน",
     "forgotPassword": "ลืมรหัสผ่าน",
-    "setupPending": "ยังไม่ได้ตั้งค่า Supabase Auth env สำหรับ frontend"
+    "setupPending": "ยังไม่ได้ตั้งค่า Supabase Auth env สำหรับ frontend",
+    "forgotPasswordBody": "กรอกอีเมล แล้วระบบจะส่งลิงก์รีเซ็ตรหัสผ่านแบบปลอดภัยให้",
+    "sendResetAction": "ส่งลิงก์รีเซ็ต",
+    "resetPassword": "รีเซ็ตรหัสผ่าน",
+    "resetPasswordBody": "ตั้งรหัสผ่านใหม่หลังจากเปิดลิงก์รีเซ็ตจากอีเมล",
+    "newPassword": "รหัสผ่านใหม่",
+    "confirmPassword": "ยืนยันรหัสผ่าน",
+    "updatePasswordAction": "อัปเดตรหัสผ่าน"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",
