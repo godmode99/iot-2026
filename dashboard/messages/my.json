@@ -85,5 +85,24 @@
     "savePreference": "Preference သိမ်းရန်",
     "audit": "Audit log",
     "noAudit": "Audit entry မရှိသေးပါ။"
+  },
+  "deviceDetail": {
+    "eyebrow": "Device detail",
+    "body": "Monitor latest telemetry, alerts, battery state, and permitted actions for this device.",
+    "notFoundBody": "This device is not visible to the current session.",
+    "onlineState": "Online state",
+    "battery": "Battery",
+    "signal": "Signal",
+    "variant": "Variant",
+    "latestTelemetry": "Latest telemetry",
+    "commands": "Commands",
+    "commandType": "Command type",
+    "commandNote": "Note",
+    "queueCommand": "Queue command",
+    "commandViewOnly": "You can view this device, but you cannot send commands.",
+    "alerts": "Alerts",
+    "noAlerts": "No alerts found for this device.",
+    "commandLog": "Command log",
+    "noCommands": "No command activity yet."
   }
 }

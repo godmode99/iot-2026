@@ -85,5 +85,24 @@
     "savePreference": "บันทึก preference",
     "audit": "Audit log",
     "noAudit": "ยังไม่มี audit entry"
+  },
+  "deviceDetail": {
+    "eyebrow": "รายละเอียดอุปกรณ์",
+    "body": "ติดตาม telemetry, alert, battery และ action ที่มีสิทธิ์สำหรับอุปกรณ์นี้",
+    "notFoundBody": "session ปัจจุบันยังไม่มีสิทธิ์เห็นอุปกรณ์นี้",
+    "onlineState": "สถานะ online",
+    "battery": "แบตเตอรี่",
+    "signal": "สัญญาณ",
+    "variant": "รุ่น",
+    "latestTelemetry": "Telemetry ล่าสุด",
+    "commands": "คำสั่ง",
+    "commandType": "ประเภทคำสั่ง",
+    "commandNote": "หมายเหตุ",
+    "queueCommand": "เข้าคิวคำสั่ง",
+    "commandViewOnly": "คุณดูอุปกรณ์นี้ได้ แต่ยังส่งคำสั่งไม่ได้",
+    "alerts": "แจ้งเตือน",
+    "noAlerts": "ยังไม่มีแจ้งเตือนของอุปกรณ์นี้",
+    "commandLog": "ประวัติคำสั่ง",
+    "noCommands": "ยังไม่มีกิจกรรมคำสั่ง"
   }
 }
