@@ -36,13 +36,13 @@ export async function loadCustomerDashboard() {
       .limit(20),
     supabase
       .from("devices")
-      .select("id,device_id,serial_number,farm_id,provisioning_state,battery_variant")
+      .select("id,device_id,serial_number,farm_id,provisioning_state,battery_variant,device_status(online_state,last_seen_at,battery_percent,battery_mv,signal_quality,gps_fix_state)")
       .not("farm_id", "is", null)
       .order("device_id", { ascending: true })
       .limit(50),
     supabase
       .from("alerts")
-      .select("id,alert_type,severity,status,farm_id,device_id,opened_at")
+      .select("id,alert_type,severity,status,farm_id,device_id,opened_at,devices(device_id,serial_number)")
       .eq("status", "open")
       .order("opened_at", { ascending: false })
       .limit(20)
@@ -59,4 +59,3 @@ export async function loadCustomerDashboard() {
     errors: [farms.error, devices.error, openAlerts.error].filter(Boolean)
   };
 }
-
