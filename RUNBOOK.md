@@ -3,7 +3,7 @@
 This repository now contains the first runnable workspace for:
 
 - `firmware/` - ESP-IDF skeleton for `ESP32-S3`
-- `backend/` - local API and ingest placeholder
+- `backend/` - local API, ingest path, admin routes, and read models
 - `dashboard/` - Next.js production frontend shell
 - `shared/` - contracts and baseline schemas
 - `ops/` - environment, secrets, and topic notes
@@ -18,7 +18,7 @@ This repository now contains the first runnable workspace for:
 
 1. Copy `.env.example` to `.env`
 2. Fill in real secrets when available
-3. For placeholder local boot, defaults will still allow backend and dashboard to start
+3. For local boot, defaults will still allow backend and dashboard to start while real secrets are pending
 
 ## Backend
 

@@ -55,9 +55,9 @@
     "provisionTitle": "စက်ထည့်ရန်",
     "provisionBody": "QR payload ကို scan သို့မဟုတ် paste လုပ်ပြီး စက်ကိုစစ်ဆေးပါ၊ သင်ပိုင်သော farm ကိုရွေးပြီး လုံခြုံသော provisioning flow ဖြင့် ချိတ်ဆက်ပါ။",
     "opsTitle": "Ops overview",
-    "opsBody": "ဤစာမျက်နှာတွင် operator dashboard, alerts, commands နှင့် OTA controls ကို Next.js သို့ရွှေ့ပါမည်။",
+    "opsBody": "Fleet health၊ open alerts၊ command activity နှင့် notification readiness ကို operator console မှ စစ်ဆေးပါ။",
     "deviceTitle": "စက်အသေးစိတ်",
-    "deviceBody": "ဤစာမျက်နှာတွင် device history, map, alerts နှင့် command log ကို production APIs ဖြင့် နောက်တစ်ဆင့်တွင်ချိတ်ပါမည်။"
+    "deviceBody": "နောက်ဆုံး telemetry၊ alert state၊ command history နှင့် ခွင့်ပြုထားသော device actions များကို စစ်ဆေးပါ။"
   },
   "provision": {
     "qrLabel": "QR payload သို့မဟုတ် device ID",

@@ -201,15 +201,6 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  if (url.pathname === "/api/ingest-placeholder") {
-    sendJson(response, 200, {
-      message: "Use POST /api/ingest/telemetry for the real EX-07 ingest path.",
-      mqttTopicPrefix: config.values.MQTT_TOPIC_PREFIX,
-      requestId
-    });
-    return;
-  }
-
   if (request.method === "GET" && url.pathname === "/api/devices") {
     try {
       const devices = await listDevicesWithStatus();

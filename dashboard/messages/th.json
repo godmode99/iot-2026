@@ -55,9 +55,9 @@
     "provisionTitle": "เพิ่มอุปกรณ์",
     "provisionBody": "สแกนหรือวาง QR payload ตรวจสอบอุปกรณ์ เลือกฟาร์มที่คุณเป็นเจ้าของ แล้วผูกอุปกรณ์ผ่าน flow ที่ตรวจสิทธิ์แล้ว",
     "opsTitle": "Ops overview",
-    "opsBody": "หน้านี้จะย้าย operator dashboard, alerts, commands และ OTA controls เข้ามาใน Next.js",
+    "opsBody": "ดูภาพรวม fleet, alert ที่เปิดอยู่, command activity และความพร้อมของ notification จากหน้า operator console",
     "deviceTitle": "รายละเอียดอุปกรณ์",
-    "deviceBody": "หน้านี้จะต่อ device history, map, alerts และ command log ด้วย API production ต่อไป"
+    "deviceBody": "ดู telemetry ล่าสุด สถานะ alert ประวัติ command และ action ของอุปกรณ์ที่มีสิทธิ์ใช้งาน"
   },
   "provision": {
     "qrLabel": "QR payload หรือ device ID",
