@@ -20,6 +20,17 @@ function PermissionPills({ item }) {
   return permissions.length ? permissions.map((permission) => <span className="pill" key={permission}>{permission}</span>) : <span className="muted">view only</span>;
 }
 
+function formatDate(value) {
+  if (!value) {
+    return "N/A";
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeZone: "Asia/Bangkok"
+  }).format(new Date(value));
+}
+
 function inviteCookieName(farmId) {
   return `sb_invite_token_${farmId}`;
 }
@@ -39,16 +50,49 @@ export default async function FarmSettingsPage({ params, searchParams }) {
   const feedback = ["invite", "reseller", "notification", "error"]
     .map((key) => (typeof query?.[key] === "string" ? `${key}: ${query[key]}` : null))
     .filter(Boolean);
+  const hasFarmContacts = Boolean(settings?.farm?.alert_email_to || settings?.farm?.alert_line_user_id);
+  const latestAuditAt = settings?.audit[0]?.created_at ?? null;
 
   return (
     <AppShell currentPath={`/farms/${farmId}`} ariaLabel="Farm settings navigation" className="page-shell placeholder-layout">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
       {feedback.length ? <section className="notice">{feedback.join(" / ")}</section> : null}
 
-      <section className="card">
-        <p className="eyebrow">{t(messages, "farmSettings.eyebrow")}</p>
-        <h1 className="page-title">{settings?.farm?.name ?? t(messages, "farmSettings.notFoundTitle")}</h1>
-        <p className="lede">{settings?.farm ? t(messages, "farmSettings.body") : t(messages, "farmSettings.notFoundBody")}</p>
+      <section className="farm-hero dashboard-card">
+        <div>
+          <p className="eyebrow">{t(messages, "farmSettings.eyebrow")}</p>
+          <h1 className="page-title">{settings?.farm?.name ?? t(messages, "farmSettings.notFoundTitle")}</h1>
+          <p className="lede">{settings?.farm ? t(messages, "farmSettings.body") : t(messages, "farmSettings.notFoundBody")}</p>
+          <div className="inline-actions">
+            {settings?.farm ? <span className="pill">{settings.canManage ? t(messages, "farmSettings.manageMode") : t(messages, "farmSettings.viewMode")}</span> : null}
+            {settings?.farm ? <span className="pill">{t(messages, "farmSettings.created")}: {formatDate(settings.farm.created_at)}</span> : null}
+          </div>
+        </div>
+
+        {settings?.farm ? (
+          <div className="farm-hero-panel">
+            <div className="metric-grid compact-grid">
+              <article className="metric">
+                <span className="muted">{t(messages, "farmSettings.members")}</span>
+                <span className="metric-value">{settings.members.length}</span>
+              </article>
+              <article className="metric">
+                <span className="muted">{t(messages, "farmSettings.resellers")}</span>
+                <span className="metric-value">{settings.resellers.length}</span>
+              </article>
+              <article className="metric">
+                <span className="muted">{t(messages, "farmSettings.audit")}</span>
+                <span className="metric-value">{settings.audit.length}</span>
+              </article>
+            </div>
+            <div className="farm-contact-strip">
+              <span className={`health-chip ${hasFarmContacts ? "is-online" : "is-stale"}`}>
+                {hasFarmContacts ? t(messages, "farmSettings.contactsReady") : t(messages, "farmSettings.contactsMissing")}
+              </span>
+              <span className="health-chip">{t(messages, "farmSettings.latestAudit")}: {formatDate(latestAuditAt)}</span>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       {settings?.errors.length ? (
