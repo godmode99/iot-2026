@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { resolveProvisioningTarget } from "@/lib/backend/provisioning.js";
@@ -43,12 +43,7 @@ export default async function ProvisionPage({ searchParams }) {
   const canBind = Boolean(user && device && resolved?.result?.state === "valid_unbound" && farms.length > 0);
 
   return (
-    <main className="page-shell placeholder-layout">
-      <Link className="brand" href="/">
-        <span className="brand-mark" aria-hidden="true" />
-        <span>{t(messages, "brand.name")}</span>
-      </Link>
-
+    <AppShell currentPath="/provision" ariaLabel="Provisioning navigation" className="page-shell placeholder-layout">
       <section className="card">
         <p className="eyebrow">QR + Web/PWA</p>
         <h1 className="page-title">{t(messages, "placeholder.provisionTitle")}</h1>
@@ -112,6 +107,6 @@ export default async function ProvisionPage({ searchParams }) {
       {device && resolved?.result?.state === "valid_unbound" && !farms.length ? (
         <section className="notice">{t(messages, "provision.noOwnedFarms")}</section>
       ) : null}
-    </main>
+    </AppShell>
   );
 }

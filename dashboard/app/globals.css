@@ -125,8 +125,35 @@ select {
   background: rgba(255, 255, 249, 0.7);
 }
 
+.nav-link.is-active {
+  color: #fff;
+  background: var(--accent-strong);
+  border-color: rgba(0, 0, 0, 0);
+}
+
 .nav-button {
   cursor: pointer;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 10;
+  margin-bottom: 30px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 249, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 48px rgba(23, 42, 31, 0.12);
+}
+
+.app-nav-links {
+  justify-content: flex-end;
+}
+
+.shell-user-pill {
+  max-width: 160px;
 }
 
 .hero-grid {

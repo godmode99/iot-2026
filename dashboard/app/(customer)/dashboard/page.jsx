@@ -1,8 +1,8 @@
 import Link from "next/link";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadCustomerDashboard } from "@/lib/data/customer-dashboard.js";
-import { signOut } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
@@ -15,24 +15,7 @@ export default async function DashboardPage() {
   const openAlertCount = dashboard?.openAlerts.length ?? 0;
 
   return (
-    <main className="page-shell">
-      <nav className="topbar" aria-label="Dashboard navigation">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/farms/new">{t(messages, "nav.newFarm")}</Link>
-          <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
-          <Link className="nav-link" href="/ops">{t(messages, "nav.ops")}</Link>
-          {authConfigured ? (
-            <form action={signOut}>
-              <button className="button-secondary nav-button" type="submit">{t(messages, "nav.signout")}</button>
-            </form>
-          ) : null}
-        </div>
-      </nav>
-
+    <AppShell currentPath="/dashboard" ariaLabel="Dashboard navigation">
       <section className="card dashboard-card">
         <p className="eyebrow">{t(messages, "dashboard.eyebrow")}</p>
         <h1 className="page-title">{t(messages, "dashboard.title")}</h1>
@@ -111,6 +94,6 @@ export default async function DashboardPage() {
           )}
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }

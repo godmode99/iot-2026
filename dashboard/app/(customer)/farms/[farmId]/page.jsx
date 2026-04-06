@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadFarmSettings } from "@/lib/data/farm-settings.js";
@@ -40,18 +41,7 @@ export default async function FarmSettingsPage({ params, searchParams }) {
     .filter(Boolean);
 
   return (
-    <main className="page-shell placeholder-layout">
-      <nav className="topbar" aria-label="Farm settings navigation">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/dashboard">{t(messages, "nav.dashboard")}</Link>
-          <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
-        </div>
-      </nav>
-
+    <AppShell currentPath={`/farms/${farmId}`} ariaLabel="Farm settings navigation" className="page-shell placeholder-layout">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
       {feedback.length ? <section className="notice">{feedback.join(" / ")}</section> : null}
 
@@ -179,6 +169,6 @@ export default async function FarmSettingsPage({ params, searchParams }) {
           </section>
         </>
       ) : null}
-    </main>
+    </AppShell>
   );
 }

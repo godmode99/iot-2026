@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadOpsOverview } from "@/lib/data/ops-overview.js";
@@ -47,18 +48,7 @@ export default async function OpsPage() {
   const ops = user ? await loadOpsOverview() : null;
 
   return (
-    <main className="page-shell">
-      <nav className="topbar" aria-label="Ops navigation">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/dashboard">{t(messages, "nav.dashboard")}</Link>
-          <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
-        </div>
-      </nav>
-
+    <AppShell currentPath="/ops" ariaLabel="Ops navigation">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
 
       <section className="card dashboard-card">
@@ -161,6 +151,6 @@ export default async function OpsPage() {
           </section>
         </>
       ) : null}
-    </main>
+    </AppShell>
   );
 }

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { createFarm } from "./actions.js";
@@ -12,18 +12,7 @@ export default async function NewFarmPage({ searchParams }) {
   const error = typeof query?.error === "string" ? query.error : "";
 
   return (
-    <main className="page-shell placeholder-layout">
-      <nav className="topbar" aria-label="New farm navigation">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/dashboard">{t(messages, "nav.dashboard")}</Link>
-          <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
-        </div>
-      </nav>
-
+    <AppShell currentPath="/farms/new" ariaLabel="New farm navigation" className="page-shell placeholder-layout">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
       {error ? <section className="notice">error: {error}</section> : null}
 
@@ -48,6 +37,6 @@ export default async function NewFarmPage({ searchParams }) {
           <button className="button" type="submit">{t(messages, "farmCreate.createAction")}</button>
         </form>
       </section>
-    </main>
+    </AppShell>
   );
 }

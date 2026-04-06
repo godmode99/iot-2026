@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppShell } from "@/components/app-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadDeviceDetail } from "@/lib/data/device-detail.js";
@@ -85,18 +86,7 @@ export default async function DeviceDetailPage({ params, searchParams }) {
   const commandOptions = detail?.permissions.canSendOtaApply ? [...safeCommands, "ota_apply"] : safeCommands;
 
   return (
-    <main className="page-shell">
-      <nav className="topbar" aria-label="Device detail navigation">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/dashboard">{t(messages, "nav.dashboard")}</Link>
-          <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
-        </div>
-      </nav>
-
+    <AppShell currentPath={`/devices/${deviceId}`} ariaLabel="Device detail navigation">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
       {feedback.length ? <section className="notice">{feedback.join(" / ")}</section> : null}
 
@@ -207,6 +197,6 @@ export default async function DeviceDetailPage({ params, searchParams }) {
           </section>
         </>
       ) : null}
-    </main>
+    </AppShell>
   );
 }
