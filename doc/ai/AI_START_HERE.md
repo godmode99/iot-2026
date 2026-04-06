@@ -51,6 +51,7 @@ It does not replace detailed specs or task-level documents.
 - [SB-00_Battery_Platform_Interface_Spec_v1_0.md](./SB-00_Battery_Platform_Interface_Spec_v1_0.md)
 - [SB-00_Frontend_App_Plan_v1_0.md](./SB-00_Frontend_App_Plan_v1_0.md)
 - [SB-00_Fullstack_Production_Plan_v1_0.md](./SB-00_Fullstack_Production_Plan_v1_0.md)
+- [NEXTJS_MIGRATION_PLAN_v1_0.md](./NEXTJS_MIGRATION_PLAN_v1_0.md)
 
 ## Project Summary
 
@@ -107,6 +108,7 @@ At the time of writing:
 | battery interface detail | [SB-00_Battery_Platform_Interface_Spec_v1_0.md](./SB-00_Battery_Platform_Interface_Spec_v1_0.md) | use when implementing battery metadata and variant support |
 | frontend production plan | [SB-00_Frontend_App_Plan_v1_0.md](./SB-00_Frontend_App_Plan_v1_0.md) | use before building Next.js, customer dashboard, i18n, or role-aware UI |
 | fullstack production plan | [SB-00_Fullstack_Production_Plan_v1_0.md](./SB-00_Fullstack_Production_Plan_v1_0.md) | use before implementing production auth, RBAC, frontend/backend contracts, or role-scoped APIs |
+| Next.js migration plan | [NEXTJS_MIGRATION_PLAN_v1_0.md](./NEXTJS_MIGRATION_PLAN_v1_0.md) | use when replacing the current dashboard MVP with a production Next.js app |
 | UX flow and screen inventory | [SB-00_UX_Flow_v1_0.md](./SB-00_UX_Flow_v1_0.md) | use when building any frontend screen, auth flow, or user-facing interaction |
 | auth and role model | [SB-00_Auth_Role_Spec_v1_0.md](./SB-00_Auth_Role_Spec_v1_0.md) | use when implementing login, auth guard, RLS policies, or any permission check |
 
