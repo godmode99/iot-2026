@@ -29,6 +29,16 @@ import {
   listAlertSummaries,
   listDevicesWithStatus
 } from "./read-models.mjs";
+import {
+  acceptInvite,
+  assignResellerToFarm,
+  createFarmMemberInvite,
+  getAuditLog,
+  getFarmMembers,
+  getNotificationPreferences,
+  getResellerAssignments,
+  saveNotificationPreference
+} from "./rbac/service.mjs";
 
 const config = getBackendConfig();
 const currentDir = dirname(fileURLToPath(import.meta.url));
@@ -283,6 +293,208 @@ const server = createServer(async (request, response) => {
       sendJson(response, 500, {
         ok: false,
         code: "farm_notification_targets_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/admin/audit-log") {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const limit = Number(url.searchParams.get("limit") ?? 50);
+      const result = await getAuditLog({
+        farmId: url.searchParams.get("farm_id"),
+        limit: Number.isFinite(limit) ? limit : 50
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "audit_log_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/admin/farm-invites/accept") {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const body = await readJsonBody(request);
+      const result = await acceptInvite({
+        inviteToken: body?.invite_token ?? "",
+        acceptedBy: body?.accepted_by ?? auth.actorUserId ?? "",
+        acceptedEmail: body?.accepted_email ?? ""
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "farm_invite_accept_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (url.pathname.startsWith("/api/admin/farms/")) {
+    const segments = url.pathname.split("/");
+    const farmId = decodeURIComponent(segments[4] ?? "");
+    const resource = segments[5] ?? "";
+    const resourceId = segments[6] ? decodeURIComponent(segments[6]) : null;
+
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      if (request.method === "GET" && resource === "members") {
+        const result = await getFarmMembers({ farmId });
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+
+      if (request.method === "POST" && resource === "invites") {
+        const body = await readJsonBody(request);
+        const result = await createFarmMemberInvite({
+          farmId,
+          email: body?.email ?? "",
+          permissions: body?.permissions ?? {},
+          invitedBy: auth.actorUserId ?? body?.invited_by ?? ""
+        });
+
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+
+      if (request.method === "GET" && resource === "resellers") {
+        const result = await getResellerAssignments({ farmId });
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+
+      if (request.method === "POST" && resource === "resellers") {
+        const body = await readJsonBody(request);
+        const result = await assignResellerToFarm({
+          farmId,
+          resellerUserId: body?.reseller_user_id ?? "",
+          canManageAlerts: body?.can_manage_alerts ?? false,
+          canSendSafeCommands: body?.can_send_safe_commands ?? false,
+          assignedBy: auth.actorUserId ?? body?.assigned_by ?? null
+        });
+
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+
+      if (request.method === "GET" && resource === "notification-preferences") {
+        const result = await getNotificationPreferences({ farmId });
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+
+      if ((request.method === "PATCH" || request.method === "PUT") && resource === "notification-preferences") {
+        const body = await readJsonBody(request);
+        const result = await saveNotificationPreference({
+          farmId,
+          userId: resourceId ?? body?.user_id ?? "",
+          emailEnabled: body?.email_enabled ?? true,
+          lineEnabled: body?.line_enabled ?? false,
+          criticalOnly: body?.critical_only ?? false,
+          alertTypes: body?.alert_types ?? [],
+          actorUserId: auth.actorUserId ?? body?.actor_user_id ?? null
+        });
+
+        sendJson(response, result.statusCode, {
+          ok: result.ok,
+          code: result.code,
+          result: result.result ?? null,
+          details: result.details ?? [],
+          requestId
+        });
+        return;
+      }
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "farm_admin_action_failed",
         details: [error instanceof Error ? error.message : "unknown_error"],
         requestId
       });

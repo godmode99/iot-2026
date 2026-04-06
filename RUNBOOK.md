@@ -49,6 +49,7 @@ Backend production notes:
 - Supabase Auth/RBAC now has farm-scoped owner/member/reseller helpers in local migrations
 - Reseller support access must come from `public.reseller_farms`; do not infer it from email/domain alone
 - OTA manifest is served from `OTA_RELEASES_PATH` and should be backed by real artifact URLs plus checksums
+- Auth/RBAC API details live in `ops/auth-rbac-api.md`
 - Run backend tests with `pnpm test:backend`
 
 ## Dashboard
