@@ -68,7 +68,16 @@
     "resolvedDevice": "Resolved device",
     "chooseFarm": "Choose farm",
     "bindAction": "Bind device",
-    "noOwnedFarms": "This account has no owner-scoped farm available for binding yet."
+    "noOwnedFarms": "This account has no owner-scoped farm available for binding yet.",
+    "startWithQr": "Paste the QR payload or device ID to continue.",
+    "resolveFirst": "Resolve the device before choosing a farm.",
+    "alreadyBoundBody": "This device is already bound to a farm.",
+    "steps": {
+      "scan": "Scan QR",
+      "confirm": "Confirm device",
+      "farm": "Choose farm",
+      "bind": "Bind"
+    }
   },
   "farmSettings": {
     "eyebrow": "Farm settings",
