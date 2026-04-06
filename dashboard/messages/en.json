@@ -34,7 +34,14 @@
     "resetPasswordBody": "Set a new password after opening the secure reset link from your email.",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
-    "updatePasswordAction": "Update password"
+    "updatePasswordAction": "Update password",
+    "portalEyebrow": "Secure access",
+    "portalTitle": "One account for farms, devices, and alerts",
+    "portalBody": "Sign in to monitor field devices, bind QR codes, and manage farm permissions from a mobile-first dashboard.",
+    "portalProofLabel": "Portal capabilities",
+    "proofSecure": "Supabase Auth",
+    "proofMobile": "Mobile-first",
+    "proofLanguages": "TH / EN / MY"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

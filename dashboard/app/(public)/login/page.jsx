@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthShell } from "@/components/auth-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { signInWithPassword } from "./actions.js";
 
@@ -10,16 +11,24 @@ export default async function LoginPage({ searchParams }) {
   const notice = typeof params?.notice === "string" ? params.notice : "";
 
   return (
-    <main className="page-shell">
-      <Link className="brand auth-brand" href="/">
-        <span className="brand-mark" aria-hidden="true" />
-        <span>{t(messages, "brand.name")}</span>
-      </Link>
-      <section className="card auth-card">
-        <p className="eyebrow">{t(messages, "nav.login")}</p>
-        <h1 className="page-title">{t(messages, "auth.loginTitle")}</h1>
-        {error ? <p className="notice">Auth status: {error}</p> : null}
-        {notice ? <p className="notice">Notice: {notice}</p> : null}
+    <AuthShell
+      eyebrow={t(messages, "nav.login")}
+      footer={(
+        <>
+          <Link href="/signup">{t(messages, "nav.signup")}</Link>
+          {" / "}
+          <Link href="/forgot-password">{t(messages, "auth.forgotPassword")}</Link>
+        </>
+      )}
+      messages={messages}
+      notice={(
+        <>
+          {error ? <p className="notice">Auth status: {error}</p> : null}
+          {notice ? <p className="notice">Notice: {notice}</p> : null}
+        </>
+      )}
+      title={t(messages, "auth.loginTitle")}
+    >
         <form className="form" action={signInWithPassword}>
           <input type="hidden" name="returnUrl" value={returnUrl} />
           <label>
@@ -32,13 +41,6 @@ export default async function LoginPage({ searchParams }) {
           </label>
           <button className="button" type="submit">{t(messages, "auth.loginAction")}</button>
         </form>
-        <p className="muted auth-footnote">
-          <Link href="/signup">{t(messages, "nav.signup")}</Link>
-          {" / "}
-          <Link href="/forgot-password">{t(messages, "auth.forgotPassword")}</Link>
-        </p>
-      </section>
-    </main>
+    </AuthShell>
   );
 }
-

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthShell } from "@/components/auth-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requestPasswordReset } from "./actions.js";
 
@@ -9,13 +10,19 @@ export default async function ForgotPasswordPage({ searchParams }) {
   const notice = typeof params?.notice === "string" ? params.notice : "";
 
   return (
-    <main className="page-shell">
-      <section className="card auth-card">
-        <p className="eyebrow">{t(messages, "auth.forgotPassword")}</p>
-        <h1 className="page-title">{t(messages, "auth.forgotPassword")}</h1>
-        <p className="muted">{t(messages, "auth.forgotPasswordBody")}</p>
-        {error ? <p className="notice">Auth status: {error}</p> : null}
-        {notice ? <p className="notice">Notice: {notice}</p> : null}
+    <AuthShell
+      body={t(messages, "auth.forgotPasswordBody")}
+      eyebrow={t(messages, "auth.forgotPassword")}
+      footer={<Link href="/login">{t(messages, "nav.login")}</Link>}
+      messages={messages}
+      notice={(
+        <>
+          {error ? <p className="notice">Auth status: {error}</p> : null}
+          {notice ? <p className="notice">Notice: {notice}</p> : null}
+        </>
+      )}
+      title={t(messages, "auth.forgotPassword")}
+    >
         <form className="form" action={requestPasswordReset}>
           <label>
             {t(messages, "auth.email")}
@@ -23,8 +30,6 @@ export default async function ForgotPasswordPage({ searchParams }) {
           </label>
           <button className="button" type="submit">{t(messages, "auth.sendResetAction")}</button>
         </form>
-        <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
-      </section>
-    </main>
+    </AuthShell>
   );
 }
