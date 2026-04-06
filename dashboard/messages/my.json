@@ -33,7 +33,15 @@
     "authPending": "Dashboard route ကို guard ထားပြီးဖြစ်သည်။ NEXT_PUBLIC_SUPABASE_URL နှင့် NEXT_PUBLIC_SUPABASE_ANON_KEY သတ်မှတ်ပြီးမှ login ကို အပြည့်အဝအသုံးပြုပါမည်။",
     "signedInAs": "ဝင်ထားသူ",
     "emptyTitle": "Data အစစ်ချိတ်ရန် အသင့်",
-    "emptyBody": "နောက်တစ်ဆင့်တွင် session-aware RLS ဖြင့် device နှင့် farm API ကိုချိတ်ပါမည်။"
+    "emptyBody": "နောက်တစ်ဆင့်တွင် session-aware RLS ဖြင့် device နှင့် farm API ကိုချိတ်ပါမည်။",
+    "farms": "ဖားမ်များ",
+    "devices": "စက်များ",
+    "openAlerts": "ဖွင့်ထားသော alerts",
+    "recentFarms": "နောက်ဆုံး ဖားမ်များ",
+    "visibleDevices": "မြင်နိုင်သော စက်များ",
+    "noFarms": "ဤအကောင့်အတွက် ဖားမ် မတွေ့သေးပါ။",
+    "noDevices": "ဤအကောင့်အတွက် စက် မတွေ့သေးပါ။",
+    "dataWarnings": "Data warnings"
   },
   "placeholder": {
     "provisionTitle": "စက်ထည့်ရန်",

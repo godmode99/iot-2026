@@ -33,7 +33,15 @@
     "authPending": "Dashboard ถูก guard ไว้แล้ว แต่ยังไม่บังคับ login จนกว่าจะตั้งค่า NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_ANON_KEY",
     "signedInAs": "เข้าสู่ระบบด้วย",
     "emptyTitle": "พร้อมเชื่อมข้อมูลจริง",
-    "emptyBody": "ก้อนถัดไปจะต่อ device/farm API ด้วย session และ RLS จริง"
+    "emptyBody": "ก้อนถัดไปจะต่อ device/farm API ด้วย session และ RLS จริง",
+    "farms": "ฟาร์ม",
+    "devices": "อุปกรณ์",
+    "openAlerts": "แจ้งเตือนที่เปิดอยู่",
+    "recentFarms": "ฟาร์มล่าสุด",
+    "visibleDevices": "อุปกรณ์ที่เห็นได้",
+    "noFarms": "บัญชีนี้ยังไม่เห็นฟาร์มใด",
+    "noDevices": "บัญชีนี้ยังไม่เห็นอุปกรณ์ใด",
+    "dataWarnings": "คำเตือนข้อมูล"
   },
   "placeholder": {
     "provisionTitle": "เพิ่มอุปกรณ์",

@@ -33,7 +33,15 @@
     "authPending": "The dashboard route is guarded, but login is deferred until NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are configured.",
     "signedInAs": "Signed in as",
     "emptyTitle": "Ready for real data",
-    "emptyBody": "Next up: connect device and farm APIs through session-aware RLS."
+    "emptyBody": "Next up: connect device and farm APIs through session-aware RLS.",
+    "farms": "farms",
+    "devices": "devices",
+    "openAlerts": "open alerts",
+    "recentFarms": "Recent farms",
+    "visibleDevices": "Visible devices",
+    "noFarms": "No farms are visible for this account yet.",
+    "noDevices": "No devices are visible for this account yet.",
+    "dataWarnings": "Data warnings"
   },
   "placeholder": {
     "provisionTitle": "Provision device",
