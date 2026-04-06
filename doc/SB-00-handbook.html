@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SB-00 Project Handbook</title>
+<style>
+:root{
+  --teal:#1a6b5a;--teal-lt:#e6f4f0;--teal-md:#2e9e80;
+  --blue:#1a4a7a;--blue-lt:#e6eef8;
+  --amber:#8a5200;--amber-lt:#fff4e0;
+  --red:#b02020;--red-lt:#fdeaea;
+  --green:#1a6b40;--green-lt:#e6f9ee;
+  --purple:#5a2e8a;--purple-lt:#f0eafc;
+  --gray:#5a6170;--gray-lt:#f4f5f7;
+  --border:#d0d5dd;--ink:#1a1f2e;--white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI","Noto Sans Thai",sans-serif;background:#f0f2f5;color:var(--ink);font-size:14px;line-height:1.65;}
+
+/* ── header ── */
+header{background:var(--teal);color:#fff;padding:28px 40px 0;}
+header h1{font-size:24px;font-weight:800;}
+header p{font-size:13px;opacity:.75;margin-top:4px;padding-bottom:16px;}
+
+/* ── tabs ── */
+.tabs{display:flex;gap:4px;padding:0 40px;background:var(--teal);flex-wrap:wrap;}
+.tab{padding:10px 18px;border-radius:8px 8px 0 0;background:rgba(255,255,255,.18);color:#fff;cursor:pointer;font-weight:600;font-size:13px;border:none;outline:none;transition:background .15s;}
+.tab.active{background:#f0f2f5;color:var(--teal);}
+.tab:not(.active):hover{background:rgba(255,255,255,.28);}
+
+/* ── content ── */
+.content{padding:32px 40px 60px;}
+.section{display:none;}.section.active{display:block;}
+
+/* ── typography ── */
+h2{font-size:19px;font-weight:800;margin-bottom:6px;}
+h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--teal);}
+p{color:var(--gray);font-size:13px;margin-bottom:14px;}
+.lead{color:var(--ink);font-size:14px;margin-bottom:20px;}
+
+/* ── badges ── */
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-right:4px;}
+.b-teal{background:var(--teal-lt);color:var(--teal);}
+.b-blue{background:var(--blue-lt);color:var(--blue);}
+.b-amber{background:var(--amber-lt);color:var(--amber);}
+.b-red{background:var(--red-lt);color:var(--red);}
+.b-green{background:var(--green-lt);color:var(--green);}
+.b-gray{background:var(--gray-lt);color:var(--gray);}
+.b-purple{background:var(--purple-lt);color:var(--purple);}
+
+/* ── cards ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:20px 0;}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.card h3{margin-bottom:8px;}
+.card ul{list-style:none;padding:0;}
+.card ul li{font-size:12.5px;color:var(--gray);padding:3px 0 3px 14px;position:relative;}
+.card ul li::before{content:"·";position:absolute;left:4px;color:var(--teal-md);font-weight:900;}
+.card-icon{font-size:22px;display:block;margin-bottom:8px;}
+
+/* ── table ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+.tbl th{background:var(--teal-lt);color:var(--teal);font-weight:700;padding:10px 14px;text-align:left;border-bottom:2px solid var(--teal-md);}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fafbf9;}
+
+/* ── timeline ── */
+.timeline{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.tl-item{display:flex;gap:20px;padding-bottom:28px;position:relative;}
+.tl-item:not(:last-child)::before{content:"";position:absolute;left:18px;top:38px;bottom:0;width:2px;background:var(--border);}
+.tl-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:2px solid var(--border);}
+.tl-dot.done{background:var(--green-lt);border-color:var(--green);}
+.tl-dot.active{background:var(--teal-lt);border-color:var(--teal);}
+.tl-dot.pending{background:var(--gray-lt);border-color:var(--border);}
+.tl-body{flex:1;padding-top:6px;}
+.tl-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.tl-date{font-size:11px;color:var(--gray);margin-bottom:8px;}
+.tl-desc{font-size:12.5px;color:var(--gray);}
+
+/* ── task list ── */
+.task-group{margin-bottom:28px;}
+.task-group-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:10px;}
+.task-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.task-status{width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.ts-done{background:var(--green-lt);color:var(--green);border:2px solid var(--green);}
+.ts-pending{background:var(--gray-lt);color:var(--gray);border:2px solid var(--border);}
+.ts-partial{background:var(--amber-lt);color:var(--amber);border:2px solid #d0a060;}
+.task-body{flex:1;}
+.task-id{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:2px;}
+.task-name{font-size:13px;font-weight:600;}
+.task-owner{font-size:11px;color:var(--gray);margin-top:2px;}
+
+/* ── flow diagram ── */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:16px 0;}
+.flow-node{background:#fff;border:2px solid var(--border);border-radius:10px;padding:10px 16px;font-size:12.5px;font-weight:600;text-align:center;min-width:100px;}
+.flow-node.hw{border-color:var(--teal-md);background:var(--teal-lt);color:var(--teal);}
+.flow-node.sw{border-color:#a0b8d8;background:var(--blue-lt);color:var(--blue);}
+.flow-node.db{border-color:#c090e0;background:var(--purple-lt);color:var(--purple);}
+.flow-node.ui{border-color:#d0a060;background:var(--amber-lt);color:var(--amber);}
+.flow-arr{font-size:18px;color:var(--border);padding:0 4px;}
+
+/* ── role matrix ── */
+.matrix{width:100%;border-collapse:collapse;font-size:12.5px;margin:16px 0;}
+.matrix th{background:var(--ink);color:#fff;padding:10px 12px;text-align:center;font-weight:700;}
+.matrix th:first-child{text-align:left;}
+.matrix td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:center;}
+.matrix td:first-child{text-align:left;font-weight:600;}
+.matrix tr:nth-child(even) td{background:#fafbf9;}
+.mx-y{color:var(--green);font-size:16px;}
+.mx-n{color:var(--border);font-size:16px;}
+.mx-p{color:var(--amber);font-size:11px;font-weight:700;}
+
+/* ── decision card ── */
+.dec-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.dec-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.dec-id{font-size:11px;font-weight:700;background:var(--ink);color:#fff;padding:2px 8px;border-radius:4px;}
+.dec-title{font-size:14px;font-weight:700;}
+.dec-body{font-size:12.5px;color:var(--gray);line-height:1.8;}
+.dec-body strong{color:var(--ink);}
+
+/* ── info box ── */
+.info{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:12.5px;}
+.info ul{padding-left:18px;margin-top:6px;line-height:1.9;}
+.info.teal{background:var(--teal-lt);border:1px solid var(--teal-md);color:var(--teal);}
+.info.amber{background:var(--amber-lt);border:1px solid #d0a060;color:var(--amber);}
+.info.blue{background:var(--blue-lt);border:1px solid #a0b8d8;color:var(--blue);}
+
+.divider{border:none;border-top:1px dashed var(--border);margin:28px 0;}
+.section-intro{margin-bottom:24px;}
+
+@media(max-width:768px){
+  .content{padding:20px 16px 40px;}
+  .tabs{padding:0 16px;}
+  header{padding:20px 16px 0;}
+  .card-grid{grid-template-columns:1fr;}
+  .flow{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SB-00 Project Handbook</h1>
+  <p>IoT Buoy Pilot · เอกสารสำหรับทีม · อัปเดต 6 เม.ย. 2026</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('overview')">🗺️ ภาพรวม</button>
+  <button class="tab" onclick="show('arch')">⚙️ สถาปัตยกรรม</button>
+  <button class="tab" onclick="show('tasks')">📋 งาน &amp; สถานะ</button>
+  <button class="tab" onclick="show('auth')">🔐 Auth &amp; Roles</button>
+  <button class="tab" onclick="show('decisions')">🔒 สิ่งที่ lock แล้ว</button>
+</div>
+
+<div class="content">
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div class="section active" id="sec-overview">
+  <div class="section-intro">
+    <h2>SB-00 คืออะไร</h2>
+    <p class="lead">ระบบ IoT สำหรับติดตามคุณภาพน้ำในบ่อ/ฟาร์ม ผ่านทุ่นที่วัด <strong>อุณหภูมิ, ความขุ่น, GPS, และแบตเตอรี่</strong> แล้วส่งข้อมูลผ่าน 4G ขึ้น cloud ให้เจ้าของฟาร์มดูบน dashboard และรับแจ้งเตือนผ่าน LINE</p>
+  </div>
+
+  <h3>ทีม</h3>
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-icon">👨‍💻</span>
+      <h3>พล</h3>
+      <ul>
+        <li>Firmware (ESP32-S3)</li>
+        <li>Backend (Node.js + Supabase)</li>
+        <li>Dashboard</li>
+        <li>MQTT / 4G connectivity</li>
+        <li>OTA update</li>
+        <li>Auth &amp; provisioning flow</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔧</span>
+      <h3>เอ</h3>
+      <ul>
+        <li>PCB design</li>
+        <li>Enclosure &amp; กล่องกันน้ำ</li>
+        <li>Battery module</li>
+        <li>Hardware assembly</li>
+        <li>Physical integration</li>
+        <li>Waterproofing &amp; field test</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <h3>Timeline</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot active">🚀</div>
+      <div class="tl-body">
+        <div class="tl-title">Phase 1 — Prototype &amp; Engineering Field Test</div>
+        <div class="tl-date">เม.ย. – มิ.ย. 2026 <span class="badge b-teal">กำลังทำอยู่</span></div>
+        <div class="tl-desc">ทำให้ทุกฟังก์ชันหลักทำงานได้ — firmware อ่าน sensor ได้, ส่ง MQTT ได้, dashboard แสดงข้อมูลได้, enclosure v1 กันน้ำได้, และ Engineering Field Test 7 วันผ่าน</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot pending">🔬</div>
+      <div class="tl-body">
+        <div class="tl-title">Phase 2 — PCB &amp; Pilot Hardware</div>
+        <div class="tl-date">มิ.ย. – ส.ค. 2026 <span class="badge b-gray">รอ Phase 1</span></div>
+        <div class="tl-desc">PCB v1 เสร็จ, enclosure ผลิตซ้ำได้, farm member system, OTA ปลอดภัย, backend hardened สำหรับ pilot</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot pending">🌾</div>
+      <div class="tl-body">
+        <div class="tl-title">Phase 3 — Pilot &amp; Commercial Readiness</div>
+        <div class="tl-date">ก.ย. – ต.ค. 2026 <span class="badge b-gray">รอ Phase 2</span></div>
+        <div class="tl-desc">30-day pilot กับลูกค้าจริง, reseller system, billing, launch readiness checklist ผ่านทุกข้อ</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <h3>สถานะปัจจุบัน (ต้นเม.ย. 2026)</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h3>✅ เสร็จแล้ว</h3>
+      <ul>
+        <li>Workspace &amp; env setup (EX-01)</li>
+        <li>Firmware skeleton — NVS, config, scheduler, watchdog</li>
+        <li>Sensor drivers — DS18B20, turbidity, GPS, battery</li>
+        <li>4G + MQTT over TLS</li>
+        <li>Supabase schema + RLS</li>
+        <li>Backend ingest path</li>
+        <li>Dashboard MVP</li>
+        <li>Alert system (threshold, offline, battery, fault)</li>
+        <li>Provisioning backend (QR + Web)</li>
+        <li>OTA service</li>
+        <li>UX flow docs ครบทุก screen</li>
+        <li>Auth &amp; role spec (D-07)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>⏳ งานที่รอ hardware</h3>
+      <ul>
+        <li>Bench soak test 48 ชั่วโมง (EX-12)</li>
+        <li>วัด current draw จริง (EX-13)</li>
+        <li>Enclosure prototype (EX-14) — เอ</li>
+        <li>Engineering Field Test 7 วัน (EX-15)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔴 P0 ต้องทำก่อน pilot</h3>
+      <ul>
+        <li>Login / Signup pages</li>
+        <li>Supabase Auth integration (แทน hardcoded user)</li>
+        <li>user_profiles table + trigger</li>
+        <li>Auth guard บนทุก route</li>
+        <li>Create farm page</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ ARCHITECTURE ══════════ -->
+<div class="section" id="sec-arch">
+  <div class="section-intro">
+    <h2>สถาปัตยกรรมระบบ</h2>
+    <p class="lead">ข้อมูลไหลจากทุ่นในน้ำ ผ่าน 4G ขึ้น cloud แล้วไปแสดงบน dashboard และส่ง alert ให้ผู้ใช้</p>
+  </div>
+
+  <h3>Data Flow</h3>
+  <div class="flow">
+    <div class="flow-node hw">📡 ทุ่น (Device)<div style="font-size:10px;font-weight:400;margin-top:2px;">ESP32-S3 + sensors</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-node hw">📶 4G / MQTT TLS<div style="font-size:10px;font-weight:400;margin-top:2px;">A7670E → HiveMQ</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-node sw">⚙️ Backend<div style="font-size:10px;font-weight:400;margin-top:2px;">Node.js ingest</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-node db">🗄️ Database<div style="font-size:10px;font-weight:400;margin-top:2px;">Supabase (Postgres)</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-node ui">📊 Dashboard<div style="font-size:10px;font-weight:400;margin-top:2px;">web browser</div></div>
+  </div>
+  <div style="margin-top:8px;font-size:12px;color:var(--gray);">+ Alert system ส่ง LINE / email เมื่อเกิด event สำคัญ</div>
+
+  <hr class="divider"/>
+  <h3>Hardware</h3>
+  <table class="tbl">
+    <tr><th>ส่วน</th><th>Prototype</th><th>Production</th><th>หมายเหตุ</th></tr>
+    <tr><td><strong>MCU</strong></td><td>ESP32-S3 (FS-HCore)</td><td>ESP32-S3 (PCB v1)</td><td>ESP-IDF v5.x</td></tr>
+    <tr><td><strong>4G Modem</strong></td><td>FS-HCore built-in</td><td>A7670E</td><td>SIM7670E เป็น fallback</td></tr>
+    <tr><td><strong>GPS</strong></td><td>L76K</td><td>L76K</td><td>NEO-M8N เป็น fallback</td></tr>
+    <tr><td><strong>Temp sensor</strong></td><td>DS18B20</td><td>DS18B20</td><td>waterproof probe</td></tr>
+    <tr><td><strong>Turbidity</strong></td><td>SEN0600 path</td><td>SEN0600 path</td><td>analog ADC</td></tr>
+    <tr><td><strong>Battery gauge</strong></td><td>MAX17048</td><td>MAX17048</td><td>I2C fuel gauge</td></tr>
+    <tr><td><strong>Enclosure</strong></td><td>3D print v1</td><td>150×100×60 mm</td><td>IP67 target</td></tr>
+  </table>
+
+  <hr class="divider"/>
+  <h3>Software Stack</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h3>📟 Firmware</h3>
+      <ul>
+        <li>ESP-IDF v5.x (C)</li>
+        <li>NVS config store</li>
+        <li>Scheduler + watchdog</li>
+        <li>Sensor drivers</li>
+        <li>MQTT over TLS</li>
+        <li>OTA update (signed)</li>
+        <li>Offline buffer + retry</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>⚙️ Backend</h3>
+      <ul>
+        <li>Node.js (plain HTTP)</li>
+        <li>Supabase (Postgres + RLS)</li>
+        <li>MQTT ingest path</li>
+        <li>Alert evaluation</li>
+        <li>Provisioning service</li>
+        <li>OTA manifest service</li>
+        <li>Admin command API</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📊 Dashboard</h3>
+      <ul>
+        <li>Node.js server-rendered HTML</li>
+        <li>Ops Overview (/ops)</li>
+        <li>Device list + detail view</li>
+        <li>Map (OpenStreetMap)</li>
+        <li>Temperature chart (SVG)</li>
+        <li>Alert management</li>
+        <li>Device command panel</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔔 Notifications</h3>
+      <ul>
+        <li>LINE free tier (pilot)</li>
+        <li>Email (stub → wire ก่อน launch)</li>
+        <li>Web in-app badge</li>
+        <li>Rate limit กัน spam</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <h3>Battery Platform — 2 Variants บน core เดียวกัน</h3>
+  <table class="tbl">
+    <tr><th>ประเด็น</th><th>Standard</th><th>Long-Life</th></tr>
+    <tr><td><strong>บทบาท</strong></td><td>รุ่นหลัก / pilot baseline</td><td>optional upgrade</td></tr>
+    <tr><td><strong>Runtime target</strong></td><td>≥ 12 วัน @ 5 นาที</td><td>≥ 30 วัน @ 5 นาที</td></tr>
+    <tr><td><strong>ราคาเป้าหมาย</strong></td><td>4,500–6,000 บาท</td><td>6,500–9,000+ บาท</td></tr>
+    <tr><td><strong>เปลี่ยนเองได้ไหม</strong></td><td>—</td><td>❌ งานช่างเท่านั้น</td></tr>
+    <tr><td><strong>Firmware</strong></td><td colspan="2">codebase เดียวกัน แยกแค่ battery_profile</td></tr>
+    <tr><td><strong>Backend schema</strong></td><td colspan="2">battery_variant field เดียวกัน</td></tr>
+    <tr><td><strong>Provisioning</strong></td><td colspan="2">QR + Web/PWA เหมือนกันทุกรุ่น</td></tr>
+  </table>
+</div>
+
+
+<!-- ══════════ TASKS ══════════ -->
+<div class="section" id="sec-tasks">
+  <div class="section-intro">
+    <h2>งานและสถานะปัจจุบัน</h2>
+    <p class="lead">ทุก task มี owner, dependency, และ definition of done ชัดเจน — สีเขียว = เสร็จแล้ว, สีเหลือง = กำลังทำ, สีเทา = รอ</p>
+  </div>
+
+  <div class="task-group">
+    <div class="task-group-title">✅ P0 — เสร็จแล้ว</div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-01</div>
+        <div class="task-name">Workspace &amp; environment setup</div>
+        <div class="task-owner">👤 พล — firmware/, backend/, dashboard/, shared/, ops/ พร้อมใช้ + RUNBOOK.md</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-03</div>
+        <div class="task-name">Firmware skeleton</div>
+        <div class="task-owner">👤 พล — boot ได้, NVS, config, scheduler, watchdog, logging ครบ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-04</div>
+        <div class="task-name">Sensor drivers</div>
+        <div class="task-owner">👤 พล — DS18B20, turbidity, MAX17048, L76K อ่านค่าได้ครบ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-05</div>
+        <div class="task-name">4G + MQTT over TLS</div>
+        <div class="task-owner">👤 พล — QoS1 publish ได้, reconnect ได้, offline buffer เริ่มทำงาน</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-06</div>
+        <div class="task-name">Supabase schema + migrations + RLS</div>
+        <div class="task-owner">👤 พล — farms, devices, telemetry, alerts, command_log ครบ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-07</div>
+        <div class="task-name">Ingest path: MQTT → backend → DB</div>
+        <div class="task-owner">👤 พล — auth, topic-parser, validator, repository, service ครบ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-09</div>
+        <div class="task-name">Dashboard MVP</div>
+        <div class="task-owner">👤 พล — Ops overview, device list, detail, map, chart, alert management, commands</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-10</div>
+        <div class="task-name">Alert system MVP</div>
+        <div class="task-owner">👤 พล — threshold, offline, low battery, sensor fault + dedup + LINE stub</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-done">✓</div>
+      <div class="task-body">
+        <div class="task-id">EX-11</div>
+        <div class="task-name">Provisioning flow (QR + Web)</div>
+        <div class="task-owner">👤 พล — QR parser, bind service, all error states</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-group">
+    <div class="task-group-title">🔴 P0 ต้องทำก่อน pilot ใช้งานได้</div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">AUTH-01</div>
+        <div class="task-name">Supabase Auth integration — แทน hardcoded actor_user_id</div>
+        <div class="task-owner">👤 พล — ทุก route ต้องตรวจ JWT จริง</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">AUTH-02</div>
+        <div class="task-name">Login / Signup pages + auth guard</div>
+        <div class="task-owner">👤 พล — /login, /signup, redirect ถ้าไม่มี session</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">AUTH-03</div>
+        <div class="task-name">user_profiles table + sign-up trigger</div>
+        <div class="task-owner">👤 พล — สร้าง row อัตโนมัติเมื่อ user ใหม่ sign up</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">AUTH-04</div>
+        <div class="task-name">Create farm page (/farms/new)</div>
+        <div class="task-owner">👤 พล — first-time user ต้องสร้าง farm ก่อนเข้า dashboard</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-group">
+    <div class="task-group-title">⏳ รอ hardware</div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-02</div>
+        <div class="task-name">สั่งซื้อ Phase 1 hardware</div>
+        <div class="task-owner">👤 พล + เอ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-08</div>
+        <div class="task-name">Enclosure CAD v1 (150×100×60 mm)</div>
+        <div class="task-owner">👤 เอ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-12</div>
+        <div class="task-name">Bench soak test 48 ชั่วโมง</div>
+        <div class="task-owner">👤 พล + เอ — ต้องรอ EX-04, EX-05, EX-07</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-13</div>
+        <div class="task-name">วัด current draw จริง + ประเมิน runtime</div>
+        <div class="task-owner">👤 พล + เอ — target ≥ 12 วัน @ 5 นาที</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-14</div>
+        <div class="task-name">Assemble enclosure prototype v1</div>
+        <div class="task-owner">👤 เอ</div>
+      </div>
+    </div>
+
+    <div class="task-item">
+      <div class="task-status ts-pending">○</div>
+      <div class="task-body">
+        <div class="task-id">EX-15</div>
+        <div class="task-name">Engineering Field Test 7 วัน</div>
+        <div class="task-owner">👤 พล + เอ — ต้องรอ EX-09 EX-10 EX-11 EX-13 EX-14 ทุกอัน</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="task-group">
+    <div class="task-group-title">📅 Phase 2 — PCB &amp; Pilot Prep (มิ.ย.–ส.ค.)</div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-16–17</div><div class="task-name">PCB v1 schematic + layout + Gerber</div><div class="task-owner">👤 เอ</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-19</div><div class="task-name">Secure OTA + signed firmware + rollback</div><div class="task-owner">👤 พล</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-22</div><div class="task-name">Harden backend สำหรับ pilot</div><div class="task-owner">👤 พล — monitoring, backup, retry, export</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-23</div><div class="task-name">Assemble pilot units + onboarding end-to-end</div><div class="task-owner">👤 พล + เอ — 3–5 devices ผ่าน QC</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">AUTH-P2</div><div class="task-name">Farm member system + permission UI</div><div class="task-owner">👤 พล — invite member, กำหนดสิทธิ์ต่อคน</div></div></div>
+  </div>
+
+  <div class="task-group">
+    <div class="task-group-title">📅 Phase 3 — Pilot &amp; Launch (ก.ย.–ต.ค.)</div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-24</div><div class="task-name">User guide + install guide + QR onboarding guide</div><div class="task-owner">👤 พล</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">EX-25–26</div><div class="task-name">Pilot Readiness Review → 30-day Pilot</div><div class="task-owner">👤 พล + เอ</div></div></div>
+    <div class="task-item"><div class="task-status ts-pending">○</div><div class="task-body"><div class="task-id">AUTH-P3</div><div class="task-name">Reseller system + reseller portal</div><div class="task-owner">👤 พล</div></div></div>
+  </div>
+</div>
+
+
+<!-- ══════════ AUTH ══════════ -->
+<div class="section" id="sec-auth">
+  <div class="section-intro">
+    <h2>Auth &amp; Role System</h2>
+    <p class="lead">ทุกคนใช้ Supabase Auth ชุดเดียวกัน ต่างกันที่ "type" ของ user และ "สิทธิ์" ในแต่ละ farm — ออกแบบมาสำหรับ production ตั้งแต่ต้น แต่ rollout ทีละ phase</p>
+  </div>
+
+  <h3>User Types</h3>
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-icon">🛡️</span>
+      <h3>Super Admin</h3>
+      <span class="badge b-red">Phase 1</span>
+      <ul style="margin-top:8px;">
+        <li>Pon + ทีมงาน (2–3 คน)</li>
+        <li>เห็นและทำได้ทุกอย่างในระบบ</li>
+        <li>bypass RLS ผ่าน service key</li>
+        <li>assign โดย Pon ใน Supabase dashboard</li>
+        <li>ไม่มี UI จัดการ — manual เท่านั้น</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌾</span>
+      <h3>Customer (Farm Owner)</h3>
+      <span class="badge b-teal">Phase 1</span>
+      <ul style="margin-top:8px;">
+        <li>เจ้าของ farm ของตัวเอง</li>
+        <li>เห็นเฉพาะ device ใน farm ตัวเอง</li>
+        <li>จัดการ alert, ส่ง command ได้ทุกอย่าง</li>
+        <li>invite ลูกน้องเข้า farm ได้ (Phase 2)</li>
+        <li>RLS กั้น — ห้ามเห็น farm คนอื่น</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-icon">👥</span>
+      <h3>Farm Member</h3>
+      <span class="badge b-amber">Phase 2</span>
+      <ul style="margin-top:8px;">
+        <li>ถูก invite เข้า farm โดย owner</li>
+        <li>สิทธิ์กำหนดโดย owner ต่อคน</li>
+        <li>ดู / รับ alert / จัดการ alert / ส่ง command</li>
+        <li>ทำได้แค่สิ่งที่ owner อนุญาต</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-icon">🤝</span>
+      <h3>Reseller</h3>
+      <span class="badge b-purple">Phase 3</span>
+      <ul style="margin-top:8px;">
+        <li>ดูแล farm ของลูกค้าในมือตัวเอง</li>
+        <li>เห็นได้เฉพาะ farm ที่ถูก assign ไว้</li>
+        <li>read-only + support เท่านั้น</li>
+        <li>assign โดย super admin</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <h3>Permission Matrix</h3>
+  <table class="matrix">
+    <tr>
+      <th>Action</th>
+      <th>Super Admin</th>
+      <th>Customer (Owner)</th>
+      <th>Farm Member</th>
+      <th>Reseller</th>
+    </tr>
+    <tr><td>เห็นทุก farm</td><td><span class="mx-y">✓</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>เห็น farm ตัวเอง / ที่ assign</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-p">can_view</span></td><td><span class="mx-y">✓</span></td></tr>
+    <tr><td>ดู device data / telemetry</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-p">can_view</span></td><td><span class="mx-y">✓ read</span></td></tr>
+    <tr><td>รับ alert notification</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-p">can_receive</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>จัดการ alert (ack/resolve)</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-p">can_manage</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>ส่ง command / OTA</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-p">can_command</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>จัดการ farm (edit/delete)</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>Invite farm member</td><td><span class="mx-y">✓</span></td><td><span class="mx-y">✓</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td></tr>
+    <tr><td>Assign reseller to farm</td><td><span class="mx-y">✓</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td><td><span class="mx-n">—</span></td></tr>
+  </table>
+  <p style="font-size:11px;color:var(--gray);margin-top:-8px;">* สี amber = ขึ้นอยู่กับ permission flag ที่ owner ตั้งต่อคน</p>
+
+  <hr class="divider"/>
+  <h3>Rollout Plan</h3>
+  <table class="tbl">
+    <tr><th>Phase</th><th>Implement</th><th>Defer</th></tr>
+    <tr>
+      <td><span class="badge b-teal">Phase 1 (Pilot)</span></td>
+      <td>user_profiles table + trigger, is_super_admin() helper, RLS สำหรับ super_admin + owner, Login/Signup pages, auth guard</td>
+      <td>farm_members, reseller_farms, permission UI</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-amber">Phase 2 (Pre-launch)</span></td>
+      <td>farm_members table, invite member UI, per-member permission editor</td>
+      <td>reseller_farms, reseller portal</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-purple">Phase 3 (Commercial)</span></td>
+      <td>reseller_farms table, reseller portal, assign reseller UI</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <div class="info teal">
+    <strong>ทำไมออกแบบ production-grade ตั้งแต่ต้น?</strong>
+    <ul>
+      <li>ถ้าออกแบบ auth ผิดตอน pilot แล้วต้อง refactor ก่อน commercial launch จะเสียเวลามากกว่า</li>
+      <li>Schema ที่รองรับ farm_members และ reseller ไว้แต่ยังไม่ implement ไม่ได้ทำให้ pilot ช้าลง</li>
+      <li>Rollout ทีละ phase ทำให้ pilot เริ่มได้เร็ว และขยายได้โดยไม่ต้องแก้ core structure</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════ DECISIONS ══════════ -->
+<div class="section" id="sec-decisions">
+  <div class="section-intro">
+    <h2>สิ่งที่ตัดสินใจแล้ว (Lock แล้ว)</h2>
+    <p class="lead">7 decisions นี้ปิดแล้ว — ห้ามเปลี่ยนโดยไม่อัปเดต Decision Register ก่อน ทุกคนในทีมต้องรู้และ follow</p>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-01</span><span class="dec-title">ขนาด Enclosure</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> ใช้ <strong>150 × 100 × 60 mm</strong> เป็น Standard baseline สำหรับ PCB v1 และ pilot batch<br/>
+      <strong>เหตุผล:</strong> ล็อก mechanical baseline ไว้ก่อน ไม่ให้ PCB, antenna, และ waterproofing ล่อยลอย — ปรับ optimize หลัง pilot<br/>
+      <strong>ข้อห้าม:</strong> Long-Life ขยายได้แค่ battery bay ห้ามย้าย core board mount
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-02</span><span class="dec-title">GPS Fallback</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> ใช้ <strong>L76K</strong> เป็น default — สลับไป NEO-M8N เมื่อ TTFF &gt; 60 วินาที หรือ error &gt; 15m บ่อยเกินไป<br/>
+      <strong>เหตุผล:</strong> ประหยัดต้นทุนและพลังงาน รอให้ field data บอกก่อนว่าต้องอัปเกรดจริงไหม
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-03</span><span class="dec-title">Provisioning Flow</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> <strong>QR + Web/PWA เท่านั้น</strong> — ห้ามทำ BLE provisioning หรือ native app สำหรับลูกค้า<br/>
+      <strong>เหตุผล:</strong> flow เดียวทำให้ support, docs, และ firmware เรียบง่าย ทำงานได้ทุก mobile browser
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-04</span><span class="dec-title">4G Modem</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> ใช้ <strong>A7670E</strong> เป็น default — SIM7670E เป็น fallback เฉพาะเมื่อ A7670E ขาดตลาดหรือแพงเกิน 20%<br/>
+      <strong>เหตุผล:</strong> รักษา flexibility ในการ source โดยไม่ปล่อยให้เปลี่ยน modem ตอนใกล้ launch โดยไม่ validate ก่อน
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-05</span><span class="dec-title">LINE Notification Plan</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> ใช้ <strong>LINE free tier</strong> ตลอด pilot — review เมื่อ forecast &gt; 200 ข้อความ/เดือน หรือก่อน commercial launch<br/>
+      <strong>เหตุผล:</strong> ไม่จ่าย recurring cost ก่อนที่จะรู้ว่า pilot ส่ง notification มากแค่ไหน
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-06</span><span class="dec-title">Battery Platform</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> <strong>core module เดียว + 2 battery variants</strong> (Standard และ Long-Life) — firmware/backend/provisioning ใช้ร่วมกัน<br/>
+      <strong>เหตุผล:</strong> ไม่แยก product line ทำให้ maintain ง่ายกว่า และ Long-Life เป็น optional upgrade ที่ไม่ทำให้ระบบหลักพัง<br/>
+      <strong>ข้อห้าม:</strong> Long-Life เป็น service-upgradeable เท่านั้น ลูกค้าเปิดกล่องเองไม่ได้
+    </div>
+  </div>
+
+  <div class="dec-card">
+    <div class="dec-header"><span class="dec-id">D-07</span><span class="dec-title">Auth &amp; Role Model</span><span class="badge b-green">Closed</span></div>
+    <div class="dec-body">
+      <strong>ตัดสินใจ:</strong> <strong>4 user types</strong> (super_admin, reseller, customer, farm member) บน Supabase Auth ชุดเดียว — granular permission ต่อ farm member<br/>
+      <strong>เหตุผล:</strong> ออกแบบ production-grade ตั้งแต่ต้นเพื่อไม่ต้อง refactor ก่อน launch — rollout ทีละ phase ทำให้ pilot ไม่ช้า<br/>
+      <strong>Schema ใหม่:</strong> user_profiles, farm_members (Phase 2), reseller_farms (Phase 3)
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <h3>Non-Negotiables — ห้ามเปลี่ยนโดยไม่ได้คุยกันก่อน</h3>
+  <div class="info amber">
+    <ul>
+      <li>ลูกค้าทุกคนใช้ <strong>QR + Web/PWA</strong> เท่านั้น — ห้ามทำ BLE หรือ native app</li>
+      <li>ห้ามแยก firmware เป็นคนละ codebase ตาม battery variant</li>
+      <li>Long-Life เป็น <strong>service-upgradeable</strong> เท่านั้น — ลูกค้าเปิดกล่องเองไม่ได้</li>
+      <li>Standard ยังเป็น baseline หลักของ pilot ห้าม commit Long-Life ก่อนที่ enclosure และ battery pack นิ่ง</li>
+      <li>Operator ต้องสามารถดูและจัดการ device ของลูกค้าได้ทุก farm — ต้องมี super_admin access ก่อน pilot</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+function show(name){
+  document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -43,6 +43,8 @@ It does not cover:
 - Visual design system, colors, or typography
 - Mobile app (not in baseline)
 
+For frontend production architecture, i18n, route groups, and component migration direction, see `SB-00_Frontend_App_Plan_v1_0.md`.
+
 ## Source Of Truth Rules
 
 - This file is authoritative for screen inventory, user flows, and UX state requirements.
@@ -60,6 +62,8 @@ It does not cover:
 - [EX-11_PROVISIONING_SPEC_v1_0.md](./EX-11_PROVISIONING_SPEC_v1_0.md)
 - [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md)
 - [EX-06_SCHEMA_SPEC_v1_0.md](./EX-06_SCHEMA_SPEC_v1_0.md)
+- [SB-00_Frontend_App_Plan_v1_0.md](./SB-00_Frontend_App_Plan_v1_0.md)
+- [SB-00_Fullstack_Production_Plan_v1_0.md](./SB-00_Fullstack_Production_Plan_v1_0.md)
 
 ---
 
@@ -77,6 +81,14 @@ It does not cover:
 | SCR-06 | Device Detail Panel | `/devices/:id` | exists in code | operator |
 | SCR-07 | Provisioning | `/provision` | exists in code | customer / operator |
 | SCR-08 | Farm Settings | `/farms/:id` | needs build | farm owner |
+
+Production frontend target:
+
+- migrate current MVP into Next.js
+- support mobile-first customer monitoring
+- support desktop dashboard use
+- support Thai, English, and Myanmar
+- support `admin/operator`, `customer/farm_owner`, `reseller`, and `farm_member` from the start
 
 ---
 
