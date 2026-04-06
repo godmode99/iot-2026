@@ -94,7 +94,11 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                 <button className="button" type="submit">{t(messages, "farmSettings.createInvite")}</button>
               </form>
               {typeof query?.invite_token === "string" && query.invite_token ? (
-                <p className="notice invite-token">{query.invite_token}</p>
+                <p className="notice invite-token">
+                  <span>{query.invite_token}</span>
+                  <br />
+                  <Link href={`/invites/accept?token=${encodeURIComponent(query.invite_token)}`}>{t(messages, "inviteAccept.acceptLink")}</Link>
+                </p>
               ) : null}
             </div>
           </section>
@@ -165,4 +169,3 @@ export default async function FarmSettingsPage({ params, searchParams }) {
     </main>
   );
 }
-

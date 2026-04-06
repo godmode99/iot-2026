@@ -97,6 +97,14 @@
     "alertLine": "Fallback LINE recipient",
     "createAction": "Create farm"
   },
+  "inviteAccept": {
+    "eyebrow": "Farm invite",
+    "title": "Join a farm",
+    "body": "Accept the invite with the same email address the farm owner invited.",
+    "token": "Invite token",
+    "acceptAction": "Accept invite",
+    "acceptLink": "Open accept invite link"
+  },
   "deviceDetail": {
     "eyebrow": "Device detail",
     "body": "Monitor latest telemetry, alerts, battery state, and permitted actions for this device.",

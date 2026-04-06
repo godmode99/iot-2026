@@ -97,6 +97,14 @@
     "alertLine": "LINE recipient สำรอง",
     "createAction": "สร้างฟาร์ม"
   },
+  "inviteAccept": {
+    "eyebrow": "คำเชิญเข้าฟาร์ม",
+    "title": "เข้าร่วมฟาร์ม",
+    "body": "รับคำเชิญด้วยอีเมลเดียวกับที่เจ้าของฟาร์มเชิญ",
+    "token": "Invite token",
+    "acceptAction": "รับคำเชิญ",
+    "acceptLink": "เปิดลิงก์รับคำเชิญ"
+  },
   "deviceDetail": {
     "eyebrow": "รายละเอียดอุปกรณ์",
     "body": "ติดตาม telemetry, alert, battery และ action ที่มีสิทธิ์สำหรับอุปกรณ์นี้",

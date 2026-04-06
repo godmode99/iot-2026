@@ -21,6 +21,18 @@ export async function createFarmMemberInvite({ farmId, actorUserId, email, permi
   });
 }
 
+export async function acceptFarmMemberInvite({ actorUserId, inviteToken, acceptedEmail }) {
+  return fetchBackendJson("/api/admin/farm-invites/accept", {
+    method: "POST",
+    headers: jsonHeaders(actorUserId),
+    body: JSON.stringify({
+      invite_token: inviteToken,
+      accepted_by: actorUserId,
+      accepted_email: acceptedEmail
+    })
+  });
+}
+
 export async function listResellerAssignments({ farmId, actorUserId }) {
   return fetchBackendJson(`/api/admin/farms/${encodeURIComponent(farmId)}/resellers`, {
     headers: buildTrustedActorHeaders(actorUserId)
@@ -68,4 +80,3 @@ export async function listAuditLog({ farmId, actorUserId }) {
     headers: buildTrustedActorHeaders(actorUserId)
   });
 }
-
