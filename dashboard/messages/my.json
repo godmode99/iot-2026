@@ -103,7 +103,8 @@
     "body": "Accept the invite with the same email address the farm owner invited.",
     "token": "Invite token",
     "acceptAction": "Accept invite",
-    "acceptLink": "Open accept invite link"
+    "acceptLink": "Open accept invite link",
+    "created": "Invite created. Copy this link now; it is shown only briefly."
   },
   "deviceDetail": {
     "eyebrow": "Device detail",

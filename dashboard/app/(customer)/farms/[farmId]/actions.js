@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { withParams } from "@/lib/auth/urls.js";
 import { getCurrentUser } from "@/lib/auth/guards.js";
@@ -33,6 +34,10 @@ function checkboxValue(formData, name) {
   return formData.get(name) === "on";
 }
 
+function inviteCookieName(farmId) {
+  return `sb_invite_token_${farmId}`;
+}
+
 export async function createMemberInvite(formData) {
   const farmId = String(formData.get("farm_id") ?? "");
   const user = await requireFarmManager(farmId);
@@ -53,9 +58,17 @@ export async function createMemberInvite(formData) {
     redirect(withParams(`/farms/${farmId}`, { error: result.code ?? "invite_failed" }));
   }
 
+  const cookieStore = await cookies();
+  cookieStore.set(inviteCookieName(farmId), result.result?.inviteToken ?? "", {
+    httpOnly: true,
+    maxAge: 10 * 60,
+    path: `/farms/${farmId}`,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production"
+  });
+
   redirect(withParams(`/farms/${farmId}`, {
-    invite: "created",
-    invite_token: result.result?.inviteToken ?? ""
+    invite: "created"
   }));
 }
 
@@ -98,4 +111,3 @@ export async function updateOwnNotificationPreference(formData) {
 
   redirect(withParams(`/farms/${farmId}`, { notification: "updated" }));
 }
-

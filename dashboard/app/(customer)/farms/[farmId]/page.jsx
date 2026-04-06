@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadFarmSettings } from "@/lib/data/farm-settings.js";
@@ -18,10 +19,20 @@ function PermissionPills({ item }) {
   return permissions.length ? permissions.map((permission) => <span className="pill" key={permission}>{permission}</span>) : <span className="muted">view only</span>;
 }
 
+function inviteCookieName(farmId) {
+  return `sb_invite_token_${farmId}`;
+}
+
+function inviteAcceptPath(inviteToken) {
+  return `/invites/accept?token=${encodeURIComponent(inviteToken)}`;
+}
+
 export default async function FarmSettingsPage({ params, searchParams }) {
   const messages = await getMessages();
   const { farmId } = await params;
   const query = await searchParams;
+  const cookieStore = await cookies();
+  const inviteToken = cookieStore.get(inviteCookieName(farmId))?.value ?? "";
   const { authConfigured, user } = await requireUser({ returnUrl: `/farms/${farmId}` });
   const settings = user ? await loadFarmSettings({ farmId, actorUserId: user.id }) : null;
   const feedback = ["invite", "reseller", "notification", "error"]
@@ -93,11 +104,13 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                 <label className="check-row"><input type="checkbox" name="can_send_commands" /> {t(messages, "farmSettings.sendCommands")}</label>
                 <button className="button" type="submit">{t(messages, "farmSettings.createInvite")}</button>
               </form>
-              {typeof query?.invite_token === "string" && query.invite_token ? (
+              {inviteToken ? (
                 <p className="notice invite-token">
-                  <span>{query.invite_token}</span>
+                  <strong>{t(messages, "inviteAccept.created")}</strong>
                   <br />
-                  <Link href={`/invites/accept?token=${encodeURIComponent(query.invite_token)}`}>{t(messages, "inviteAccept.acceptLink")}</Link>
+                  <span>{inviteAcceptPath(inviteToken)}</span>
+                  <br />
+                  <Link href={inviteAcceptPath(inviteToken)}>{t(messages, "inviteAccept.acceptLink")}</Link>
                 </p>
               ) : null}
             </div>
