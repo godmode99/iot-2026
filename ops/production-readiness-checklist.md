@@ -6,11 +6,15 @@ This checklist tracks the gap between the current pre-production stack and a rea
 
 ## Software
 
+- [ ] Dashboard Vercel project uses `dashboard/` as the project root.
+- [ ] `pnpm deploy:check -- --env .env.production.local --target production` passes.
 - [ ] `INGEST_SHARED_TOKEN` is set outside local development.
 - [ ] `ADMIN_API_TOKEN` is set outside local development.
 - [ ] `ADMIN_ALLOW_INSECURE_DEV=false` outside local development.
 - [ ] `PROVISIONING_ALLOW_INSECURE_DEV=false` outside local development.
 - [ ] `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false` outside local debugging.
+- [ ] Supabase Auth redirect URLs include `/auth/callback` and `/reset-password`.
+- [ ] Supabase Auth custom SMTP is configured before customer-facing email flows.
 - [ ] Alert notification contacts are set per farm.
 - [ ] `notification_log` is reviewed during alert tests.
 - [ ] OTA manifest entries use real artifact URLs and checksums.

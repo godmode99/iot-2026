@@ -50,6 +50,7 @@ Backend production notes:
 - Reseller support access must come from `public.reseller_farms`; do not infer it from email/domain alone
 - OTA manifest is served from `OTA_RELEASES_PATH` and should be backed by real artifact URLs plus checksums
 - Auth/RBAC API details live in `ops/auth-rbac-api.md`
+- Deployment readiness details live in `ops/deployment-readiness.md`
 - Run backend tests with `pnpm test:backend`
 
 ## Dashboard
@@ -72,6 +73,7 @@ Dashboard notes:
 - Legacy MVP server code is preserved at `dashboard/src/legacy-server.mjs` while routes migrate into Next.js.
 - Public browser auth config must use `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Do not expose `SUPABASE_SERVICE_ROLE_KEY` or service-role behavior to browser code.
+- Before preview or production deploys, run `pnpm deploy:check -- --env .env.production.local --target production`.
 
 ## Run Both Web Apps
 
