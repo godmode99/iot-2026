@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SB-00 UX User Flow v1</title>
+  <style>
+    :root {
+      --teal:    #1a6b5a;
+      --teal-lt: #e6f4f0;
+      --teal-md: #2e9e80;
+      --blue:    #1a4a7a;
+      --blue-lt: #e6eef8;
+      --amber:   #8a5200;
+      --amber-lt:#fff4e0;
+      --red:     #b02020;
+      --red-lt:  #fdeaea;
+      --purple:  #5a2e8a;
+      --purple-lt:#f0eafc;
+      --gray:    #5a6170;
+      --gray-lt: #f4f5f7;
+      --border:  #d0d5dd;
+      --ink:     #1a1f2e;
+      --white:   #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Noto Sans Thai", sans-serif;
+      background: #f0f2f5;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 24px 40px 0;
+    }
+    header h1 { font-size: 22px; font-weight: 700; padding-bottom: 4px; }
+    header p  { font-size: 13px; opacity: .75; padding-bottom: 16px; }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 40px;
+      background: var(--teal);
+    }
+    .tab {
+      padding: 10px 20px;
+      border-radius: 8px 8px 0 0;
+      background: rgba(255,255,255,.18);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      border: none;
+      outline: none;
+    }
+    .tab.active { background: #f0f2f5; color: var(--teal); }
+    .tab:not(.active):hover { background: rgba(255,255,255,.28); }
+
+    .content { padding: 32px 40px 60px; }
+    .flow-section { display: none; }
+    .flow-section.active { display: block; }
+
+    .section-intro { margin-bottom: 28px; }
+    .section-intro h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .section-intro p  { color: var(--gray); font-size: 13px; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .badge-admin  { background: var(--blue-lt);   color: var(--blue); }
+    .badge-mobile { background: var(--teal-lt);   color: var(--teal); }
+    .badge-system { background: var(--amber-lt);  color: var(--amber); }
+    .badge-purple { background: var(--purple-lt); color: var(--purple); }
+
+    .flow-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 14px;
+    }
+    .flow-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 28px 0;
+    }
+
+    /* ── Site map diagram ── */
+    .sitemap {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .sm-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-height: 60px;
+    }
+    .sm-lane { display: flex; align-items: center; gap: 0; }
+    .sm-node {
+      border-radius: 10px;
+      padding: 10px 16px;
+      min-width: 140px;
+      text-align: center;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+    }
+    .sm-page    { background: white; border-color: var(--border); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .sm-entry   { background: var(--teal); color: white; border-color: var(--teal); border-radius: 30px; min-width: 100px; }
+    .sm-sub     { background: var(--teal-lt); border-color: var(--teal-md); color: var(--teal); min-width: 120px; }
+    .sm-action  { background: var(--purple-lt); border-color: #a070d0; color: var(--purple); min-width: 110px; font-size:11.5px; }
+    .sm-icon    { display: block; font-size: 16px; margin-bottom: 3px; }
+    .sm-sub-text { font-size: 10.5px; font-weight: 400; color: var(--gray); margin-top: 2px; }
+    .arr { display:flex; align-items:center; flex-shrink:0; }
+    .arr-h { width:28px; height:2px; background:var(--border); position:relative; margin: 0 2px; }
+    .arr-h::after { content:""; position:absolute; right:-6px; top:-4px; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid var(--border); }
+    .arr-h-long { width:48px; }
+    .arr-branch {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 16px;
+      border-left: 2px dashed var(--border);
+      margin-left: 8px;
+    }
+    .arr-branch-item { display:flex; align-items:center; gap: 4px; }
+    .arr-branch-label { font-size: 10px; color: var(--gray); white-space: nowrap; min-width: 80px; text-align: right; }
+
+    /* ── Screen cards ── */
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .sc {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .sc h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .sc-url {
+      display: inline-block;
+      background: var(--gray-lt);
+      color: var(--gray);
+      font-family: monospace;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .sc ul { list-style: none; padding: 0; }
+    .sc ul li {
+      font-size: 12px;
+      color: var(--gray);
+      padding: 3px 0 3px 14px;
+      position: relative;
+    }
+    .sc ul li::before { content:"·"; position:absolute; left:4px; color:var(--teal-md); font-weight:900; }
+    .sc-tags { margin-top: 10px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      margin: 2px 2px 0 0;
+    }
+    .tag-green  { background:var(--teal-lt);   color:var(--teal); }
+    .tag-amber  { background:var(--amber-lt);  color:var(--amber); }
+    .tag-red    { background:var(--red-lt);    color:var(--red); }
+    .tag-gray   { background:var(--gray-lt);   color:var(--gray); }
+    .tag-purple { background:var(--purple-lt); color:var(--purple); }
+
+    /* ── Info box ── */
+    .info-box {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 20px;
+      font-size: 12.5px;
+    }
+    .info-box ul { padding-left: 18px; margin-top: 6px; line-height: 1.9; }
+    .info-box.blue  { background: var(--blue-lt);   border: 1px solid #a0b8d8; color: var(--blue); }
+    .info-box.amber { background: var(--amber-lt);  border: 1px solid #d0a060; color: var(--amber); }
+
+    @media (max-width: 768px) {
+      .content { padding: 20px 16px 40px; }
+      .tabs { padding: 0 16px; }
+      header { padding: 20px 16px 0; }
+      .screen-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SB-00 UX User Flow v1</h1>
+  <p>IoT Buoy Pilot · Dashboard · Provisioning · Alert &amp; Notification</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+  <button class="tab" onclick="showTab('provisioning')">📱 Provisioning</button>
+  <button class="tab" onclick="showTab('alert')">🔔 Alert &amp; Notification</button>
+  <button class="tab" onclick="showTab('auth')">🔐 Login / Auth</button>
+  <button class="tab" onclick="showTab('firsttime')">🌱 First-time User</button>
+  <button class="tab" onclick="showTab('farm')">🏡 Farm Management</button>
+  <button class="tab" onclick="showTab('ota')">⬆️ OTA Update</button>
+</div>
+
+<div class="content">
+
+  <!-- ══════════════════ DASHBOARD ══════════════════ -->
+  <div class="flow-section active" id="tab-dashboard">
+
+    <div class="section-intro">
+      <h2>Dashboard User Flow</h2>
+      <span class="badge badge-admin">Admin / Operator</span>
+      <span class="badge badge-admin">Desktop-first</span>
+      <p style="margin-top:8px;">ทีมงานภายใน ดูแลระบบ fleet ของทุ่น เข้าใช้บน desktop เน้นเห็นสถานะครบ อ่านข้อมูลเร็ว และสั่ง command ได้จากที่เดียว</p>
+    </div>
+
+    <p class="flow-title">▶ Site Structure &amp; Navigation</p>
+    <div class="sitemap">
+
+      <!-- Row 1: Entry points -->
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">เข้าระบบ<br/><small>Login</small></div>
+          <div class="arr"><div class="arr-h arr-h-long"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🛰️</span>
+            Ops Overview
+            <div class="sm-sub-text">/ops — entry point หลัก</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: From Ops -->
+      <div class="sm-row" style="margin-left: 190px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Dashboard →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-page">
+              <span class="sm-icon">📊</span>
+              Main Dashboard
+              <div class="sm-sub-text">/devices — list + detail</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Provisioning →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-page">
+              <span class="sm-icon">📱</span>
+              Provisioning
+              <div class="sm-sub-text">/provision</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: From Dashboard -->
+      <div class="sm-row" style="margin-left: 410px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">เลือก device →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-sub">
+              <span class="sm-icon">📟</span>
+              Device Detail Panel
+              <div class="sm-sub-text">/devices/:id (split view)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: From Device Detail -->
+      <div class="sm-row" style="margin-left: 630px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <div class="sm-node sm-action">📈 Chart<div class="sm-sub-text">24h history</div></div>
+          </div>
+          <div class="arr-branch-item">
+            <div class="sm-node sm-action">🗺️ Map<div class="sm-sub-text">GPS location</div></div>
+          </div>
+          <div class="arr-branch-item">
+            <div class="sm-node sm-action">⚠️ Alerts<div class="sm-sub-text">ack/suppress/resolve</div></div>
+          </div>
+          <div class="arr-branch-item">
+            <div class="sm-node sm-action">⚙️ Commands<div class="sm-sub-text">reboot/OTA/flush</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Screen Specs</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>🛰️ Ops Overview</h3>
+        <span class="sc-url">/ops</span>
+        <ul>
+          <li>Summary cards: จำนวน device ทั้งหมด, online now, needs attention, critical alerts</li>
+          <li>Open alerts list (ทุก device)</li>
+          <li>Recent command log</li>
+          <li>Fleet snapshot: device list ย่อ ๆ 12 ตัวแรก พร้อม status pill</li>
+          <li>Nav links ไป /devices และ /provision</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">entry point</span>
+          <span class="tag tag-gray">read-only</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📊 Main Dashboard</h3>
+        <span class="sc-url">/devices</span>
+        <ul>
+          <li>Summary bar: online count, needs attention, critical alerts</li>
+          <li>Search + filter device list (ตาม name/serial, state)</li>
+          <li>Device list: ชื่อ, status pill, temp, battery%, last seen</li>
+          <li>Open alerts badge บน sidebar</li>
+          <li>คลิก device → detail panel เปิดทางขวา (split view)</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">split view</span>
+          <span class="tag tag-amber">filter/search</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📟 Device Detail Panel</h3>
+        <span class="sc-url">/devices/:id</span>
+        <ul>
+          <li>Header: ชื่อ, device_id, battery variant, firmware version, status pill</li>
+          <li>Metrics cards: Temperature, Turbidity, Battery (% + mV), Last Seen + GPS fix state</li>
+          <li>Map: iframe OpenStreetMap พิกัด GPS ล่าสุด</li>
+          <li>Chart: SVG temperature history 24h</li>
+          <li>Device Alerts: list + ack/suppress/resolve buttons</li>
+          <li>Device Commands: dropdown + send form + command log</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">real-time data</span>
+          <span class="tag tag-purple">writable</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚙️ Device Commands</h3>
+        <span class="sc-url">POST /devices/:id/commands</span>
+        <ul>
+          <li>command types: reboot, config_refresh, ota_check, ota_apply, telemetry_flush</li>
+          <li>optional note field สำหรับ audit trail</li>
+          <li>Queue command → แสดงผลใน command log ด้านล่าง</li>
+          <li>status per command: queued / success / failed</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">writable</span>
+          <span class="tag tag-amber">audit trail</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🗺️ Map (per device)</h3>
+        <span class="sc-url">ใน Device Detail Panel</span>
+        <ul>
+          <li>iframe OpenStreetMap แสดง marker ตำแหน่งล่าสุด</li>
+          <li>graceful fallback: "No GPS fix available" ถ้าไม่มีพิกัด</li>
+          <li>แสดง gps_fix_state (fix / no fix)</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-gray">read-only</span>
+          <span class="tag tag-amber">empty state</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📈 Temperature Chart</h3>
+        <span class="sc-url">ใน Device Detail Panel</span>
+        <ul>
+          <li>SVG line chart จาก telemetry history จริง</li>
+          <li>แสดง min/max temperature บนกราฟ</li>
+          <li>default: 24h history</li>
+          <li>empty state: "No temperature history available"</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-gray">read-only</span>
+          <span class="tag tag-amber">empty state</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box blue" style="margin-top:24px;">
+      <strong>📌 สิ่งที่ยังขาด / ต้องตัดสินใจ</strong>
+      <ul>
+        <li>Login/Auth flow ยังไม่ได้ implement — ปัจจุบัน dev mode ใช้ hardcoded actor_user_id</li>
+        <li>Filter farm ยังไม่มี — ถ้า pilot มีหลาย farm จะ list devices ทุก farm รวมกัน</li>
+        <li>Turbidity chart ยังไม่มี — ปัจจุบัน chart แสดงแค่ temperature</li>
+        <li>Map overview (ทุก device บนแผนที่เดียว) ยังไม่มีใน code จริง</li>
+        <li>Mobile responsive — ปัจจุบัน split view ไม่ได้ออกแบบสำหรับมือถือ</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════ PROVISIONING ══════════════════ -->
+  <div class="flow-section" id="tab-provisioning">
+
+    <div class="section-intro">
+      <h2>Provisioning Flow (QR + Web/PWA)</h2>
+      <span class="badge badge-mobile">Customer / เกษตรกร</span>
+      <span class="badge badge-mobile">Mobile-first</span>
+      <p style="margin-top:8px;">ลูกค้าสแกน QR บนตัวอุปกรณ์เพื่อ bind เข้า farm ของตัวเอง ต้องง่ายมาก ทำงานได้ทุก browser บน mobile ไม่ต้องติดตั้ง app</p>
+    </div>
+
+    <p class="flow-title">▶ Customer Flow</p>
+    <div class="sitemap">
+
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">สแกน QR<br/><small>บนอุปกรณ์</small></div>
+          <div class="arr"><div class="arr-h arr-h-long"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🌐</span>
+            Provisioning Page
+            <div class="sm-sub-text">/provision?qr=...</div>
+          </div>
+          <div class="arr"><div class="arr-h arr-h-long"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔍</span>
+            Resolve Device
+            <div class="sm-sub-text">ตรวจสอบ QR + device state</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-row" style="margin-left: 440px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">✅ valid_unbound →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-sub">
+              <span class="sm-icon">✏️</span>
+              Confirm + Bind
+              <div class="sm-sub-text">เลือก farm + กดยืนยัน</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:110px;text-align:center;font-size:12.5px;font-weight:600;flex-shrink:0;">
+              ✅ สำเร็จ<div style="font-size:10.5px;font-weight:400;margin-top:2px;">device ใช้งานได้</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">🔄 already_bound →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node" style="background:var(--amber-lt);border:2px solid #d0a060;color:var(--amber);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              Device bind แล้ว<div style="font-size:10px;font-weight:400;margin-top:2px;">แสดง farm เดิม</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">❌ invalid →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node" style="background:var(--red-lt);border:2px solid #e05050;color:var(--red);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              QR ไม่ถูกต้อง<div style="font-size:10px;font-weight:400;margin-top:2px;">invalid/unknown</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">🚫 unauthorized →</span>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node" style="background:var(--red-lt);border:2px solid #e05050;color:var(--red);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              Unauthorized<div style="font-size:10px;font-weight:400;margin-top:2px;">ไม่มีสิทธิ์ farm นี้</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Screen Specs</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>🌐 Provisioning Landing</h3>
+        <span class="sc-url">/provision?qr=...</span>
+        <ul>
+          <li>รับ QR value จาก URL param (?qr= หรือ ?device_id=)</li>
+          <li>แสดง form ให้ user paste QR ด้วยตนเองได้ด้วย (fallback)</li>
+          <li>ระบุ actor_user_id จาก auth session</li>
+          <li>resolve device ทันทีที่มี QR value</li>
+          <li>แสดง state label: "Scan or paste QR" / "Ready to bind" / ฯลฯ</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">entry point</span>
+          <span class="tag tag-amber">mobile-first</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>✏️ Confirm &amp; Bind</h3>
+        <span class="sc-url">POST /provision/bind</span>
+        <ul>
+          <li>แสดง device info: serial_number, device_id</li>
+          <li>แสดง farm list ให้เลือก (dropdown)</li>
+          <li>hidden fields: device_id, actor_user_id, qr</li>
+          <li>ปุ่ม "Bind device" ชัดเจน ใหญ่พอสำหรับมือถือ</li>
+          <li>หลัง bind สำเร็จ → แสดง success state บนหน้าเดิม</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">writable</span>
+          <span class="tag tag-green">one-tap action</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>✅ Success State</h3>
+        <ul>
+          <li>ยืนยัน: "Bind complete"</li>
+          <li>แสดง device ที่ bind แล้ว + farm name</li>
+          <li>link ไป dashboard สำหรับ operator ที่ login อยู่</li>
+          <li>สำหรับลูกค้า: แสดงว่า device พร้อมใช้งานแล้ว</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">end state</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>❌ Error States</h3>
+        <ul>
+          <li><strong>invalid:</strong> QR ผิดรูปแบบหรือไม่มีใน system</li>
+          <li><strong>already_bound:</strong> แสดง farm เดิมที่ bind ไว้ พร้อมคำแนะนำ</li>
+          <li><strong>unauthorized:</strong> user ไม่มีสิทธิ์ farm นั้น</li>
+          <li>ทุก state ต้อง explicit — ห้าม blank screen</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-red">error handling</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box amber">
+      <strong>⚠️ สิ่งที่ยังขาด / ต้องตัดสินใจ</strong>
+      <ul>
+        <li>Auth ปัจจุบันใช้ actor_user_id จาก query param (dev only) — production ต้องมาจาก auth layer จริง</li>
+        <li>ยังไม่มี device nickname input ใน form — ปัจจุบัน bind ได้แค่ farm binding</li>
+        <li>QR payload format ยังไม่ lock — ควรเป็น signed token หรือแค่ device_id?</li>
+        <li>PWA manifest / offline support ยังไม่มี</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════ ALERT ══════════════════ -->
+  <div class="flow-section" id="tab-alert">
+
+    <div class="section-intro">
+      <h2>Alert &amp; Notification Flow</h2>
+      <span class="badge badge-system">System Auto</span>
+      <span class="badge badge-admin">Admin / Operator</span>
+      <p style="margin-top:8px;">ระบบตรวจสอบ device condition อัตโนมัติ แจ้งเตือนผ่าน LINE/email แล้วให้ operator จัดการบน dashboard ป้องกัน duplicate alert</p>
+    </div>
+
+    <p class="flow-title">▶ Alert Lifecycle</p>
+    <div class="sitemap">
+
+      <!-- Trigger -->
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node" style="background:var(--gray-lt);border:2px dashed var(--border);color:var(--gray);border-radius:10px;padding:10px 14px;min-width:110px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+            📡 Telemetry<br/><span style="font-size:10px;font-weight:400;">ingest event</span>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔎</span>
+            Evaluate Conditions
+            <div class="sm-sub-text">threshold / offline / battery / fault</div>
+          </div>
+          <div class="arr"><div class="arr-h arr-h-long"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔁</span>
+            Dedup Check
+            <div class="sm-sub-text">open alert ซ้ำอยู่แล้ว?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- After dedup -->
+      <div class="sm-row" style="margin-left: 450px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">ไม่มี →</span>
+            <div class="sm-node sm-sub" style="min-width:120px;">
+              <span class="sm-icon">🆕</span>
+              Open Alert
+              <div class="sm-sub-text">บันทึก + notify</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-sub" style="min-width:130px;">
+              <span class="sm-icon">📣</span>
+              Send Notification
+              <div class="sm-sub-text">LINE / email / web</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">มีอยู่แล้ว →</span>
+            <div class="sm-node" style="background:var(--gray-lt);border:2px dashed var(--border);color:var(--gray);border-radius:10px;padding:10px 14px;min-width:120px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              suppressed<div style="font-size:10px;font-weight:400;margin-top:2px;">ไม่สร้าง duplicate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operator sees -->
+      <div class="sm-row" style="margin-top: 8px;">
+        <div class="sm-lane">
+          <div class="sm-node sm-page">
+            <span class="sm-icon">👁️</span>
+            Alert บน Dashboard
+            <div class="sm-sub-text">Ops Overview + Device Detail</div>
+          </div>
+          <div class="arr"><div class="arr-h arr-h-long"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">👤</span>
+            Operator เห็น alert
+            <div class="sm-sub-text">เลือก action</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="sm-row" style="margin-left: 320px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Acknowledge →</span>
+            <div class="sm-node" style="background:var(--blue-lt);border:2px solid #a0b8d8;color:var(--blue);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              รับทราบแล้ว<div style="font-size:10px;font-weight:400;margin-top:2px;">alert ยัง open อยู่</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Suppress →</span>
+            <div class="sm-node" style="background:var(--amber-lt);border:2px solid #d0a060;color:var(--amber);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              หยุดแจ้งเตือน<div style="font-size:10px;font-weight:400;margin-top:2px;">ชั่วคราว</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Resolve →</span>
+            <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              ปิด alert<div style="font-size:10px;font-weight:400;margin-top:2px;">บันทึก resolved_at</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">Auto-resolve →</span>
+            <div class="sm-node" style="background:#e6f9ee;border:2px dashed #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              ค่ากลับปกติ<div style="font-size:10px;font-weight:400;margin-top:2px;">ระบบ resolve เอง</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Alert Type Reference</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>🌡️ Threshold Alert</h3>
+        <ul>
+          <li>trigger: temp หรือ turbidity เกิน/ต่ำกว่า config</li>
+          <li>auto-resolve: ค่ากลับเข้า safe range</li>
+          <li>UX: แสดงค่าที่ trigger + threshold บน card</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">warning</span>
+          <span class="tag tag-red">critical</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📵 Offline Alert</h3>
+        <ul>
+          <li>trigger: last_seen_at เกิน freshness window</li>
+          <li>auto-resolve: telemetry กลับมา</li>
+          <li>UX: device card เปลี่ยนสีชัดเจน + แสดง "offline since"</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-red">critical เสมอ</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🔋 Low Battery Alert</h3>
+        <ul>
+          <li>trigger: battery% ต่ำกว่า warn_pct / critical_pct</li>
+          <li>ใช้ค่าจาก battery profile (Standard vs Long-Life)</li>
+          <li>UX: แสดง variant + % ปัจจุบันบน alert</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">low</span>
+          <span class="tag tag-red">critical</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚠️ Sensor Fault Alert</h3>
+        <ul>
+          <li>trigger: sensor error flag หรือค่า invalid จาก ingest</li>
+          <li>auto-resolve: valid reading กลับมา</li>
+          <li>UX: ระบุว่า sensor ไหนมีปัญหา</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">warning</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📣 Notification Channels</h3>
+        <ul>
+          <li><strong>LINE Free Tier:</strong> ส่งระหว่าง pilot — message พร้อม severity + device name</li>
+          <li><strong>Email:</strong> structured stub รอ wire จริงก่อน launch</li>
+          <li><strong>Web/in-app:</strong> alert badge + list บน Dashboard และ Ops page</li>
+          <li>rate-limit: ALERT_NOTIFY_MIN_INTERVAL_SEC กัน flood</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">LINE (pilot)</span>
+          <span class="tag tag-gray">email stub</span>
+          <span class="tag tag-green">web badge</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🎛️ Alert Actions (UI)</h3>
+        <ul>
+          <li><strong>Acknowledge:</strong> บันทึกว่าเห็นแล้ว alert ยัง open</li>
+          <li><strong>Suppress:</strong> หยุด notify ชั่วคราว (ยัง open)</li>
+          <li><strong>Resolve:</strong> ปิด alert manually + บันทึก resolved_at</li>
+          <li>ทุก action มี audit trail ใน system</li>
+          <li>UX: ปุ่มอยู่บน Device Detail Panel + Ops page</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">writable</span>
+          <span class="tag tag-amber">audit trail</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box amber">
+      <strong>⚠️ สิ่งที่ยังขาด / ต้องตัดสินใจ</strong>
+      <ul>
+        <li>Threshold config ยังอยู่ใน code — ถ้าอยากให้ operator ปรับได้ต้องมี UI เพิ่ม</li>
+        <li>Offline alert timing ควรต่างกันตาม battery-saving interval หรือเปล่า?</li>
+        <li>LINE notification ยังเป็น stub — ต้อง wire จริงก่อน pilot</li>
+        <li>Notification preference per-farm ยังไม่มี (EX-10 ระบุว่า out of scope MVP)</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+
+  <!-- ══════════════════ AUTH ══════════════════ -->
+  <div class="flow-section" id="tab-auth">
+
+    <div class="section-intro">
+      <h2>Login / Auth Flow</h2>
+      <span class="badge badge-admin">Admin / Operator</span>
+      <span class="badge badge-mobile">Customer / Farm Owner</span>
+      <p style="margin-top:8px;">ใช้ Supabase Auth (JWT session) ทั้งระบบ — ทั้ง operator และ customer ใช้ auth เดียวกัน RLS ใน database กั้นสิทธิ์ตาม farm ownership</p>
+    </div>
+
+    <p class="flow-title">▶ Login Flow</p>
+    <div class="sitemap">
+
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">เข้า URL<br/><small>ใดก็ได้</small></div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔒</span>
+            Auth Guard
+            <div class="sm-sub-text">ตรวจ JWT session</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔐</span>
+            Login Page
+            <div class="sm-sub-text">Supabase Auth UI</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-row" style="margin-left: 320px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">✅ login สำเร็จ →</span>
+            <div class="sm-node sm-page">
+              <span class="sm-icon">🔍</span>
+              ตรวจ farm
+              <div class="sm-sub-text">มี farm แล้วหรือยัง?</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="arr-branch">
+              <div class="arr-branch-item">
+                <span class="arr-branch-label">มี farm →</span>
+                <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:110px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+                  /ops<div style="font-size:10px;margin-top:2px;">Ops Overview</div>
+                </div>
+              </div>
+              <div class="arr-branch-item">
+                <span class="arr-branch-label">ยังไม่มี farm →</span>
+                <div class="sm-node" style="background:var(--teal-lt);border:2px solid var(--teal-md);color:var(--teal);border-radius:10px;padding:10px 14px;min-width:120px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+                  /farms/new<div style="font-size:10px;margin-top:2px;">สร้าง farm แรก</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">❌ ผิดพลาด →</span>
+            <div class="sm-node" style="background:var(--red-lt);border:2px solid #e05050;color:var(--red);border-radius:10px;padding:10px 14px;min-width:120px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              Error message<div style="font-size:10px;margin-top:2px;">กลับ login page</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Logout Flow</p>
+    <div class="sitemap">
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-page">
+            <span class="sm-icon">👤</span>
+            User กด Logout
+            <div class="sm-sub-text">จากหน้าใดก็ได้</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-action">Clear JWT<br/><small>Supabase signOut</small></div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔐</span>
+            Login Page
+            <div class="sm-sub-text">redirect กลับ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Screen Specs</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>🔐 Login Page</h3>
+        <span class="sc-url">/login</span>
+        <ul>
+          <li>Email + Password form (Supabase Auth)</li>
+          <li>ปุ่ม Sign In</li>
+          <li>link ไป Sign Up (สำหรับ customer ใหม่)</li>
+          <li>Error state: "Invalid credentials" ชัดเจน</li>
+          <li>Redirect URL: กลับไปหน้าที่พยายามเข้าก่อน login</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">entry point</span>
+          <span class="tag tag-amber">mobile-friendly</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📝 Sign Up Page</h3>
+        <span class="sc-url">/signup</span>
+        <ul>
+          <li>Email + Password + Confirm Password</li>
+          <li>ยืนยันอีเมล (Supabase email confirm)</li>
+          <li>หลัง confirm → redirect ไป /farms/new (สร้าง farm แรก)</li>
+          <li>Error: email ซ้ำ, password ไม่ตรง</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">new customer</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🔒 Auth Guard (Protected Routes)</h3>
+        <ul>
+          <li>ทุก route ยกเว้น /login และ /signup ต้องผ่าน auth guard</li>
+          <li>/provision ต้องการ auth เช่นกัน (bind device ต้องรู้ว่าเป็น user ไหน)</li>
+          <li>ถ้าไม่มี session → redirect ไป /login พร้อม returnUrl</li>
+          <li>JWT หมดอายุ → auto-refresh หรือ redirect กลับ login</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">system logic</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚠️ Auth + RLS Security</h3>
+        <ul>
+          <li>RLS ใน Supabase: user เห็นเฉพาะ farm ของตัวเอง (owner_user_id = auth.uid())</li>
+          <li>device ที่ยัง farm_id = null จะไม่ปรากฏใน dashboard</li>
+          <li>Ops และ Dashboard route ควรมี server-side check ด้วย ไม่ใช่แค่ RLS</li>
+          <li>Admin API ใช้ ADMIN_API_TOKEN แยกต่างหาก ไม่ใช่ user JWT</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-red">security</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box amber">
+      <strong>⚠️ สิ่งที่ยังต้องตัดสินใจ</strong>
+      <ul>
+        <li>ปัจจุบัน dashboard และ backend ใช้ actor_user_id จาก query param (dev only) — ยังไม่ได้ integrate Supabase Auth จริง</li>
+        <li>Operator (ทีมงานภายใน) กับ Customer (farm owner) มี account แยกกันไหม หรือ account เดียวกันแต่ role ต่างกัน?</li>
+        <li>Password reset flow ยังไม่ได้วางแผน</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════ FIRST-TIME USER ══════════════════ -->
+  <div class="flow-section" id="tab-firsttime">
+
+    <div class="section-intro">
+      <h2>First-time User / Empty State Flow</h2>
+      <span class="badge badge-mobile">Customer ใหม่</span>
+      <span class="badge badge-admin">Operator Setup</span>
+      <p style="margin-top:8px;">user ที่เพิ่ง sign up มา ยังไม่มี farm ยังไม่มี device ต้องสร้าง farm ก่อน แล้วค่อย bind device ผ่าน provisioning</p>
+    </div>
+
+    <p class="flow-title">▶ New User Journey</p>
+    <div class="sitemap">
+
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">Sign Up<br/><small>สำเร็จ</small></div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🏡</span>
+            Create Farm
+            <div class="sm-sub-text">/farms/new — ตั้งชื่อ farm</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">📊</span>
+            Dashboard (Empty)
+            <div class="sm-sub-text">ยังไม่มี device</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">📱</span>
+            Provisioning
+            <div class="sm-sub-text">สแกน QR → bind device</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:110px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+            ✅ Device ออนไลน์<div style="font-size:10px;margin-top:2px;">ใช้งานได้แล้ว</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Empty States ทุก screen</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>📊 Dashboard — ยังไม่มี device</h3>
+        <ul>
+          <li>แสดงข้อความ "ยังไม่มีอุปกรณ์ในระบบ"</li>
+          <li>ปุ่ม CTA: "เพิ่มอุปกรณ์" → ไป /provision</li>
+          <li>ห้ามแสดง blank screen เด็ดขาด</li>
+          <li>Summary cards แสดง 0 ทุกตัว ไม่ใช่ error</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">empty state</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🏡 Create Farm Page</h3>
+        <span class="sc-url">/farms/new</span>
+        <ul>
+          <li>input: ชื่อ farm (required)</li>
+          <li>ปุ่ม "สร้าง Farm"</li>
+          <li>หลัง create → redirect ไป /devices (dashboard)</li>
+          <li>owner_user_id = auth.uid() โดยอัตโนมัติ</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-green">first step</span>
+          <span class="tag tag-purple">writable</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚠️ Alert Center — ยังไม่มี alert</h3>
+        <ul>
+          <li>แสดง "ทุกอุปกรณ์ทำงานปกติ" หรือ "ยังไม่มี alert"</li>
+          <li>ไม่แสดง error หรือ blank</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">empty state</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>🛰️ Ops Overview — ยังไม่มีข้อมูล</h3>
+        <ul>
+          <li>Summary cards แสดง 0 ทุกตัว</li>
+          <li>Fleet snapshot แสดง "No devices available yet."</li>
+          <li>แสดงลิงก์ไป provisioning เพื่อเพิ่ม device แรก</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-amber">empty state</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box blue">
+      <strong>📌 หลักการ Empty State</strong>
+      <ul>
+        <li>ทุก screen ต้องมี empty state ที่ชัดเจน ไม่ใช่แค่แสดงตาราง/list เปล่า</li>
+        <li>empty state ที่ดีควรบอก "ทำอะไรต่อ" (next action) ให้ user ด้วย</li>
+        <li>ห้ามใช้ error style กับ empty state — มันคนละอย่างกัน</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════ FARM MANAGEMENT ══════════════════ -->
+  <div class="flow-section" id="tab-farm">
+
+    <div class="section-intro">
+      <h2>Farm Management Flow</h2>
+      <span class="badge badge-mobile">Farm Owner</span>
+      <span class="badge badge-admin">Operator</span>
+      <p style="margin-top:8px;">แต่ละ user เป็นเจ้าของ farm ของตัวเอง (owner_user_id) RLS กั้นไม่ให้เห็น farm ของคนอื่น — ต้องมี UI สำหรับ create/view/edit farm</p>
+    </div>
+
+    <p class="flow-title">▶ Farm CRUD Flow</p>
+    <div class="sitemap">
+
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">Ops Overview<br/><small>/ops</small></div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🏡</span>
+            Farm Settings
+            <div class="sm-sub-text">/farms/:id</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-row" style="margin-left: 230px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">แก้ชื่อ farm →</span>
+            <div class="sm-node sm-action" style="min-width:130px;">
+              Edit Farm Name<div class="sm-sub-text">PATCH /farms/:id</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:100px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">✅ บันทึกแล้ว</div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">ดู device ใน farm →</span>
+            <div class="sm-node sm-sub" style="min-width:130px;">
+              Device List<div class="sm-sub-text">filter by farm_id</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">เพิ่ม device →</span>
+            <div class="sm-node sm-sub" style="min-width:130px;">
+              /provision<div class="sm-sub-text">QR provisioning</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">ลบ farm →</span>
+            <div class="sm-node" style="background:var(--red-lt);border:2px solid #e05050;color:var(--red);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              Confirm Delete<div style="font-size:10px;margin-top:2px;">cascade: device unbound</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Screen Specs</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>🏡 Farm Settings</h3>
+        <span class="sc-url">/farms/:id</span>
+        <ul>
+          <li>แสดงชื่อ farm + farm ID</li>
+          <li>จำนวน device ใน farm (active / total)</li>
+          <li>ปุ่มแก้ชื่อ (inline edit หรือ form)</li>
+          <li>list device ใน farm พร้อมสถานะ provisioning_state</li>
+          <li>ปุ่ม "เพิ่มอุปกรณ์" → ไป /provision</li>
+          <li>ปุ่ม Delete Farm (ต้อง confirm ก่อน)</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">writable</span>
+          <span class="tag tag-red">destructive action</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📋 Device Provisioning States</h3>
+        <ul>
+          <li><strong>inventory:</strong> มีใน system แต่ยังไม่ได้ bind</li>
+          <li><strong>registered:</strong> QR resolve แล้ว รอ bind</li>
+          <li><strong>bound:</strong> bind กับ farm แล้ว</li>
+          <li><strong>active:</strong> ส่ง telemetry แล้ว</li>
+          <li><strong>retired:</strong> ปลดระวาง</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-gray">inventory</span>
+          <span class="tag tag-amber">registered</span>
+          <span class="tag tag-green">bound / active</span>
+          <span class="tag tag-gray">retired</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚠️ Delete Farm Confirmation</h3>
+        <ul>
+          <li>แสดง warning ชัดเจน: "การลบ farm จะทำให้ device ทุกตัวกลายเป็น unbound"</li>
+          <li>ต้องพิมพ์ชื่อ farm ยืนยัน (destructive action)</li>
+          <li>cascade ใน DB: device.farm_id → SET NULL</li>
+          <li>alert และ telemetry ที่เชื่อมกับ farm จะถูกลบด้วย (cascade)</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-red">destructive</span>
+          <span class="tag tag-amber">confirm required</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box amber">
+      <strong>⚠️ สิ่งที่ยังต้องตัดสินใจ</strong>
+      <ul>
+        <li>user คนหนึ่งมีได้กี่ farm? — schema ไม่ได้ limit แต่ MVP อาจกำหนดให้มี 1 farm ต่อ user ก่อน</li>
+        <li>Farm settings page ยังไม่มีใน code จริง — ต้องสร้างใหม่</li>
+        <li>ถ้า pilot มีหลาย farm จะ switch farm ระหว่าง session ยังไง? (farm selector)</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════ OTA ══════════════════ -->
+  <div class="flow-section" id="tab-ota">
+
+    <div class="section-intro">
+      <h2>OTA Update Flow</h2>
+      <span class="badge badge-admin">Operator / Admin</span>
+      <span class="badge badge-system">Device Auto</span>
+      <p style="margin-top:8px;">Operator สั่ง OTA ผ่าน dashboard → backend ส่ง command ไปยัง device ผ่าน MQTT → device ดาวน์โหลดและ apply firmware ใหม่ → ผลลัพธ์บันทึกใน command_log</p>
+    </div>
+
+    <p class="flow-title">▶ OTA Update Flow (Operator-initiated)</p>
+    <div class="sitemap">
+
+      <div class="sm-row">
+        <div class="sm-lane">
+          <div class="sm-node sm-entry">Device Detail<br/><small>Commands panel</small></div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">🔍</span>
+            OTA Check
+            <div class="sm-sub-text">ota_check command</div>
+          </div>
+          <div class="arr"><div class="arr-h"></div></div>
+          <div class="sm-node sm-page">
+            <span class="sm-icon">📋</span>
+            OTA Manifest
+            <div class="sm-sub-text">backend ตรวจ version</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-row" style="margin-left: 300px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">มี update →</span>
+            <div class="sm-node sm-page">
+              <span class="sm-icon">⬆️</span>
+              OTA Apply
+              <div class="sm-sub-text">operator confirm → ota_apply</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-action" style="min-width:120px;">
+              Device Download<div class="sm-sub-text">firmware binary</div>
+            </div>
+            <div class="arr"><div class="arr-h"></div></div>
+            <div class="sm-node sm-page">
+              <span class="sm-icon">🔄</span>
+              Reboot &amp; Apply
+              <div class="sm-sub-text">device side</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">ไม่มี update →</span>
+            <div class="sm-node" style="background:var(--gray-lt);border:2px solid var(--border);color:var(--gray);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              firmware เป็น latest<div style="font-size:10px;margin-top:2px;">log บันทึก</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-row" style="margin-left: 530px;">
+        <div class="arr-branch">
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">✅ สำเร็จ →</span>
+            <div class="sm-node" style="background:#e6f9ee;border:2px solid #2e9e60;color:#1a6b40;border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              firmware_version อัปเดต<div style="font-size:10px;margin-top:2px;">device ack → succeeded</div>
+            </div>
+          </div>
+          <div class="arr-branch-item">
+            <span class="arr-branch-label">❌ ล้มเหลว →</span>
+            <div class="sm-node" style="background:var(--red-lt);border:2px solid #e05050;color:var(--red);border-radius:10px;padding:10px 14px;min-width:130px;text-align:center;font-size:12px;font-weight:600;flex-shrink:0;">
+              status: failed<div style="font-size:10px;margin-top:2px;">rollback อัตโนมัติ (firmware)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="flow-divider" />
+    <p class="flow-title">▶ Screen Specs</p>
+    <div class="screen-grid">
+
+      <div class="sc">
+        <h3>⚙️ Commands Panel (OTA)</h3>
+        <span class="sc-url">ใน Device Detail /devices/:id</span>
+        <ul>
+          <li>dropdown เลือก command type: ota_check, ota_apply</li>
+          <li>optional note สำหรับ audit</li>
+          <li>Queue command → แสดงใน command log ทันที status: queued</li>
+          <li>command log อัปเดตเมื่อ device ack: queued → sent → succeeded/failed</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-purple">writable</span>
+          <span class="tag tag-amber">audit trail</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📋 OTA Manifest Logic</h3>
+        <span class="sc-url">GET /api/ota/manifest</span>
+        <ul>
+          <li>backend ตรวจ: current_version, channel, battery_variant</li>
+          <li>filter releases ตาม channel และ battery_variants</li>
+          <li>เลือก release ที่ version สูงกว่า current เท่านั้น</li>
+          <li>ถ้าไม่มี release ใหม่ → ไม่ต้อง update</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-gray">read-only</span>
+          <span class="tag tag-purple">system logic</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>📊 Command Log States</h3>
+        <ul>
+          <li><strong>queued:</strong> operator สั่งแล้ว รอ device รับ</li>
+          <li><strong>sent:</strong> backend ส่ง command ไปยัง device แล้ว</li>
+          <li><strong>succeeded:</strong> device ack สำเร็จ</li>
+          <li><strong>failed:</strong> device report error หรือ timeout</li>
+          <li><strong>cancelled:</strong> operator ยกเลิกก่อน device รับ</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-gray">queued</span>
+          <span class="tag tag-amber">sent</span>
+          <span class="tag tag-green">succeeded</span>
+          <span class="tag tag-red">failed</span>
+        </div>
+      </div>
+
+      <div class="sc">
+        <h3>⚠️ OTA Safety Rules (UX)</h3>
+        <ul>
+          <li>ota_apply ควรมี confirm dialog ก่อน — device จะ reboot</li>
+          <li>แสดง firmware version ปัจจุบัน vs version ใหม่ก่อน apply</li>
+          <li>ระหว่าง OTA device จะ offline ชั่วคราว — dashboard ไม่ควร trigger offline alert ทันที</li>
+          <li>ถ้า OTA ล้มเหลว firmware rollback อัตโนมัติ (device side)</li>
+          <li>log ทุก OTA action พร้อม requested_by user ID</li>
+        </ul>
+        <div class="sc-tags">
+          <span class="tag tag-red">safety</span>
+          <span class="tag tag-amber">confirm required</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-box amber">
+      <strong>⚠️ สิ่งที่ยังต้องตัดสินใจ</strong>
+      <ul>
+        <li>OTA progress ปัจจุบัน track ผ่าน command_log status เท่านั้น — ถ้าอยากให้ real-time ต้องมี polling หรือ websocket</li>
+        <li>Batch OTA (หลาย device พร้อมกัน) ยังเป็น SVC route ไม่มี UI</li>
+        <li>Offline alert suppression ระหว่าง OTA ยังไม่มี logic — ควรเพิ่ม grace period หลัง ota_apply</li>
+        <li>Release catalog ปัจจุบัน load จาก JSON file — production ควรเป็น DB หรือ blob storage</li>
+      </ul>
+    </div>
+
+  </div>
+
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.flow-section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -89,6 +89,15 @@ export async function bindDeviceToFarm({ deviceId, farmId, actorUserId, requestS
       };
     }
 
+    if (device.provisioning_state === "retired") {
+      return {
+        ok: false,
+        statusCode: 409,
+        code: "device_retired",
+        details: [device.device_id]
+      };
+    }
+
     if (device.farm_id && device.farm_id !== farmId) {
       return {
         ok: false,
@@ -98,11 +107,13 @@ export async function bindDeviceToFarm({ deviceId, farmId, actorUserId, requestS
       };
     }
 
+    const targetProvisioningState = device.provisioning_state === "active" ? "active" : "bound";
+
     const deviceUpdate = await trx`
       update public.devices
       set
         farm_id = ${farmId},
-        provisioning_state = 'bound'
+        provisioning_state = ${targetProvisioningState}
       where id = ${device.id}
       returning device_id, serial_number, farm_id, provisioning_state
     `;

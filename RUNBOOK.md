@@ -34,6 +34,21 @@ Health check:
 Invoke-WebRequest http://localhost:3100/health
 ```
 
+Backend production notes:
+
+- Set `INGEST_SHARED_TOKEN` before exposing `POST /api/ingest/telemetry` outside local development
+- Local development may use `INGEST_ALLOW_INSECURE_DEV=true`, but production-like environments should disable it
+- Provisioning may use `actor_user_id` only in local development when `PROVISIONING_ALLOW_INSECURE_DEV=true`
+- Production-like provisioning should pass `x-actor-user-id` from a trusted auth layer
+- Dashboard-to-backend admin and provisioning calls can use `ADMIN_API_TOKEN` plus `DASHBOARD_ACTOR_USER_ID`
+- Keep `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false` outside local debugging so operators cannot spoof actor ids from forms
+- Alert notification refreshes are rate-limited by `ALERT_NOTIFY_MIN_INTERVAL_SEC`
+- `NOTIFICATION_MODE=stub` keeps local alert delivery in console-only mode
+- Farm-scoped notification contacts on `public.farms` are preferred over `.env` fallback recipients
+- Set `ADMIN_API_TOKEN` before exposing admin command or audit routes
+- OTA manifest is served from `OTA_RELEASES_PATH` and should be backed by real artifact URLs plus checksums
+- Run backend tests with `pnpm test:backend`
+
 ## Dashboard
 
 Run:
@@ -102,6 +117,7 @@ pnpm db:lint
 - local Supabase workflow and first migration path
 - bootable backend and dashboard placeholders
 - buildable firmware skeleton
+- production-oriented ops notes in `ops/incident-response.md`, `ops/support-flow.md`, and `ops/production-readiness-checklist.md`
 
 ## Next Tasks Unlocked
 

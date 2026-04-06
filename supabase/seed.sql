@@ -33,16 +33,22 @@ set
 insert into public.farms (
   id,
   name,
-  owner_user_id
+  owner_user_id,
+  alert_email_to,
+  alert_line_user_id
 ) values (
   '22222222-2222-2222-2222-222222222222',
   'SB-00 Dev Farm',
-  '11111111-1111-1111-1111-111111111111'
+  '11111111-1111-1111-1111-111111111111',
+  'farm-alerts@example.com',
+  'Udevfarmline001'
 )
 on conflict (id) do update
 set
   name = excluded.name,
-  owner_user_id = excluded.owner_user_id;
+  owner_user_id = excluded.owner_user_id,
+  alert_email_to = excluded.alert_email_to,
+  alert_line_user_id = excluded.alert_line_user_id;
 
 insert into public.devices (
   device_id,

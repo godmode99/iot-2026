@@ -3,7 +3,7 @@ import { getDb } from "../db.mjs";
 export async function openOrRefreshAlert(device, alertType, severity, details, status = "open") {
   const sql = getDb();
   const existing = await sql`
-    select id
+    select id, severity, status, details_json, opened_at, resolved_at
     from public.alerts
     where device_id = ${device.id}
       and alert_type = ${alertType}
@@ -23,7 +23,8 @@ export async function openOrRefreshAlert(device, alertType, severity, details, s
     `;
     return {
       action: "refreshed",
-      alert: rows[0]
+      alert: rows[0],
+      previous: existing[0]
     };
   }
 
@@ -48,12 +49,26 @@ export async function openOrRefreshAlert(device, alertType, severity, details, s
 
   return {
     action: "opened",
-    alert: rows[0]
+    alert: rows[0],
+    previous: null
   };
 }
 
 export async function resolveAlert(deviceId, alertType, details = {}) {
   const sql = getDb();
+  const existing = await sql`
+    select id, severity, status, details_json, opened_at, resolved_at
+    from public.alerts
+    where device_id = ${deviceId}
+      and alert_type = ${alertType}
+      and status in ('open', 'acknowledged')
+    limit 1
+  `;
+
+  if (existing.length === 0) {
+    return null;
+  }
+
   const rows = await sql`
     update public.alerts
     set
@@ -64,6 +79,74 @@ export async function resolveAlert(deviceId, alertType, details = {}) {
       and alert_type = ${alertType}
       and status in ('open', 'acknowledged')
     returning id, alert_type, status, severity, opened_at, resolved_at
+  `;
+
+  if (!rows[0]) {
+    return null;
+  }
+
+  return {
+    ...rows[0],
+    previous: existing[0]
+  };
+}
+
+export async function annotateAlertNotification(alertId, notification) {
+  const sql = getDb();
+  const rows = await sql`
+    update public.alerts
+    set details_json = jsonb_set(
+      coalesce(details_json, '{}'::jsonb),
+      '{notification}',
+      ${sql.json(notification)}::jsonb,
+      true
+    )
+    where id = ${alertId}
+    returning id
+  `;
+
+  return rows[0] ?? null;
+}
+
+export async function findAlertById(alertId) {
+  const sql = getDb();
+  const rows = await sql`
+    select
+      a.id,
+      a.device_id,
+      a.farm_id,
+      a.alert_type,
+      a.status,
+      a.severity,
+      a.opened_at,
+      a.resolved_at,
+      a.details_json
+    from public.alerts a
+    where a.id = ${alertId}::uuid
+    limit 1
+  `;
+
+  return rows[0] ?? null;
+}
+
+export async function updateAlertStatusById(alertId, status, adminAction) {
+  const sql = getDb();
+  const rows = await sql`
+    update public.alerts
+    set
+      status = ${status},
+      resolved_at = case
+        when ${status} = 'resolved' then timezone('utc', now())
+        else resolved_at
+      end,
+      details_json = jsonb_set(
+        coalesce(details_json, '{}'::jsonb),
+        '{admin_actions}',
+        coalesce(details_json->'admin_actions', '[]'::jsonb) || ${sql.json([adminAction])}::jsonb,
+        true
+      )
+    where id = ${alertId}::uuid
+    returning id, alert_type, status, severity, opened_at, resolved_at, details_json
   `;
 
   return rows[0] ?? null;

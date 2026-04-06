@@ -1,10 +1,23 @@
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { evaluateOfflineAlerts } from "./alerts/service.mjs";
+import { adminUpdateAlertStatus } from "./alerts/admin-service.mjs";
+import { authorizeAdminRequest } from "./admin/auth.mjs";
+import {
+  acknowledgeCommandResult,
+  enqueueDeviceCommand,
+  fetchPendingCommandsForDevice,
+  getFarmNotificationTargets,
+  getRecentCommandLog,
+  saveFarmNotificationTargets
+} from "./admin/service.mjs";
 import { getBackendConfig } from "./config.mjs";
+import { authorizeIngestRequest } from "./ingest/auth.mjs";
 import { ingestTelemetryEnvelope } from "./ingest/service.mjs";
+import { resolveOtaManifest } from "./ota/service.mjs";
 import {
   bindProvisioningTarget,
   resolveProvisioningTarget
@@ -24,7 +37,11 @@ const deviceIdentitySchemaPath = resolve(currentDir, "..", "..", "shared", "cont
 const batteryProfilePath = resolve(currentDir, "..", "..", "shared", "contracts", "battery-profile.json");
 
 function sendJson(response, statusCode, body) {
-  response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
+  const headers = { "content-type": "application/json; charset=utf-8" };
+  if (body?.requestId) {
+    headers["x-request-id"] = body.requestId;
+  }
+  response.writeHead(statusCode, headers);
   response.end(JSON.stringify(body, null, 2));
 }
 
@@ -64,9 +81,34 @@ function sendError(response, statusCode, code, details = []) {
   });
 }
 
+function getRequestId(request) {
+  const headerValue = request.headers["x-request-id"];
+  if (typeof headerValue === "string" && headerValue.trim()) {
+    return headerValue.trim();
+  }
+
+  return randomUUID();
+}
+
+function logRequest(configValue, level, event, payload) {
+  if (!configValue) {
+    return;
+  }
+
+  const line = `[backend:${level}] ${event} ${JSON.stringify(payload)}`;
+  if (level === "error") {
+    console.error(line);
+    return;
+  }
+
+  console.log(line);
+}
+
 const server = createServer(async (request, response) => {
+  const requestId = getRequestId(request);
+
   if (!request.url) {
-    sendJson(response, 400, { error: "missing_url" });
+    sendJson(response, 400, { error: "missing_url", requestId });
     return;
   }
 
@@ -77,7 +119,8 @@ const server = createServer(async (request, response) => {
       service: "backend",
       ok: true,
       port: config.port,
-      missingEnv: config.missing
+      missingEnv: config.missing,
+      requestId
     });
     return;
   }
@@ -86,7 +129,8 @@ const server = createServer(async (request, response) => {
     sendJson(response, 200, {
       telemetry: JSON.parse(readFileSync(telemetrySchemaPath, "utf8")),
       deviceIdentity: JSON.parse(readFileSync(deviceIdentitySchemaPath, "utf8")),
-      batteryProfiles: JSON.parse(readFileSync(batteryProfilePath, "utf8"))
+      batteryProfiles: JSON.parse(readFileSync(batteryProfilePath, "utf8")),
+      requestId
     });
     return;
   }
@@ -94,7 +138,8 @@ const server = createServer(async (request, response) => {
   if (url.pathname === "/api/ingest-placeholder") {
     sendJson(response, 200, {
       message: "Use POST /api/ingest/telemetry for the real EX-07 ingest path.",
-      mqttTopicPrefix: config.values.MQTT_TOPIC_PREFIX
+      mqttTopicPrefix: config.values.MQTT_TOPIC_PREFIX,
+      requestId
     });
     return;
   }
@@ -104,12 +149,18 @@ const server = createServer(async (request, response) => {
       const devices = await listDevicesWithStatus();
       sendJson(response, 200, {
         ok: true,
-        devices
+        devices,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[read-model] devices_failed", error);
-      sendError(response, 500, "devices_query_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "devices_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -120,12 +171,165 @@ const server = createServer(async (request, response) => {
       const alerts = await listAlertSummaries(status);
       sendJson(response, 200, {
         ok: true,
-        alerts
+        alerts,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[read-model] alerts_failed", error);
-      sendError(response, 500, "alerts_query_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "alerts_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/device/commands") {
+    const auth = authorizeIngestRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const result = await fetchPendingCommandsForDevice({
+        deviceId: url.searchParams.get("device_id") ?? "",
+        limit: Number(url.searchParams.get("limit") ?? 20)
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "device_command_fetch_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/admin/command-log") {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const limit = Number(url.searchParams.get("limit") ?? 50);
+      const commands = await getRecentCommandLog({
+        limit: Number.isFinite(limit) ? limit : 50,
+        deviceId: url.searchParams.get("device_id")
+      });
+      sendJson(response, 200, {
+        ok: true,
+        commands,
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "command_log_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/admin/farms/notification-targets") {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const farms = await getFarmNotificationTargets();
+      sendJson(response, 200, {
+        ok: true,
+        farms,
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "farm_notification_targets_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/api/admin/alerts/")) {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    const segments = url.pathname.split("/");
+    const alertId = decodeURIComponent(segments[4] ?? "");
+    const action = segments[5] ?? "";
+
+    try {
+      const body = await readJsonBody(request);
+      const result = await adminUpdateAlertStatus({
+        alertId,
+        action,
+        requestedBy: auth.actorUserId ?? body?.requested_by ?? null,
+        note: body?.note ?? ""
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "alert_admin_action_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -135,12 +339,57 @@ const server = createServer(async (request, response) => {
       const alerts = await evaluateOfflineAlerts();
       sendJson(response, 200, {
         ok: true,
-        evaluated: alerts.length
+        evaluated: alerts.length,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[alerts] offline_evaluation_failed", error);
-      sendError(response, 500, "offline_evaluation_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "offline_evaluation_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/ota/manifest") {
+    const auth = authorizeIngestRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    try {
+      const result = resolveOtaManifest(config, {
+        deviceId: url.searchParams.get("device_id"),
+        currentVersion: url.searchParams.get("current_version"),
+        batteryVariant: url.searchParams.get("battery_variant"),
+        channel: url.searchParams.get("channel")
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "ota_manifest_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -148,25 +397,38 @@ const server = createServer(async (request, response) => {
   if (request.method === "GET" && url.pathname === "/api/provisioning/resolve") {
     try {
       const result = await resolveProvisioningTarget({
+        config,
+        headers: request.headers,
         qr: url.searchParams.get("qr"),
         deviceId: url.searchParams.get("device_id"),
         actorUserId: url.searchParams.get("actor_user_id")
       });
 
       if (!result.ok) {
-        sendError(response, result.statusCode, result.code, result.details ?? []);
+        sendJson(response, result.statusCode, {
+          ok: false,
+          code: result.code,
+          details: result.details ?? [],
+          requestId
+        });
         return;
       }
 
       sendJson(response, result.statusCode, {
         ok: true,
         code: result.code,
-        result: result.result
+        result: result.result,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[provisioning] resolve_failed", error);
-      sendError(response, 500, "provisioning_resolve_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "provisioning_resolve_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -175,6 +437,8 @@ const server = createServer(async (request, response) => {
     try {
       const body = await readJsonBody(request);
       const result = await bindProvisioningTarget({
+        config,
+        headers: request.headers,
         qr: body?.qr ?? null,
         deviceId: body?.device_id ?? null,
         farmId: body?.farm_id ?? null,
@@ -182,19 +446,156 @@ const server = createServer(async (request, response) => {
       });
 
       if (!result.ok) {
-        sendError(response, result.statusCode, result.code, result.details ?? []);
+        sendJson(response, result.statusCode, {
+          ok: false,
+          code: result.code,
+          details: result.details ?? [],
+          requestId
+        });
         return;
       }
 
       sendJson(response, result.statusCode, {
         ok: true,
         code: result.code,
-        result: result.result
+        result: result.result,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[provisioning] bind_failed", error);
-      sendError(response, 500, "provisioning_bind_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "provisioning_bind_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/api/admin/devices/") && url.pathname.endsWith("/commands")) {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    const deviceId = decodeURIComponent(url.pathname.split("/")[4] ?? "");
+
+    try {
+      const body = await readJsonBody(request);
+      const result = await enqueueDeviceCommand({
+        deviceId,
+        commandType: body?.command_type ?? "",
+        requestedBy: auth.actorUserId ?? body?.requested_by ?? null,
+        requestSource: "admin_api",
+        details: body?.details ?? {}
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "command_queue_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "PATCH" && url.pathname.startsWith("/api/admin/farms/") && url.pathname.endsWith("/notification-targets")) {
+    const auth = authorizeAdminRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    const farmId = decodeURIComponent(url.pathname.split("/")[4] ?? "");
+
+    try {
+      const body = await readJsonBody(request);
+      const result = await saveFarmNotificationTargets({
+        farmId,
+        alertEmailTo: body?.alert_email_to ?? null,
+        alertLineUserId: body?.alert_line_user_id ?? null
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "farm_notification_targets_update_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/api/device/commands/") && url.pathname.endsWith("/ack")) {
+    const auth = authorizeIngestRequest(config, request.headers);
+    if (!auth.ok) {
+      sendJson(response, auth.statusCode, {
+        ok: false,
+        code: auth.code,
+        details: auth.details ?? [],
+        requestId
+      });
+      return;
+    }
+
+    const commandId = decodeURIComponent(url.pathname.split("/")[4] ?? "");
+
+    try {
+      const body = await readJsonBody(request);
+      const result = await acknowledgeCommandResult({
+        commandId,
+        deviceId: body?.device_id ?? "",
+        status: body?.status ?? "",
+        details: body?.details ?? {}
+      });
+
+      sendJson(response, result.statusCode, {
+        ok: result.ok,
+        code: result.code,
+        result: result.result ?? null,
+        details: result.details ?? [],
+        requestId
+      });
+      return;
+    } catch (error) {
+      sendJson(response, 500, {
+        ok: false,
+        code: "device_command_ack_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -208,12 +609,18 @@ const server = createServer(async (request, response) => {
       sendJson(response, 200, {
         ok: true,
         deviceId,
-        history
+        history,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[read-model] history_failed", error);
-      sendError(response, 500, "history_query_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "history_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -226,12 +633,18 @@ const server = createServer(async (request, response) => {
       sendJson(response, 200, {
         ok: true,
         deviceId,
-        alerts
+        alerts,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[read-model] device_alerts_failed", error);
-      sendError(response, 500, "device_alerts_query_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "device_alerts_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
@@ -242,50 +655,102 @@ const server = createServer(async (request, response) => {
     try {
       const device = await getDeviceDetail(deviceId);
       if (!device) {
-        sendError(response, 404, "device_not_found", [deviceId]);
+        sendJson(response, 404, {
+          ok: false,
+          code: "device_not_found",
+          details: [deviceId],
+          requestId
+        });
         return;
       }
 
       sendJson(response, 200, {
         ok: true,
-        device
+        device,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[read-model] device_failed", error);
-      sendError(response, 500, "device_query_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "device_query_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
 
   if (request.method === "POST" && url.pathname === "/api/ingest/telemetry") {
     try {
+      const auth = authorizeIngestRequest(config, request.headers);
+      if (!auth.ok) {
+        logRequest(config.requestLoggingEnabled, "error", "ingest.auth_rejected", {
+          requestId,
+          code: auth.code,
+          remoteAddress: request.socket.remoteAddress ?? "unknown"
+        });
+        sendJson(response, auth.statusCode, {
+          ok: false,
+          code: auth.code,
+          details: auth.details ?? [],
+          requestId
+        });
+        return;
+      }
+
       const body = await readJsonBody(request);
       const result = await ingestTelemetryEnvelope(config, body);
 
       if (!result.ok) {
-        console.error("[ingest] rejected", result.code, result.details ?? []);
-        sendError(response, result.statusCode, result.code, result.details ?? []);
+        logRequest(config.requestLoggingEnabled, "error", "ingest.rejected", {
+          requestId,
+          code: result.code,
+          details: result.details ?? [],
+          authMode: auth.mode,
+          remoteAddress: request.socket.remoteAddress ?? "unknown"
+        });
+        sendJson(response, result.statusCode, {
+          ok: false,
+          code: result.code,
+          details: result.details ?? [],
+          requestId
+        });
         return;
       }
 
-      console.log("[ingest] accepted", result.code, result.result);
+      logRequest(config.requestLoggingEnabled, "info", "ingest.accepted", {
+        requestId,
+        code: result.code,
+        authMode: auth.mode,
+        duplicate: result.result?.duplicate ?? false,
+        deviceId: result.result?.deviceId ?? null,
+        remoteAddress: request.socket.remoteAddress ?? "unknown"
+      });
       sendJson(response, result.statusCode, {
         ok: true,
         code: result.code,
-        result: result.result
+        result: result.result,
+        requestId
       });
       return;
     } catch (error) {
       console.error("[ingest] failed", error);
-      sendError(response, 500, "ingest_failed", [error instanceof Error ? error.message : "unknown_error"]);
+      sendJson(response, 500, {
+        ok: false,
+        code: "ingest_failed",
+        details: [error instanceof Error ? error.message : "unknown_error"],
+        requestId
+      });
       return;
     }
   }
 
   sendJson(response, 404, {
     error: "not_found",
-    service: "backend"
+    service: "backend",
+    requestId
   });
 });
 

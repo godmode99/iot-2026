@@ -3,8 +3,16 @@ import { validateTelemetryEnvelope } from "./validator.mjs";
 import { findDeviceByDeviceId, persistTelemetryAndStatus } from "./repository.mjs";
 import { evaluateAlertsForTelemetry } from "../alerts/service.mjs";
 
-export async function ingestTelemetryEnvelope(config, envelope) {
-  const topicResult = parseIngestTopic(envelope?.topic ?? null, config.values.MQTT_TOPIC_PREFIX);
+export async function ingestTelemetryEnvelope(config, envelope, dependencies = {}) {
+  const {
+    parseTopic = parseIngestTopic,
+    validate = validateTelemetryEnvelope,
+    findDevice = findDeviceByDeviceId,
+    persist = persistTelemetryAndStatus,
+    evaluateAlerts = evaluateAlertsForTelemetry
+  } = dependencies;
+
+  const topicResult = parseTopic(envelope?.topic ?? null, config.values.MQTT_TOPIC_PREFIX);
   if (!topicResult.ok) {
     return {
       ok: false,
@@ -23,7 +31,7 @@ export async function ingestTelemetryEnvelope(config, envelope) {
     };
   }
 
-  const validation = validateTelemetryEnvelope(envelope, config.values.MQTT_TOPIC_PREFIX);
+  const validation = validate(envelope, config.values.MQTT_TOPIC_PREFIX);
   if (!validation.ok) {
     return {
       ok: false,
@@ -43,7 +51,7 @@ export async function ingestTelemetryEnvelope(config, envelope) {
     };
   }
 
-  const device = await findDeviceByDeviceId(telemetry.deviceId);
+  const device = await findDevice(telemetry.deviceId);
   if (!device) {
     return {
       ok: false,
@@ -53,8 +61,17 @@ export async function ingestTelemetryEnvelope(config, envelope) {
     };
   }
 
-  const persisted = await persistTelemetryAndStatus(device, telemetry);
-  const alertResults = await evaluateAlertsForTelemetry(device, telemetry);
+  if (device.provisioning_state === "retired") {
+    return {
+      ok: false,
+      statusCode: 409,
+      code: "device_retired",
+      details: [telemetry.deviceId]
+    };
+  }
+
+  const persisted = await persist(device, telemetry);
+  const alertResults = await evaluateAlerts(device, telemetry);
   return {
     ok: true,
     statusCode: persisted.duplicate ? 200 : 201,

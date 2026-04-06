@@ -103,6 +103,8 @@ At the time of writing:
 | firmware and hardware detail | [SB-00_Firmware_Hardware_v1_1.md](./SB-00_Firmware_Hardware_v1_1.md) | use for ESP-IDF, peripherals, power, and hardware assumptions |
 | backend and security detail | [SB-00_Backend_Security_v1_1.md](./SB-00_Backend_Security_v1_1.md) | use for schema, RLS, backend, auth, and ops baseline |
 | battery interface detail | [SB-00_Battery_Platform_Interface_Spec_v1_0.md](./SB-00_Battery_Platform_Interface_Spec_v1_0.md) | use when implementing battery metadata and variant support |
+| UX flow and screen inventory | [SB-00_UX_Flow_v1_0.md](./SB-00_UX_Flow_v1_0.md) | use when building any frontend screen, auth flow, or user-facing interaction |
+| auth and role model | [SB-00_Auth_Role_Spec_v1_0.md](./SB-00_Auth_Role_Spec_v1_0.md) | use when implementing login, auth guard, RLS policies, or any permission check |
 
 ## Immediate Working Priorities
 

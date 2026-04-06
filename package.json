@@ -9,6 +9,7 @@
     "dev:dashboard": "pnpm --dir dashboard dev",
     "start:backend": "pnpm --dir backend start",
     "start:dashboard": "pnpm --dir dashboard start",
+    "test:backend": "pnpm --dir backend test",
     "build:firmware": "powershell -ExecutionPolicy Bypass -File scripts/idf-build.ps1",
     "bench:soak": "node scripts/ex12-soak.mjs",
     "power:estimate": "node scripts/ex13-runtime-report.mjs",

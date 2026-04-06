@@ -1,24 +1,77 @@
 import { getBatteryThresholds } from "./battery-profiles.mjs";
 import {
+  annotateAlertNotification,
   listOfflineCandidates,
   openOrRefreshAlert,
   resolveAlert,
   setDeviceOnlineState
 } from "./repository.mjs";
+import { getBackendConfig } from "../config.mjs";
+import { dispatchAlertNotification } from "../notifications/service.mjs";
+
+const config = getBackendConfig();
 
 function nowIso() {
   return new Date().toISOString();
 }
 
-async function notifyStub(action, alertType, device, severity) {
-  console.log("[notify:stub]", {
-    action,
+function readPreviousNotificationMetadata(resultLike) {
+  return resultLike?.previous?.details_json?.notification ?? null;
+}
+
+function shouldNotify(resultLike, decisionSeverity) {
+  if (!resultLike) {
+    return false;
+  }
+
+  if (resultLike.action === "opened") {
+    return true;
+  }
+
+  const previousSeverity = resultLike.previous?.severity ?? null;
+  if (previousSeverity && previousSeverity !== decisionSeverity) {
+    return true;
+  }
+
+  const notification = readPreviousNotificationMetadata(resultLike);
+  if (!notification?.lastActionAt) {
+    return true;
+  }
+
+  const lastActionMs = new Date(notification.lastActionAt).getTime();
+  const cooldownMs = Math.max(60, Number(config.alertNotifyMinIntervalSec || 900)) * 1000;
+  return Number.isFinite(lastActionMs) && Date.now() - lastActionMs >= cooldownMs;
+}
+
+async function maybeNotify(resultLike, action, alertType, device, severity, dependencies = {}) {
+  const {
+    annotateNotification = annotateAlertNotification,
+    dispatchNotification = dispatchAlertNotification
+  } = dependencies;
+
+  if (!shouldNotify(resultLike, severity)) {
+    return false;
+  }
+
+  const notificationResult = await dispatchNotification({
+    alertId: resultLike.alert?.id ?? null,
     alertType,
-    deviceId: device.device_id,
+    action,
     severity,
-    channel: "web_stub",
-    at: nowIso()
-  });
+    device
+  }, dependencies);
+
+  const lastActionAt = notificationResult.sentAt ?? nowIso();
+  if (resultLike.alert?.id) {
+    await annotateNotification(resultLike.alert.id, {
+      channel: notificationResult.channel,
+      deliveryStatus: notificationResult.deliveryStatus,
+      lastActionAt,
+      lastAction: action,
+      severity
+    });
+  }
+  return true;
 }
 
 function thresholdDecision(telemetry) {
@@ -142,51 +195,57 @@ function sensorFaultDecision(telemetry) {
   };
 }
 
-async function applyDecision(device, alertType, decision) {
+async function applyDecision(device, alertType, decision, dependencies = {}) {
   if (!device.farm_id) {
     return null;
   }
 
   if (decision.open) {
-    const result = await openOrRefreshAlert(device, alertType, decision.severity, {
-      ...decision.details,
-      notification: {
-        channel: "web_stub",
-        lastActionAt: nowIso()
-      }
-    });
-    await notifyStub(result.action, alertType, device, decision.severity);
+    const result = await (dependencies.openOrRefreshAlert ?? openOrRefreshAlert)(
+      device,
+      alertType,
+      decision.severity,
+      decision.details
+    );
+    await maybeNotify(result, result.action, alertType, device, decision.severity, dependencies);
     return result;
   }
 
-  const resolved = await resolveAlert(device.id, alertType, decision.details);
+  const resolved = await (dependencies.resolveAlert ?? resolveAlert)(device.id, alertType, decision.details);
   if (resolved) {
-    await notifyStub("resolved", alertType, device, resolved.severity);
+    await maybeNotify({ action: "resolved", alert: resolved, previous: resolved.previous }, "resolved", alertType, device, resolved.severity, dependencies);
   }
   return resolved;
 }
 
-export async function evaluateAlertsForTelemetry(device, telemetry) {
+export async function evaluateAlertsForTelemetry(device, telemetry, dependencies = {}) {
   const results = [];
 
-  results.push(await applyDecision(device, "threshold", thresholdDecision(telemetry)));
-  results.push(await applyDecision(device, "low_battery", lowBatteryDecision(device, telemetry)));
-  results.push(await applyDecision(device, "sensor_fault", sensorFaultDecision(telemetry)));
+  results.push(await applyDecision(device, "threshold", thresholdDecision(telemetry), dependencies));
+  results.push(await applyDecision(device, "low_battery", lowBatteryDecision(device, telemetry), dependencies));
+  results.push(await applyDecision(device, "sensor_fault", sensorFaultDecision(telemetry), dependencies));
 
-  const offlineResolved = await resolveAlert(device.id, "offline", {
+  const offlineResolved = await (dependencies.resolveAlert ?? resolveAlert)(device.id, "offline", {
     reason: "telemetry_resumed",
     clearedAt: telemetry.recordedAt
   });
   if (offlineResolved) {
-    await notifyStub("resolved", "offline", device, offlineResolved.severity);
+    await maybeNotify(
+      { action: "resolved", alert: offlineResolved, previous: offlineResolved.previous },
+      "resolved",
+      "offline",
+      device,
+      offlineResolved.severity,
+      dependencies
+    );
     results.push(offlineResolved);
   }
 
   return results.filter(Boolean);
 }
 
-export async function evaluateOfflineAlerts() {
-  const devices = await listOfflineCandidates();
+export async function evaluateOfflineAlerts(dependencies = {}) {
+  const devices = await (dependencies.listOfflineCandidates ?? listOfflineCandidates)();
   const now = Date.now();
   const results = [];
 
@@ -200,24 +259,31 @@ export async function evaluateOfflineAlerts() {
     const isOffline = !lastSeenMs || now - lastSeenMs > thresholdSeconds * 1000;
 
     if (isOffline) {
-      await setDeviceOnlineState(device.id, "offline");
-      const result = await openOrRefreshAlert(device, "offline", "warning", {
+      await (dependencies.setDeviceOnlineState ?? setDeviceOnlineState)(device.id, "offline");
+      const result = await (dependencies.openOrRefreshAlert ?? openOrRefreshAlert)(device, "offline", "warning", {
         thresholdSeconds,
         lastSeenAt: device.last_seen_at,
         evaluatedAt: nowIso()
       });
-      await notifyStub(result.action, "offline", device, "warning");
+      await maybeNotify(result, result.action, "offline", device, "warning", dependencies);
       results.push(result);
       continue;
     }
 
-    await setDeviceOnlineState(device.id, "online");
-    const resolved = await resolveAlert(device.id, "offline", {
+    await (dependencies.setDeviceOnlineState ?? setDeviceOnlineState)(device.id, "online");
+    const resolved = await (dependencies.resolveAlert ?? resolveAlert)(device.id, "offline", {
       reason: "fresh_last_seen",
       evaluatedAt: nowIso()
     });
     if (resolved) {
-      await notifyStub("resolved", "offline", device, resolved.severity);
+      await maybeNotify(
+        { action: "resolved", alert: resolved, previous: resolved.previous },
+        "resolved",
+        "offline",
+        device,
+        resolved.severity,
+        dependencies
+      );
       results.push(resolved);
     }
   }

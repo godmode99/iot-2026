@@ -47,6 +47,14 @@ function normalizeGpsFixState(value) {
   return "none";
 }
 
+function isReasonableLatitude(value) {
+  return value === null || (value >= -90 && value <= 90);
+}
+
+function isReasonableLongitude(value) {
+  return value === null || (value >= -180 && value <= 180);
+}
+
 export function validateTelemetryEnvelope(input, expectedTopicPrefix) {
   const payload = input?.payload ?? input;
   const topic = input?.topic ?? null;
@@ -106,6 +114,14 @@ export function validateTelemetryEnvelope(input, expectedTopicPrefix) {
     errors.push("lat_lng_pair_invalid");
   }
 
+  if (!isReasonableLatitude(lat)) {
+    errors.push("lat_out_of_range");
+  }
+
+  if (!isReasonableLongitude(lng)) {
+    errors.push("lng_out_of_range");
+  }
+
   if (batteryPercent !== null && (batteryPercent < 0 || batteryPercent > 100)) {
     errors.push("battery_percent_out_of_range");
   }
@@ -114,8 +130,22 @@ export function validateTelemetryEnvelope(input, expectedTopicPrefix) {
     errors.push("battery_mv_out_of_range");
   }
 
+  if (temperatureC !== null && (temperatureC < -40 || temperatureC > 125)) {
+    errors.push("temperature_c_out_of_range");
+  }
+
+  if (turbidityRaw !== null && turbidityRaw < 0) {
+    errors.push("turbidity_raw_out_of_range");
+  }
+
+  if (signalQuality !== null && (signalQuality < 0 || signalQuality > 100)) {
+    errors.push("signal_quality_out_of_range");
+  }
+
   if (typeof payload.device_id !== "string" || payload.device_id.trim() === "") {
     errors.push("invalid_device_id");
+  } else if (!/^[a-z0-9-]+$/i.test(payload.device_id.trim())) {
+    errors.push("device_id_format_invalid");
   }
 
   if (topic && typeof topic === "string" && expectedTopicPrefix && !topic.startsWith(expectedTopicPrefix)) {

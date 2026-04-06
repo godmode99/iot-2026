@@ -5,7 +5,7 @@ status: active
 owners: [Pon, A]
 depends_on: [SB-00-MASTER]
 source_of_truth: true
-last_updated: 2026-04-03
+last_updated: 2026-04-06
 language: English-first
 audience: ai
 ---
@@ -49,6 +49,7 @@ It does not replace the master assumptions file. Instead, it explains how each l
 | D-04 | Production 4G sourcing fallback (`A7670E` / `SIM7670E`) | Closed | A | 2026-04-02 |
 | D-05 | LINE OA paid-plan review trigger | Closed | Pon | 2026-04-02 |
 | D-06 | Battery platform modular upgrade path | Closed | Pon + A | 2026-04-03 |
+| D-07 | Auth and role model | Closed | Pon | 2026-04-06 |
 
 ## Core Content
 
@@ -126,6 +127,22 @@ It does not replace the master assumptions file. Instead, it explains how each l
 | Rationale | Enables a higher-runtime option without splitting firmware, backend, provisioning, or mainboard architecture into separate product lines |
 | Downstream docs | master assumptions, firmware/hardware spec, procurement list, execution task list, battery platform spec |
 
+### D-07 Auth and Role Model
+
+| Field | Value |
+| --- | --- |
+| Status | Closed |
+| Owner | Pon |
+| Decision | Use a 4-type role model: `super_admin`, `reseller`, `customer`, and farm-level membership with granular permissions |
+| User type strategy | Single Supabase Auth pool — all users share one login system, differentiated by `user_profiles.user_type` |
+| Farm membership model | Farm owners can invite members to their farm with per-member permission flags: `can_view`, `can_receive_alerts`, `can_manage_alerts`, `can_send_commands` |
+| Reseller model | Reseller is a distinct user type with a dedicated `reseller_farms` table mapping which farms they manage |
+| Admin access | `super_admin` bypasses RLS entirely via service key — assigned manually by Pon through Supabase dashboard |
+| Rollout plan | Pilot: `super_admin` + `customer` only — add `farm_members` in Phase 2, add `reseller` in Phase 3 |
+| Scope impact | Schema migration required: add `user_profiles`, `farm_members`, `reseller_farms` tables — update all RLS policies |
+| Rationale | Production-grade access control from the start avoids costly refactoring before commercial launch — gradual rollout keeps pilot timeline intact |
+| Downstream docs | `SB-00_Auth_Role_Spec_v1_0.md`, `SB-00_UX_Flow_v1_0.md`, `SB-00_Backend_Security_v1_1.md`, `EX-06_SCHEMA_SPEC_v1_0.md` |
+
 ## Close Log
 
 | ID | Closed on | Final choice summary |
@@ -136,6 +153,7 @@ It does not replace the master assumptions file. Instead, it explains how each l
 | D-04 | 2026-04-02 | `A7670E` default with validated `SIM7670E` fallback |
 | D-05 | 2026-04-02 | Use `LINE free tier` through pilot, then review |
 | D-06 | 2026-04-03 | Shared core module plus `Standard` and `Long-Life` battery variants |
+| D-07 | 2026-04-06 | 4-type role model: `super_admin`, `reseller`, `customer`, farm member with granular permissions |
 
 ## Acceptance Criteria
 

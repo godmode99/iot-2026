@@ -63,6 +63,30 @@ function severityClass(value) {
   return value === "critical" ? "is-offline" : value === "warning" ? "is-stale" : "is-online";
 }
 
+function normalizeFilterValue(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function matchesDeviceFilter(device, filters) {
+  const query = normalizeFilterValue(filters.query);
+  const state = normalizeFilterValue(filters.state);
+
+  if (state && state !== "all" && normalizeFilterValue(device.online_state) !== state) {
+    return false;
+  }
+
+  if (!query) {
+    return true;
+  }
+
+  return [
+    device.device_id,
+    device.serial_number,
+    device.firmware_version,
+    device.battery_variant
+  ].some((value) => normalizeFilterValue(value).includes(query));
+}
+
 function renderChart(history) {
   if (!history?.length) {
     return `<div class="empty-card">No recent telemetry yet.</div>`;
@@ -156,6 +180,334 @@ function renderAlerts(alerts) {
       `
     )
     .join("");
+}
+
+function renderCommandLog(commands) {
+  if (!commands?.length) {
+    return `<div class="empty-card">No command activity yet.</div>`;
+  }
+
+  return commands
+    .map(
+      (command) => `
+        <div class="alert-row">
+          <div>
+            <div class="device-title">${escapeHtml(formatAlertType(command.command_type))}</div>
+            <div class="device-subtitle">${escapeHtml(command.id)}</div>
+          </div>
+          <div class="device-meta">
+            <span class="pill ${command.status === "failed" ? "is-offline" : command.status === "queued" ? "is-stale" : "is-online"}">${escapeHtml(command.status)}</span>
+            <span>${formatDate(command.requested_at)}</span>
+          </div>
+        </div>
+      `
+    )
+    .join("");
+}
+
+function renderNotificationTargets(farms) {
+  if (!farms?.length) {
+    return `<div class="empty-card">No farm notification targets available yet.</div>`;
+  }
+
+  return farms
+    .map(
+      (farm) => `
+        <form method="post" action="/ops/farms/${encodeURIComponent(farm.id)}/notification-targets" class="device-list">
+          <div>
+            <div class="device-title">${escapeHtml(farm.name)}</div>
+            <div class="device-subtitle">${escapeHtml(farm.id)}</div>
+          </div>
+          <div>
+            <div class="label">Alert Email</div>
+            <input type="email" name="alert_email_to" value="${escapeHtml(farm.alert_email_to || "")}" placeholder="alerts@example.com" />
+          </div>
+          <div>
+            <div class="label">LINE User ID</div>
+            <input type="text" name="alert_line_user_id" value="${escapeHtml(farm.alert_line_user_id || "")}" placeholder="Uxxxxxxxxxxxx" />
+          </div>
+          <button type="submit">Save contacts</button>
+        </form>
+      `
+    )
+    .join("");
+}
+
+function renderManagedAlerts(alerts, deviceId) {
+  if (!alerts?.length) {
+    return `<div class="empty-card">No alerts in this view.</div>`;
+  }
+
+  return alerts
+    .map((alert) => {
+      const canAct = alert.status === "open" || alert.status === "acknowledged";
+      return `
+        <div class="alert-manage-row">
+          <div class="alert-row">
+            <div>
+              <div class="device-title">${escapeHtml(formatAlertType(alert.alert_type))}</div>
+              <div class="device-subtitle">${escapeHtml(alert.id)}</div>
+            </div>
+            <div class="device-meta">
+              <span class="pill ${severityClass(alert.severity)}">${escapeHtml(alert.severity)}</span>
+              <span>${escapeHtml(alert.status)}</span>
+              <span>${formatDate(alert.opened_at)}</span>
+            </div>
+          </div>
+          ${canAct ? `
+            <div class="device-meta">
+              <form method="post" action="/devices/${encodeURIComponent(deviceId)}/alerts/${encodeURIComponent(alert.id)}/acknowledge" class="inline-form">
+                <button type="submit">Acknowledge</button>
+              </form>
+              <form method="post" action="/devices/${encodeURIComponent(deviceId)}/alerts/${encodeURIComponent(alert.id)}/suppress" class="inline-form">
+                <button type="submit">Suppress</button>
+              </form>
+              <form method="post" action="/devices/${encodeURIComponent(deviceId)}/alerts/${encodeURIComponent(alert.id)}/resolve" class="inline-form">
+                <button type="submit">Resolve</button>
+              </form>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderOpsPage({ devices, alerts, commands, farms, error, contactFeedback }) {
+  const onlineCount = devices.filter((device) => device.online_state === "online").length;
+  const attentionCount = devices.filter((device) => ["stale", "offline"].includes(device.online_state)).length;
+  const criticalAlertCount = alerts.filter((alert) => alert.severity === "critical" && alert.status === "open").length;
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SB-00 Ops Overview</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f6ef;
+        --panel: #ffffff;
+        --ink: #10221b;
+        --muted: #53645c;
+        --line: #d7ddd3;
+        --accent: #0e8a63;
+        --accent-soft: #d7efe4;
+        --danger: #9d3d32;
+        --danger-soft: #f7ddd8;
+        --warn: #93650d;
+        --warn-soft: #f8ebc4;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, #eef4df 0, var(--bg) 55%);
+        color: var(--ink);
+      }
+      main {
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 48px 24px 64px;
+        display: grid;
+        gap: 18px;
+      }
+      .hero {
+        display: grid;
+        gap: 12px;
+      }
+      .hero-nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hero-nav a {
+        display: inline-flex;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: #eef4df;
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .metrics-grid,
+      .ops-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .ops-grid {
+        align-items: start;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 14px 40px rgba(16, 34, 27, 0.06);
+      }
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .value {
+        margin-top: 8px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .device-list {
+        display: grid;
+        gap: 12px;
+      }
+      .device-row,
+      .alert-row {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+      .device-title {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .device-subtitle,
+      .device-meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .device-meta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+      .is-online {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .is-offline {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+      .is-stale {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+      .empty-card {
+        background: linear-gradient(180deg, #fbfdf8 0%, #f2f6ee 100%);
+        border: 1px dashed #c6d1c3;
+        border-radius: 18px;
+        padding: 22px;
+        color: var(--muted);
+      }
+      .error-banner {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--danger-soft);
+        color: var(--danger);
+        border: 1px solid #edc0b7;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="label">SB-00 Ops</div>
+        <h1>Fleet operations overview</h1>
+        <p>Single place to watch fleet health, open alerts, and command activity while hardware validation is still ramping up.</p>
+        <div class="hero-nav">
+          <a href="/devices">Dashboard</a>
+          <a href="/provision">Provisioning</a>
+        </div>
+      </section>
+      ${error ? `<section class="error-banner">${escapeHtml(error)}</section>` : ""}
+      ${contactFeedback ? `<section class="error-banner">${escapeHtml(contactFeedback)}</section>` : ""}
+      <section class="metrics-grid">
+        <article class="card">
+          <div class="label">Fleet Devices</div>
+          <div class="value">${devices.length}</div>
+          <p>Known devices in the current environment</p>
+        </article>
+        <article class="card">
+          <div class="label">Online Now</div>
+          <div class="value">${onlineCount}</div>
+          <p>Fresh devices currently reporting normally</p>
+        </article>
+        <article class="card">
+          <div class="label">Needs Attention</div>
+          <div class="value">${attentionCount}</div>
+          <p>Stale or offline devices needing follow-up</p>
+        </article>
+        <article class="card">
+          <div class="label">Critical Alerts</div>
+          <div class="value">${criticalAlertCount}</div>
+          <p>Open critical conditions across the fleet</p>
+        </article>
+      </section>
+      <section class="ops-grid">
+        <article class="card">
+          <div class="label">Open Alerts</div>
+          <div class="value">${alerts.length}</div>
+          <div class="device-list">${renderAlerts(alerts)}</div>
+        </article>
+        <article class="card">
+          <div class="label">Recent Commands</div>
+          <div class="value">${commands.length}</div>
+          <div class="device-list">${renderCommandLog(commands)}</div>
+        </article>
+        <article class="card">
+          <div class="label">Fleet Snapshot</div>
+          <div class="device-list">
+            ${
+              devices.length
+                ? devices
+                    .slice(0, 12)
+                    .map(
+                      (device) => `
+                        <a class="device-row" href="/devices/${encodeURIComponent(device.device_id)}">
+                          <div>
+                            <div class="device-title">${escapeHtml(device.serial_number || device.device_id)}</div>
+                            <div class="device-subtitle">${escapeHtml(device.device_id)}</div>
+                          </div>
+                          <div class="device-meta">
+                            <span class="pill ${onlineClass(device.online_state)}">${onlineLabel(device.online_state)}</span>
+                            <span>${formatMetric(device.battery_percent, "%")}</span>
+                            <span>${formatDate(device.last_seen_at)}</span>
+                          </div>
+                        </a>
+                      `
+                    )
+                    .join("")
+                : `<div class="empty-card">No devices available yet.</div>`
+            }
+          </div>
+        </article>
+        <article class="card">
+          <div class="label">Notification Contacts</div>
+          <div class="value">${farms.length}</div>
+          <div class="device-list">${renderNotificationTargets(farms)}</div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>`;
 }
 
 function readFormBody(request) {
@@ -327,10 +679,15 @@ function renderProvisioningPage({ qrValue, actorUserId, resolved, bindResult, er
             <span class="label">QR Payload Or Device ID</span>
             <input type="text" name="qr" value="${escapeHtml(qrValue)}" placeholder="sb00-devkit-02 or a QR URL" />
           </label>
+          ${
+            config.allowActorOverride
+              ? `
           <label class="stack">
-            <span class="label">Actor User ID</span>
+            <span class="label">Actor User ID (dev override)</span>
             <input type="text" name="actor_user_id" value="${escapeHtml(actorUserId)}" />
-          </label>
+          </label>`
+              : `<p class="meta">Operator identity is supplied by dashboard config.</p>`
+          }
           <button type="submit">Resolve device</button>
         </form>
       </section>
@@ -359,7 +716,7 @@ function renderProvisioningPage({ qrValue, actorUserId, resolved, bindResult, er
         <section class="card">
           <form method="post" action="/provision/bind">
             <input type="hidden" name="device_id" value="${escapeHtml(device.device_id)}" />
-            <input type="hidden" name="actor_user_id" value="${escapeHtml(actorUserId)}" />
+            ${config.allowActorOverride ? `<input type="hidden" name="actor_user_id" value="${escapeHtml(actorUserId)}" />` : ""}
             <label class="stack">
               <span class="label">Choose Farm</span>
               <select name="farm_id">
@@ -393,9 +750,14 @@ function renderProvisioningPage({ qrValue, actorUserId, resolved, bindResult, er
 </html>`;
 }
 
-function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, error }) {
-  const deviceCards = devices.length
-    ? devices
+function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, commands, error, filters, commandFeedback, alertFeedback }) {
+  const filteredDevices = devices.filter((device) => matchesDeviceFilter(device, filters));
+  const onlineCount = devices.filter((device) => device.online_state === "online").length;
+  const attentionCount = devices.filter((device) => ["stale", "offline"].includes(device.online_state)).length;
+  const criticalAlertCount = alerts.filter((alert) => alert.severity === "critical" && alert.status === "open").length;
+
+  const deviceCards = filteredDevices.length
+    ? filteredDevices
         .map(
           (device) => `
             <a class="device-row" href="/devices/${encodeURIComponent(device.device_id)}">
@@ -413,7 +775,7 @@ function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, er
           `
         )
         .join("")
-    : `<div class="empty-card">No devices found yet. Ingest one payload first.</div>`;
+    : `<div class="empty-card">No devices matched the current filters.</div>`;
 
   const detail = selectedDevice
     ? `
@@ -560,6 +922,13 @@ function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, er
         gap: 10px;
         flex-wrap: wrap;
       }
+      .alert-manage-row {
+        display: grid;
+        gap: 8px;
+      }
+      .inline-form {
+        display: inline-flex;
+      }
       .pill {
         display: inline-flex;
         align-items: center;
@@ -639,6 +1008,25 @@ function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, er
         color: var(--danger);
         border: 1px solid #edc0b7;
       }
+      input, select, button {
+        font: inherit;
+      }
+      input, select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+      button {
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        background: var(--accent);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+      }
       a {
         color: var(--accent);
         text-decoration: none;
@@ -659,12 +1047,55 @@ function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, er
         <p>Backend API: <a href="${config.backendUrl}/health">${config.backendUrl}/health</a></p>
       </section>
       ${error ? `<section class="error-banner">${escapeHtml(error)}</section>` : ""}
+      ${commandFeedback ? `<section class="error-banner">${escapeHtml(commandFeedback)}</section>` : ""}
+      ${alertFeedback ? `<section class="error-banner">${escapeHtml(alertFeedback)}</section>` : ""}
+      <section class="metrics-grid">
+        <article class="card">
+          <div class="label">Fleet Devices</div>
+          <div class="value">${devices.length}</div>
+          <p>${filteredDevices.length} visible in current view</p>
+        </article>
+        <article class="card">
+          <div class="label">Online Now</div>
+          <div class="value">${onlineCount}</div>
+          <p>Devices with fresh telemetry and healthy status</p>
+        </article>
+        <article class="card">
+          <div class="label">Needs Attention</div>
+          <div class="value">${attentionCount}</div>
+          <p>Offline or stale devices that need follow-up</p>
+        </article>
+        <article class="card">
+          <div class="label">Critical Alerts</div>
+          <div class="value">${criticalAlertCount}</div>
+          <p>Open critical alerts across the current fleet</p>
+        </article>
+      </section>
       <section class="layout">
         <aside class="sidebar">
           <article class="card">
             <div class="label">Device Fleet</div>
-            <div class="value">${devices.length}</div>
+            <div class="value">${filteredDevices.length}</div>
             <p>Map provider: ${escapeHtml(config.mapProvider)} | Provisioning: QR + Web/PWA</p>
+          </article>
+          <article class="card">
+            <form method="get" action="/devices" class="device-list">
+              <div>
+                <div class="label">Search</div>
+                <input type="text" name="q" value="${escapeHtml(filters.query)}" placeholder="device id, serial, firmware" />
+              </div>
+              <div>
+                <div class="label">State</div>
+                <select name="state">
+                  <option value="all" ${filters.state === "all" ? "selected" : ""}>All</option>
+                  <option value="online" ${filters.state === "online" ? "selected" : ""}>Online</option>
+                  <option value="stale" ${filters.state === "stale" ? "selected" : ""}>Stale</option>
+                  <option value="offline" ${filters.state === "offline" ? "selected" : ""}>Offline</option>
+                  <option value="unknown" ${filters.state === "unknown" ? "selected" : ""}>Unknown</option>
+                </select>
+              </div>
+              <button type="submit">Apply filters</button>
+            </form>
           </article>
           <article class="card">
             <div class="label">Open Alerts</div>
@@ -676,8 +1107,29 @@ function renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, er
         ${detail}
       ${selectedDevice ? `
         <section class="card">
+          <div class="label">Device Commands</div>
+          <form method="post" action="/devices/${encodeURIComponent(selectedDevice.device_id)}/commands" class="device-list">
+            <div>
+              <div class="label">Command Type</div>
+              <select name="command_type">
+                <option value="reboot">Reboot</option>
+                <option value="config_refresh">Config refresh</option>
+                <option value="ota_check">OTA check</option>
+                <option value="ota_apply">OTA apply</option>
+                <option value="telemetry_flush">Telemetry flush</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Note</div>
+              <input type="text" name="note" placeholder="optional note for audit trail" />
+            </div>
+            <button type="submit">Queue command</button>
+          </form>
+          <div class="device-list">${renderCommandLog(commands)}</div>
+        </section>
+        <section class="card">
           <div class="label">Device Alerts</div>
-          <div class="device-list">${renderAlerts(deviceAlerts)}</div>
+          <div class="device-list">${renderManagedAlerts(deviceAlerts, selectedDevice.device_id)}</div>
         </section>
       ` : ""}
       </section>
@@ -697,6 +1149,18 @@ async function fetchJson(url, options = {}) {
   return data;
 }
 
+function devActorHeaders(actorUserId = config.actorUserId || DEV_ACTOR_USER_ID) {
+  const headers = {
+    "x-actor-user-id": actorUserId
+  };
+
+  if (config.adminApiToken) {
+    headers.authorization = `Bearer ${config.adminApiToken}`;
+  }
+
+  return headers;
+}
+
 const server = createServer(async (request, response) => {
   if (!request.url) {
     response.writeHead(400);
@@ -708,14 +1172,19 @@ const server = createServer(async (request, response) => {
 
   if (request.method === "GET" && url.pathname === "/provision") {
     const qrValue = url.searchParams.get("qr") ?? url.searchParams.get("device_id") ?? "";
-    const actorUserId = url.searchParams.get("actor_user_id") ?? DEV_ACTOR_USER_ID;
+    const actorUserId = config.allowActorOverride
+      ? url.searchParams.get("actor_user_id") ?? config.actorUserId ?? DEV_ACTOR_USER_ID
+      : config.actorUserId ?? DEV_ACTOR_USER_ID;
     let resolved = null;
     let error = "";
 
     if (qrValue) {
       try {
         const provisioning = await fetchJson(
-          `${config.backendUrl}/api/provisioning/resolve?qr=${encodeURIComponent(qrValue)}&actor_user_id=${encodeURIComponent(actorUserId)}`
+          `${config.backendUrl}/api/provisioning/resolve?qr=${encodeURIComponent(qrValue)}`,
+          {
+            headers: devActorHeaders(actorUserId)
+          }
         );
         resolved = provisioning.result ?? null;
       } catch (caughtError) {
@@ -734,24 +1203,29 @@ const server = createServer(async (request, response) => {
     let error = "";
     const form = await readFormBody(request);
     const qrValue = form.qr || form.device_id || "";
-    const actorUserId = form.actor_user_id || DEV_ACTOR_USER_ID;
+    const actorUserId = config.allowActorOverride
+      ? form.actor_user_id || config.actorUserId || DEV_ACTOR_USER_ID
+      : config.actorUserId || DEV_ACTOR_USER_ID;
 
     try {
       bindResult = await fetchJson(`${config.backendUrl}/api/provisioning/bind`, {
         method: "POST",
         headers: {
-          "content-type": "application/json"
+          "content-type": "application/json",
+          ...devActorHeaders(actorUserId)
         },
         body: JSON.stringify({
           qr: form.qr || null,
           device_id: form.device_id || null,
-          farm_id: form.farm_id || null,
-          actor_user_id: actorUserId
+          farm_id: form.farm_id || null
         })
       });
 
       const provisioning = await fetchJson(
-        `${config.backendUrl}/api/provisioning/resolve?device_id=${encodeURIComponent(form.device_id || "")}&actor_user_id=${encodeURIComponent(actorUserId)}`
+        `${config.backendUrl}/api/provisioning/resolve?device_id=${encodeURIComponent(form.device_id || "")}`,
+        {
+          headers: devActorHeaders(actorUserId)
+        }
       );
       resolved = provisioning.result ?? null;
     } catch (caughtError) {
@@ -763,13 +1237,155 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  if (request.method === "GET" && url.pathname === "/ops") {
+    let devices = [];
+    let alerts = [];
+    let commands = [];
+    let farms = [];
+    let error = "";
+    const contactFeedback = url.searchParams.get("contact_feedback") ?? "";
+
+    try {
+      const [devicesResult, alertsResult, commandLogResult, farmsResult] = await Promise.all([
+        fetchJson(`${config.backendUrl}/api/devices`),
+        fetchJson(`${config.backendUrl}/api/alerts?status=open`),
+        fetchJson(`${config.backendUrl}/api/admin/command-log?limit=20`, {
+          headers: devActorHeaders()
+        }),
+        fetchJson(`${config.backendUrl}/api/admin/farms/notification-targets`, {
+          headers: devActorHeaders()
+        })
+      ]);
+
+      devices = devicesResult.devices ?? [];
+      alerts = alertsResult.alerts ?? [];
+      commands = commandLogResult.commands ?? [];
+      farms = farmsResult.farms ?? [];
+    } catch (caughtError) {
+      error = caughtError instanceof Error ? caughtError.message : "ops_data_unavailable";
+    }
+
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(renderOpsPage({ devices, alerts, commands, farms, error, contactFeedback }));
+    return;
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/ops/farms/") && url.pathname.endsWith("/notification-targets")) {
+    const farmId = decodeURIComponent(url.pathname.split("/")[3] ?? "");
+    const form = await readFormBody(request);
+
+    try {
+      await fetchJson(`${config.backendUrl}/api/admin/farms/${encodeURIComponent(farmId)}/notification-targets`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          ...devActorHeaders()
+        },
+        body: JSON.stringify({
+          alert_email_to: form.alert_email_to || null,
+          alert_line_user_id: form.alert_line_user_id || null
+        })
+      });
+
+      response.writeHead(302, {
+        location: `/ops?contact_feedback=${encodeURIComponent("Notification contacts updated")}`
+      });
+      response.end();
+      return;
+    } catch (caughtError) {
+      response.writeHead(302, {
+        location: `/ops?contact_feedback=${encodeURIComponent(
+          caughtError instanceof Error ? caughtError.message : "notification_contact_update_failed"
+        )}`
+      });
+      response.end();
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/devices/") && url.pathname.endsWith("/commands")) {
+    const deviceId = decodeURIComponent(url.pathname.split("/")[2] ?? "");
+    const form = await readFormBody(request);
+
+    try {
+      await fetchJson(`${config.backendUrl}/api/admin/devices/${encodeURIComponent(deviceId)}/commands`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...devActorHeaders()
+        },
+        body: JSON.stringify({
+          command_type: form.command_type,
+          details: {
+            note: form.note || ""
+          }
+        })
+      });
+
+      response.writeHead(302, {
+        location: `/devices/${encodeURIComponent(deviceId)}?command_feedback=${encodeURIComponent("Command queued")}`
+      });
+      response.end();
+      return;
+    } catch (caughtError) {
+      response.writeHead(302, {
+        location: `/devices/${encodeURIComponent(deviceId)}?command_feedback=${encodeURIComponent(
+          caughtError instanceof Error ? caughtError.message : "command_queue_failed"
+        )}`
+      });
+      response.end();
+      return;
+    }
+  }
+
+  if (request.method === "POST" && url.pathname.startsWith("/devices/") && url.pathname.includes("/alerts/")) {
+    const segments = url.pathname.split("/");
+    const deviceId = decodeURIComponent(segments[2] ?? "");
+    const alertId = decodeURIComponent(segments[4] ?? "");
+    const action = segments[5] ?? "";
+
+    try {
+      await fetchJson(`${config.backendUrl}/api/admin/alerts/${encodeURIComponent(alertId)}/${encodeURIComponent(action)}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...devActorHeaders()
+        },
+        body: JSON.stringify({
+          note: `dashboard_${action}`
+        })
+      });
+
+      response.writeHead(302, {
+        location: `/devices/${encodeURIComponent(deviceId)}?alert_feedback=${encodeURIComponent(`Alert ${action}d`)}`
+      });
+      response.end();
+      return;
+    } catch (caughtError) {
+      response.writeHead(302, {
+        location: `/devices/${encodeURIComponent(deviceId)}?alert_feedback=${encodeURIComponent(
+          caughtError instanceof Error ? caughtError.message : "alert_action_failed"
+        )}`
+      });
+      response.end();
+      return;
+    }
+  }
+
   if (url.pathname === "/" || url.pathname === "/devices" || url.pathname.startsWith("/devices/")) {
     let devices = [];
     let selectedDevice = null;
     let history = [];
     let alerts = [];
     let deviceAlerts = [];
+    let commands = [];
     let error = "";
+    const filters = {
+      query: url.searchParams.get("q") ?? "",
+      state: url.searchParams.get("state") ?? "all"
+    };
+    const commandFeedback = url.searchParams.get("command_feedback") ?? "";
+    const alertFeedback = url.searchParams.get("alert_feedback") ?? "";
     const selectedDeviceId = url.pathname.startsWith("/devices/")
       ? decodeURIComponent(url.pathname.split("/")[2] ?? "")
       : "";
@@ -782,21 +1398,25 @@ const server = createServer(async (request, response) => {
 
       const fallbackDeviceId = selectedDeviceId || devices[0]?.device_id || "";
       if (fallbackDeviceId) {
-        const [deviceResult, historyResult, deviceAlertsResult] = await Promise.all([
+        const [deviceResult, historyResult, deviceAlertsResult, commandLogResult] = await Promise.all([
           fetchJson(`${config.backendUrl}/api/devices/${encodeURIComponent(fallbackDeviceId)}`),
           fetchJson(`${config.backendUrl}/api/devices/${encodeURIComponent(fallbackDeviceId)}/history?hours=24`),
-          fetchJson(`${config.backendUrl}/api/devices/${encodeURIComponent(fallbackDeviceId)}/alerts?status=all`)
+          fetchJson(`${config.backendUrl}/api/devices/${encodeURIComponent(fallbackDeviceId)}/alerts?status=all`),
+          fetchJson(`${config.backendUrl}/api/admin/command-log?device_id=${encodeURIComponent(fallbackDeviceId)}&limit=10`, {
+            headers: devActorHeaders()
+          })
         ]);
         selectedDevice = deviceResult.device ?? null;
         history = historyResult.history ?? [];
         deviceAlerts = deviceAlertsResult.alerts ?? [];
+        commands = commandLogResult.commands ?? [];
       }
     } catch (caughtError) {
       error = caughtError instanceof Error ? caughtError.message : "dashboard_data_unavailable";
     }
 
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    response.end(renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, error }));
+    response.end(renderPage({ devices, selectedDevice, history, alerts, deviceAlerts, commands, error, filters, commandFeedback, alertFeedback }));
     return;
   }
 

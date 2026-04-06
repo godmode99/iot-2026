@@ -1,11 +1,12 @@
 import { parseProvisioningQr } from "./qr-parser.mjs";
+import { resolveProvisioningActor } from "./auth.mjs";
 import {
   bindDeviceToFarm,
   findProvisioningDevice,
   listOwnedFarms
 } from "./repository.mjs";
 
-export async function resolveProvisioningTarget({ qr, deviceId, actorUserId }) {
+export async function resolveProvisioningTarget({ config, headers = {}, qr, deviceId, actorUserId }) {
   const parsed = parseProvisioningQr(qr ?? deviceId ?? "");
   if (!parsed.ok) {
     return {
@@ -26,7 +27,8 @@ export async function resolveProvisioningTarget({ qr, deviceId, actorUserId }) {
     };
   }
 
-  if (!actorUserId) {
+  const actor = resolveProvisioningActor(config, actorUserId, headers);
+  if (!actor.ok && actor.code === "actor_missing") {
     return {
       ok: true,
       statusCode: 200,
@@ -40,7 +42,11 @@ export async function resolveProvisioningTarget({ qr, deviceId, actorUserId }) {
     };
   }
 
-  const farms = await listOwnedFarms(actorUserId);
+  if (!actor.ok) {
+    return actor;
+  }
+
+  const farms = await listOwnedFarms(actor.actorUserId);
   return {
     ok: true,
     statusCode: 200,
@@ -49,21 +55,13 @@ export async function resolveProvisioningTarget({ qr, deviceId, actorUserId }) {
       device,
       state: device.farm_id ? "already_bound" : "valid_unbound",
       farms,
-      actorUserId
+      actorUserId: actor.actorUserId,
+      actorMode: actor.mode
     }
   };
 }
 
-export async function bindProvisioningTarget({ qr, deviceId, farmId, actorUserId }) {
-  if (!actorUserId) {
-    return {
-      ok: false,
-      statusCode: 401,
-      code: "actor_missing",
-      details: ["actor_user_id is required"]
-    };
-  }
-
+export async function bindProvisioningTarget({ config, headers = {}, qr, deviceId, farmId, actorUserId }) {
   if (!farmId) {
     return {
       ok: false,
@@ -71,6 +69,11 @@ export async function bindProvisioningTarget({ qr, deviceId, farmId, actorUserId
       code: "farm_missing",
       details: ["farm_id is required"]
     };
+  }
+
+  const actor = resolveProvisioningActor(config, actorUserId, headers);
+  if (!actor.ok) {
+    return actor;
   }
 
   const parsed = parseProvisioningQr(qr ?? deviceId ?? "");
@@ -86,7 +89,7 @@ export async function bindProvisioningTarget({ qr, deviceId, farmId, actorUserId
   return bindDeviceToFarm({
     deviceId: parsed.deviceId,
     farmId,
-    actorUserId,
+    actorUserId: actor.actorUserId,
     requestSource: "web_qr"
   });
 }
