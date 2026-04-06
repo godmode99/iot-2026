@@ -370,6 +370,63 @@ h2 {
   margin-top: 0;
 }
 
+.dashboard-health-strip {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.health-chip {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 249, 0.76);
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.health-chip.is-online {
+  border-color: rgba(15, 139, 98, 0.2);
+  background: #d7efe2;
+  color: #086747;
+}
+
+.health-chip.is-offline {
+  border-color: rgba(173, 63, 50, 0.22);
+  background: #ffe1dc;
+  color: #8f2d23;
+}
+
+.health-chip.is-stale {
+  border-color: rgba(166, 102, 18, 0.24);
+  background: #fff0c9;
+  color: #7b520d;
+}
+
+.empty-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: clamp(22px, 5vw, 34px);
+  border: 1px dashed rgba(15, 139, 98, 0.34);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 90% 16%, rgba(15, 139, 98, 0.14), transparent 16rem),
+    rgba(255, 255, 249, 0.76);
+  box-shadow: 0 16px 42px rgba(23, 42, 31, 0.1);
+}
+
+.empty-panel h2 {
+  margin-bottom: 8px;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -659,6 +716,15 @@ h2 {
 
   .dashboard-hero {
     border-radius: 30px;
+  }
+
+  .empty-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .empty-panel .action-row {
+    margin-top: 0;
   }
 
   .mobile-list-row {

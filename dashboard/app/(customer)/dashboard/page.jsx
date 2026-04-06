@@ -56,6 +56,24 @@ function batteryLabel(status) {
   return `${Number(status.battery_percent).toFixed(0)}% battery`;
 }
 
+function countDevicesByState(devices, state) {
+  return devices.filter((device) => firstStatus(device)?.online_state === state).length;
+}
+
+function latestSeenAt(devices) {
+  const timestamps = devices
+    .map((device) => firstStatus(device)?.last_seen_at)
+    .filter(Boolean)
+    .map((value) => new Date(value).getTime())
+    .filter((value) => Number.isFinite(value));
+
+  if (!timestamps.length) {
+    return null;
+  }
+
+  return new Date(Math.max(...timestamps)).toISOString();
+}
+
 export default async function DashboardPage() {
   const messages = await getMessages();
   const { authConfigured, user } = await requireUser({ returnUrl: "/dashboard" });
@@ -63,6 +81,12 @@ export default async function DashboardPage() {
   const farmCount = dashboard?.farms.length ?? 0;
   const deviceCount = dashboard?.devices.length ?? 0;
   const openAlertCount = dashboard?.openAlerts.length ?? 0;
+  const onlineCount = countDevicesByState(dashboard?.devices ?? [], "online");
+  const offlineCount = countDevicesByState(dashboard?.devices ?? [], "offline");
+  const staleCount = countDevicesByState(dashboard?.devices ?? [], "stale");
+  const criticalAlertCount = (dashboard?.openAlerts ?? []).filter((alert) => alert.severity === "critical").length;
+  const lastHeartbeatAt = latestSeenAt(dashboard?.devices ?? []);
+  const hasWorkspace = farmCount > 0 || deviceCount > 0;
 
   return (
     <AppShell currentPath="/dashboard" ariaLabel="Dashboard navigation">
@@ -91,6 +115,16 @@ export default async function DashboardPage() {
             <span className="muted">{t(messages, "dashboard.openAlerts")}</span>
           </div>
         </div>
+
+        <div className="dashboard-health-strip" aria-label={t(messages, "dashboard.fleetHealth")}>
+          <span className="health-chip is-online">{onlineCount} {t(messages, "dashboard.onlineDevices")}</span>
+          <span className="health-chip is-stale">{staleCount} {t(messages, "dashboard.staleDevices")}</span>
+          <span className="health-chip is-offline">{offlineCount} {t(messages, "dashboard.offlineDevices")}</span>
+          <span className={`health-chip ${criticalAlertCount ? "is-offline" : "is-online"}`}>
+            {criticalAlertCount ? `${criticalAlertCount} ${t(messages, "dashboard.criticalAlerts")}` : t(messages, "dashboard.allClear")}
+          </span>
+          <span className="health-chip">{t(messages, "dashboard.latestHeartbeat")}: {formatDate(lastHeartbeatAt)}</span>
+        </div>
       </section>
 
       {dashboard?.errors.length ? (
@@ -116,6 +150,20 @@ export default async function DashboardPage() {
           <span className="muted">{t(messages, "farmCreate.body")}</span>
         </Link>
       </section>
+
+      {!hasWorkspace ? (
+        <section className="empty-panel dashboard-card">
+          <div>
+            <p className="eyebrow">{t(messages, "dashboard.emptyEyebrow")}</p>
+            <h2>{t(messages, "dashboard.emptyTitle")}</h2>
+            <p className="muted">{t(messages, "dashboard.emptyBody")}</p>
+          </div>
+          <div className="action-row">
+            <Link className="button" href="/farms/new">{t(messages, "dashboard.emptyCtaFarm")}</Link>
+            <Link className="button-secondary" href="/provision">{t(messages, "dashboard.emptyCtaProvision")}</Link>
+          </div>
+        </section>
+      ) : null}
 
       <section className="dashboard-grid">
         <div className="card">
