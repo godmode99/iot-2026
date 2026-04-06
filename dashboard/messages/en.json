@@ -60,5 +60,30 @@
     "chooseFarm": "Choose farm",
     "bindAction": "Bind device",
     "noOwnedFarms": "This account has no owner-scoped farm available for binding yet."
+  },
+  "farmSettings": {
+    "eyebrow": "Farm settings",
+    "body": "Manage farm members, reseller scope, notification preferences, and audit visibility.",
+    "notFoundTitle": "Farm unavailable",
+    "notFoundBody": "This farm is not visible to the current session.",
+    "viewOnly": "You can view this farm, but you cannot manage members or reseller scope.",
+    "members": "Members",
+    "noMembers": "No members found.",
+    "inviteMember": "Invite member",
+    "receiveAlerts": "Receive alerts",
+    "manageAlerts": "Manage alerts",
+    "sendCommands": "Send commands",
+    "createInvite": "Create invite",
+    "resellers": "Resellers",
+    "noResellers": "No reseller assignments yet.",
+    "assignReseller": "Assign reseller",
+    "resellerUserId": "Reseller user ID",
+    "sendSafeCommands": "Send safe commands",
+    "assignResellerAction": "Assign reseller",
+    "notificationPreferences": "My notification preferences",
+    "criticalOnly": "Critical alerts only",
+    "savePreference": "Save preference",
+    "audit": "Audit log",
+    "noAudit": "No audit entries yet."
   }
 }

@@ -80,7 +80,7 @@ export default async function DashboardPage() {
             <ul className="status-list">
               {dashboard.farms.map((farm) => (
                 <li key={farm.id}>
-                  <span>{farm.name}</span>
+                  <Link href={`/farms/${farm.id}`}>{farm.name}</Link>
                   <span className="pill">farm</span>
                 </li>
               ))}

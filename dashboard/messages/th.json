@@ -60,5 +60,30 @@
     "chooseFarm": "เลือกฟาร์ม",
     "bindAction": "ผูกอุปกรณ์",
     "noOwnedFarms": "บัญชีนี้ยังไม่มีฟาร์มในสิทธิ์ owner สำหรับ bind อุปกรณ์"
+  },
+  "farmSettings": {
+    "eyebrow": "ตั้งค่าฟาร์ม",
+    "body": "จัดการสมาชิก, reseller scope, notification preferences และ audit visibility",
+    "notFoundTitle": "ไม่พบฟาร์ม",
+    "notFoundBody": "session ปัจจุบันยังไม่มีสิทธิ์เห็นฟาร์มนี้",
+    "viewOnly": "คุณดูฟาร์มนี้ได้ แต่ยังจัดการสมาชิกหรือ reseller scope ไม่ได้",
+    "members": "สมาชิก",
+    "noMembers": "ยังไม่พบสมาชิก",
+    "inviteMember": "เชิญสมาชิก",
+    "receiveAlerts": "รับแจ้งเตือน",
+    "manageAlerts": "จัดการแจ้งเตือน",
+    "sendCommands": "ส่งคำสั่ง",
+    "createInvite": "สร้าง invite",
+    "resellers": "Reseller",
+    "noResellers": "ยังไม่มี reseller assignment",
+    "assignReseller": "เพิ่ม reseller",
+    "resellerUserId": "Reseller user ID",
+    "sendSafeCommands": "ส่งคำสั่งที่ปลอดภัย",
+    "assignResellerAction": "Assign reseller",
+    "notificationPreferences": "การแจ้งเตือนของฉัน",
+    "criticalOnly": "เฉพาะ critical alerts",
+    "savePreference": "บันทึก preference",
+    "audit": "Audit log",
+    "noAudit": "ยังไม่มี audit entry"
   }
 }

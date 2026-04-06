@@ -313,6 +313,29 @@ h2 {
   gap: 18px;
 }
 
+.pill-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.check-row {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: center;
+  gap: 10px !important;
+}
+
+.check-row input {
+  width: auto;
+  min-height: auto;
+}
+
+.invite-token {
+  word-break: break-all;
+}
+
 .form {
   display: grid;
   gap: 14px;

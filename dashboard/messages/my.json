@@ -60,5 +60,30 @@
     "chooseFarm": "ဖားမ်ရွေးရန်",
     "bindAction": "စက်ချိတ်ရန်",
     "noOwnedFarms": "ဤအကောင့်တွင် bind ပြုလုပ်နိုင်သော owner-scoped farm မရှိသေးပါ။"
+  },
+  "farmSettings": {
+    "eyebrow": "Farm settings",
+    "body": "Farm members, reseller scope, notification preferences နှင့် audit visibility ကို စီမံပါ။",
+    "notFoundTitle": "Farm မတွေ့ပါ",
+    "notFoundBody": "လက်ရှိ session မှ ဤ farm ကို မမြင်နိုင်ပါ။",
+    "viewOnly": "ဤ farm ကို ကြည့်နိုင်သော်လည်း members သို့မဟုတ် reseller scope ကို မစီမံနိုင်ပါ။",
+    "members": "Members",
+    "noMembers": "Member မတွေ့သေးပါ။",
+    "inviteMember": "Member ဖိတ်ရန်",
+    "receiveAlerts": "Alerts လက်ခံရန်",
+    "manageAlerts": "Alerts စီမံရန်",
+    "sendCommands": "Commands ပို့ရန်",
+    "createInvite": "Invite ဖန်တီးရန်",
+    "resellers": "Resellers",
+    "noResellers": "Reseller assignment မရှိသေးပါ။",
+    "assignReseller": "Reseller သတ်မှတ်ရန်",
+    "resellerUserId": "Reseller user ID",
+    "sendSafeCommands": "Safe commands ပို့ရန်",
+    "assignResellerAction": "Reseller သတ်မှတ်ရန်",
+    "notificationPreferences": "ကျွန်ုပ်၏ notification preferences",
+    "criticalOnly": "Critical alerts များသာ",
+    "savePreference": "Preference သိမ်းရန်",
+    "audit": "Audit log",
+    "noAudit": "Audit entry မရှိသေးပါ။"
   }
 }
