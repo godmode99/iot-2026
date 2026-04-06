@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell.jsx";
+import { DeviceCommandForm } from "@/components/device-command-form.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadDeviceDetail } from "@/lib/data/device-detail.js";
@@ -133,22 +134,22 @@ export default async function DeviceDetailPage({ params, searchParams }) {
             <article className="card">
               <h2>{t(messages, "deviceDetail.commands")}</h2>
               {canSendAnyCommand ? (
-                <form className="form" action={submitDeviceCommand}>
-                  <input type="hidden" name="device_id" value={deviceId} />
-                  <label>
-                    {t(messages, "deviceDetail.commandType")}
-                    <select name="command_type" required>
-                      {commandOptions.map((command) => (
-                        <option value={command} key={command}>{label(command)}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    {t(messages, "deviceDetail.commandNote")}
-                    <input name="note" placeholder="optional audit note" />
-                  </label>
-                  <button className="button" type="submit">{t(messages, "deviceDetail.queueCommand")}</button>
-                </form>
+                <DeviceCommandForm
+                  action={submitDeviceCommand}
+                  commandOptions={commandOptions}
+                  deviceId={deviceId}
+                  labels={{
+                    commandType: t(messages, "deviceDetail.commandType"),
+                    commandNote: t(messages, "deviceDetail.commandNote"),
+                    queueCommand: t(messages, "deviceDetail.queueCommand"),
+                    riskNotice: t(messages, "deviceDetail.riskNotice"),
+                    confirmEyebrow: t(messages, "deviceDetail.confirmEyebrow"),
+                    confirmTitle: t(messages, "deviceDetail.confirmTitle"),
+                    confirmBody: t(messages, "deviceDetail.confirmBody"),
+                    confirmAction: t(messages, "deviceDetail.confirmAction"),
+                    cancelAction: t(messages, "deviceDetail.cancelAction")
+                  }}
+                />
               ) : <p className="muted">{t(messages, "deviceDetail.commandViewOnly")}</p>}
             </article>
           </section>

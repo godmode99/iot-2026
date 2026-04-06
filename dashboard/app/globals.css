@@ -555,6 +555,31 @@ h2 {
   cursor: pointer;
 }
 
+.command-risk-note {
+  margin: 0;
+}
+
+.confirm-dialog {
+  width: min(480px, calc(100% - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: 30px;
+  background: transparent;
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(20, 33, 27, 0.42);
+  backdrop-filter: blur(6px);
+}
+
+.confirm-dialog-panel {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: var(--panel-solid);
+  box-shadow: 0 28px 90px rgba(20, 33, 27, 0.28);
+}
+
 .mobile-list-row {
   align-items: center;
 }
