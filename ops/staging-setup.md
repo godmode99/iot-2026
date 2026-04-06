@@ -11,6 +11,18 @@ Use this checklist to connect the project to staging without committing secrets.
 - Do not paste secrets into tracked docs, source code, screenshots, or chat history when avoidable.
 - `.env.staging.local` is ignored by git through `.env.*.local`.
 
+You can create the local file and generate local-only tokens with:
+
+```powershell
+pnpm env:init:staging
+```
+
+The command writes `.env.staging.local`, generates `ADMIN_API_TOKEN`, `INGEST_SHARED_TOKEN`, and `JWT_SECRET`, and does not print the generated values. If the file already exists, it refuses to overwrite unless you pass `--force`:
+
+```powershell
+pnpm env:init:staging -- --force
+```
+
 ## Minimum Staging Inputs
 
 Create or collect these before validation:
@@ -87,6 +99,7 @@ NOTIFICATION_MODE=stub
 After `.env.staging.local` is filled, run:
 
 ```powershell
+pnpm env:init:staging -- --dry-run
 pnpm deploy:check:staging
 pnpm --dir dashboard build
 pnpm --dir backend test

@@ -14,6 +14,7 @@
     "bench:soak": "node scripts/ex12-soak.mjs",
     "power:estimate": "node scripts/ex13-runtime-report.mjs",
     "field:report": "node scripts/ex15-field-report.mjs",
+    "env:init:staging": "node scripts/init-staging-env.mjs",
     "deploy:check": "node scripts/verify-deployment-readiness.mjs",
     "deploy:check:staging": "node scripts/verify-deployment-readiness.mjs --env .env.staging.local --target staging",
     "db:start": "supabase start",
