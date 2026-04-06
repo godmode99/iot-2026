@@ -491,6 +491,35 @@ h2 {
   gap: 8px;
 }
 
+.ops-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
+  gap: 22px;
+  align-items: end;
+  padding: clamp(22px, 5vw, 42px);
+  border: 1px solid var(--line);
+  border-radius: 36px;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(15, 139, 98, 0.16), transparent 22rem),
+    linear-gradient(145deg, rgba(255, 255, 249, 0.94), rgba(223, 232, 213, 0.84));
+  box-shadow: var(--shadow);
+}
+
+.ops-hero-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(15, 139, 98, 0.18);
+  border-radius: 28px;
+  background: rgba(255, 255, 249, 0.74);
+}
+
+.ops-health-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -774,6 +803,7 @@ h2 {
   .dashboard-hero,
   .device-hero,
   .farm-hero,
+  .ops-hero,
   .dashboard-actions-grid,
   .provision-hero,
   .provision-steps {

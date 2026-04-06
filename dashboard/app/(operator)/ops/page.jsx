@@ -32,6 +32,24 @@ function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
 
+function countDevicesByState(devices, state) {
+  return devices.filter((device) => device.status?.online_state === state).length;
+}
+
+function latestSeenAt(devices) {
+  const timestamps = devices
+    .map((device) => device.status?.last_seen_at)
+    .filter(Boolean)
+    .map((value) => new Date(value).getTime())
+    .filter((value) => Number.isFinite(value));
+
+  if (!timestamps.length) {
+    return null;
+  }
+
+  return new Date(Math.max(...timestamps)).toISOString();
+}
+
 function Metric({ labelText, value, meta }) {
   return (
     <article className="metric">
@@ -46,15 +64,40 @@ export default async function OpsPage() {
   const messages = await getMessages();
   const { authConfigured, user } = await requireUser({ returnUrl: "/ops" });
   const ops = user ? await loadOpsOverview() : null;
+  const offlineCount = countDevicesByState(ops?.devices ?? [], "offline");
+  const staleCount = countDevicesByState(ops?.devices ?? [], "stale");
+  const latestHeartbeatAt = latestSeenAt(ops?.devices ?? []);
+  const missingContactCount = (ops?.farms ?? []).filter((farm) => !farm.alert_email_to && !farm.alert_line_user_id).length;
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
       {!authConfigured ? <section className="notice">{t(messages, "dashboard.authPending")}</section> : null}
 
-      <section className="card dashboard-card">
-        <p className="eyebrow">{t(messages, "ops.eyebrow")}</p>
-        <h1 className="page-title">{t(messages, "ops.title")}</h1>
-        <p className="lede">{ops?.authorized ? t(messages, "ops.body") : t(messages, "ops.notAuthorized")}</p>
+      <section className="ops-hero dashboard-card">
+        <div>
+          <p className="eyebrow">{t(messages, "ops.eyebrow")}</p>
+          <h1 className="page-title">{t(messages, "ops.title")}</h1>
+          <p className="lede">{ops?.authorized ? t(messages, "ops.body") : t(messages, "ops.notAuthorized")}</p>
+        </div>
+
+        {ops?.authorized ? (
+          <div className="ops-hero-panel">
+            <div className="metric-grid compact-grid">
+              <Metric labelText={t(messages, "ops.farms")} value={ops.metrics.farmCount} />
+              <Metric labelText={t(messages, "ops.devices")} value={ops.metrics.deviceCount} />
+              <Metric labelText={t(messages, "ops.attention")} value={ops.metrics.attentionCount} meta={`${ops.metrics.criticalAlertCount} ${t(messages, "ops.critical")}`} />
+            </div>
+            <div className="ops-health-strip">
+              <span className="health-chip is-online">{ops.metrics.onlineCount} {t(messages, "ops.online")}</span>
+              <span className="health-chip is-stale">{staleCount} {t(messages, "ops.stale")}</span>
+              <span className="health-chip is-offline">{offlineCount} {t(messages, "ops.offline")}</span>
+              <span className={`health-chip ${missingContactCount ? "is-stale" : "is-online"}`}>
+                {missingContactCount ? `${missingContactCount} ${t(messages, "ops.missingContacts")}` : t(messages, "ops.contactsReady")}
+              </span>
+              <span className="health-chip">{t(messages, "ops.latestHeartbeat")}: {formatDate(latestHeartbeatAt)}</span>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       {ops?.errors.length ? (
@@ -68,13 +111,6 @@ export default async function OpsPage() {
 
       {ops?.authorized ? (
         <>
-          <section className="metric-grid dashboard-metrics">
-            <Metric labelText={t(messages, "ops.farms")} value={ops.metrics.farmCount} />
-            <Metric labelText={t(messages, "ops.devices")} value={ops.metrics.deviceCount} />
-            <Metric labelText={t(messages, "ops.online")} value={ops.metrics.onlineCount} />
-            <Metric labelText={t(messages, "ops.attention")} value={ops.metrics.attentionCount} meta={`${ops.metrics.criticalAlertCount} critical`} />
-          </section>
-
           <section className="dashboard-grid">
             <article className="card">
               <h2>{t(messages, "ops.fleetSnapshot")}</h2>
