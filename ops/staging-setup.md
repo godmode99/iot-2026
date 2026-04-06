@@ -1,0 +1,108 @@
+# Staging Setup
+
+## Purpose
+
+Use this checklist to connect the project to staging without committing secrets.
+
+## Safe Secret Handling
+
+- Copy `.env.staging.example` to `.env.staging.local`.
+- Fill real staging values only in `.env.staging.local`.
+- Do not paste secrets into tracked docs, source code, screenshots, or chat history when avoidable.
+- `.env.staging.local` is ignored by git through `.env.*.local`.
+
+## Minimum Staging Inputs
+
+Create or collect these before validation:
+
+- Supabase staging project URL.
+- Supabase staging anon key.
+- Supabase staging service role key.
+- Supabase staging database URL.
+- Dashboard staging URL.
+- Backend staging URL.
+- Generated `ADMIN_API_TOKEN`.
+- Generated `INGEST_SHARED_TOKEN`.
+- Generated `JWT_SECRET`.
+
+MQTT, LINE, Resend, and OTA signing can stay on placeholder/stub values until that specific integration is being tested.
+
+## Supabase Auth Redirects
+
+Add these in Supabase Auth for the staging project:
+
+- `${DASHBOARD_URL}`
+- `${DASHBOARD_URL}/auth/callback`
+- `${DASHBOARD_URL}/reset-password`
+
+Use the final Vercel preview/staging URL, not localhost.
+
+## Vercel Dashboard Project
+
+Use these Vercel settings:
+
+| setting | value |
+| --- | --- |
+| Root Directory | `dashboard` |
+| Install Command | `pnpm install --frozen-lockfile` |
+| Build Command | `pnpm build` |
+| Output Directory | `.next` |
+
+Set these Vercel variables for the dashboard project:
+
+- `APP_URL`
+- `DASHBOARD_URL`
+- `BACKEND_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_DEFAULT_LOCALE`
+- `ADMIN_API_TOKEN`
+- `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false`
+
+Do not set service role keys or broker passwords as `NEXT_PUBLIC_*` variables.
+
+## Backend Runtime
+
+Set backend-only secrets on the API/backend runtime:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_DB_URL`
+- `ADMIN_API_TOKEN`
+- `INGEST_SHARED_TOKEN`
+- `JWT_SECRET`
+- `ADMIN_ALLOW_INSECURE_DEV=false`
+- `INGEST_ALLOW_INSECURE_DEV=false`
+- `PROVISIONING_ALLOW_INSECURE_DEV=false`
+- `BACKEND_RATE_LIMIT_ENABLED=true`
+
+If notifications are not ready, use:
+
+```text
+NOTIFICATION_MODE=stub
+```
+
+## Local Validation
+
+After `.env.staging.local` is filled, run:
+
+```powershell
+pnpm deploy:check:staging
+pnpm --dir dashboard build
+pnpm --dir backend test
+pnpm db:smoke:rbac
+```
+
+The staging deploy check validates required keys, HTTPS URLs, unsafe dev flags, rate limiting, and short secret values without printing the secret values.
+
+## First Preview Gate
+
+Before inviting anyone to test staging:
+
+- Login/signup works against Supabase staging.
+- Password reset returns through `/reset-password`.
+- `/dashboard` only shows farms visible to the signed-in user.
+- `/provision` binds a staging device to the selected farm.
+- `/farms/[farmId]` invite and notification preference actions write audit records.
+- `/devices/[deviceId]` command and alert actions enforce RBAC permissions.
+- `/ops` is visible only to operator/admin users.

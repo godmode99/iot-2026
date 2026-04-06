@@ -67,6 +67,7 @@ For preview deployments, add the preview domain or Vercel preview wildcard polic
 Run before promoting preview to production:
 
 ```powershell
+pnpm deploy:check:staging
 pnpm deploy:check -- --env .env.production.local --target production
 pnpm --dir dashboard build
 pnpm --dir backend test

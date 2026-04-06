@@ -84,6 +84,7 @@ Keep `BACKEND_RATE_LIMIT_ENABLED=true` outside local debugging and tune route li
 Run this locally before deployment:
 
 ```powershell
+pnpm deploy:check:staging
 pnpm deploy:check -- --env .env.production.local --target production
 pnpm --dir dashboard build
 pnpm --dir backend test
@@ -94,6 +95,13 @@ Validate the tracked template without requiring real secrets:
 
 ```powershell
 pnpm deploy:check -- --env .env.example --target template
+pnpm deploy:check -- --env .env.staging.example --target template
+```
+
+Validate staging after `.env.staging.local` is filled:
+
+```powershell
+pnpm deploy:check:staging
 ```
 
 ## Preview Gate

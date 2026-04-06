@@ -68,8 +68,8 @@ function parseArgs(argv) {
     }
   }
 
-  if (!["local", "preview", "production", "template"].includes(args.target)) {
-    throw new Error(`Unsupported --target ${args.target}. Use local, preview, production, or template.`);
+  if (!["local", "preview", "staging", "production", "template"].includes(args.target)) {
+    throw new Error(`Unsupported --target ${args.target}. Use local, preview, staging, production, or template.`);
   }
 
   return args;
@@ -124,7 +124,7 @@ function run() {
   const errors = [];
   const warnings = [];
 
-  if (!existsSync(envPath) && args.target !== "production") {
+  if (!existsSync(envPath) && !["staging", "production"].includes(args.target)) {
     warnings.push(`Env file not found: ${envPath}. Falling back to process.env only.`);
   }
 
@@ -150,26 +150,39 @@ function run() {
     }
   }
 
-  if (args.target === "production") {
+  if (["staging", "production"].includes(args.target)) {
     for (const key of PRODUCTION_FALSE_FLAGS) {
       if (valueFor(fileEnv, key) !== "false") {
-        errors.push(`${key} must be false for production`);
+        errors.push(`${key} must be false for ${args.target}`);
       }
     }
 
     for (const key of HTTPS_KEYS) {
       const value = valueFor(fileEnv, key);
       if (value && !isHttpsUrl(value)) {
-        errors.push(`${key} must be an https:// URL for production`);
+        errors.push(`${key} must be an https:// URL for ${args.target}`);
       }
     }
 
-    if (valueFor(fileEnv, "NOTIFICATION_MODE") === "stub") {
-      warnings.push("NOTIFICATION_MODE is stub. Production alerts will be audited but not delivered to users.");
-    }
-
     if (valueFor(fileEnv, "BACKEND_RATE_LIMIT_ENABLED") !== "true") {
-      errors.push("BACKEND_RATE_LIMIT_ENABLED must be true for production");
+      errors.push(`BACKEND_RATE_LIMIT_ENABLED must be true for ${args.target}`);
+    }
+  }
+
+  if (args.target === "production" && valueFor(fileEnv, "NOTIFICATION_MODE") === "stub") {
+    warnings.push("NOTIFICATION_MODE is stub. Production alerts will be audited but not delivered to users.");
+  }
+
+  if (args.target === "staging" && valueFor(fileEnv, "NOTIFICATION_MODE") === "stub") {
+    warnings.push("NOTIFICATION_MODE is stub. Staging alerts will be audited but not delivered.");
+  }
+
+  if (args.target === "staging") {
+    for (const key of ["SUPABASE_SERVICE_ROLE_KEY", "ADMIN_API_TOKEN", "INGEST_SHARED_TOKEN", "JWT_SECRET"]) {
+      const value = valueFor(fileEnv, key);
+      if (value && value.length < 24) {
+        errors.push(`${key} should be at least 24 characters for staging`);
+      }
     }
   }
 
