@@ -7,7 +7,8 @@
     "provision": "Provision",
     "ops": "Ops",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "signout": "Sign out"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",

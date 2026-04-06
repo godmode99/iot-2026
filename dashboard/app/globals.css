@@ -124,6 +124,10 @@ input {
   background: rgba(255, 255, 249, 0.7);
 }
 
+.nav-button {
+  cursor: pointer;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);

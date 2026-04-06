@@ -34,7 +34,7 @@ export default async function LoginPage({ searchParams }) {
         </form>
         <p className="muted auth-footnote">
           <Link href="/signup">{t(messages, "nav.signup")}</Link>
-          {" · "}
+          {" / "}
           <Link href="/forgot-password">{t(messages, "auth.forgotPassword")}</Link>
         </p>
       </section>

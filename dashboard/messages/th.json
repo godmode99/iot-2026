@@ -7,7 +7,8 @@
     "provision": "เพิ่มอุปกรณ์",
     "ops": "Ops",
     "login": "เข้าสู่ระบบ",
-    "signup": "สมัครใช้งาน"
+    "signup": "สมัครใช้งาน",
+    "signout": "ออกจากระบบ"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",

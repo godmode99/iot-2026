@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
+import { signOut } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,11 @@ export default async function DashboardPage() {
         <div className="nav-links">
           <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
           <Link className="nav-link" href="/ops">{t(messages, "nav.ops")}</Link>
+          {authConfigured ? (
+            <form action={signOut}>
+              <button className="button-secondary nav-button" type="submit">{t(messages, "nav.signout")}</button>
+            </form>
+          ) : null}
         </div>
       </nav>
 
@@ -49,4 +55,3 @@ export default async function DashboardPage() {
     </main>
   );
 }
-

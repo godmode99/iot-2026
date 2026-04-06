@@ -2,18 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { getAppUrl } from "@/lib/env.js";
+import { safeReturnUrl, withParams } from "@/lib/auth/urls.js";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server.js";
-
-function safeReturnUrl(value) {
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/dashboard";
-}
-
-function withParams(path, params) {
-  const searchParams = new URLSearchParams(params);
-  return `${path}?${searchParams.toString()}`;
-}
 
 export async function signInWithPassword(formData) {
   const returnUrl = safeReturnUrl(formData.get("returnUrl"));
@@ -47,7 +37,7 @@ export async function signUpWithPassword(formData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${getAppUrl()}/dashboard`
+      emailRedirectTo: `${getAppUrl()}/auth/callback?next=/dashboard`
     }
   });
 
@@ -57,4 +47,3 @@ export async function signUpWithPassword(formData) {
 
   redirect(withParams("/login", { notice: "check_email" }));
 }
-

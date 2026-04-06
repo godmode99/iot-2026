@@ -7,7 +7,8 @@
     "provision": "စက်ထည့်ရန်",
     "ops": "Ops",
     "login": "ဝင်ရန်",
-    "signup": "အကောင့်ဖွင့်ရန်"
+    "signup": "အကောင့်ဖွင့်ရန်",
+    "signout": "ထွက်ရန်"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",
