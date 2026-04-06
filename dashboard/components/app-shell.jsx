@@ -18,6 +18,7 @@ export async function AppShell({ children, currentPath = "", ariaLabel = "Primar
     navItem("/dashboard", t(messages, "nav.dashboard"), currentPath),
     context.isReseller ? null : navItem("/farms/new", t(messages, "nav.newFarm"), currentPath),
     navItem("/provision", t(messages, "nav.provision"), currentPath),
+    navItem("/settings", t(messages, "nav.settings"), currentPath),
     context.canAccessOps ? navItem("/ops", t(messages, "nav.ops"), currentPath) : null
   ].filter(Boolean);
 

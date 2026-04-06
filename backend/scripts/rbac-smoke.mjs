@@ -56,6 +56,28 @@ async function getFarmPermissionSnapshot(userId) {
   });
 }
 
+async function updateOwnProfileSnapshot(userId) {
+  return asAuthenticated(userId, async (trx) => {
+    const [before] = await trx`
+      select display_name, preferred_locale, user_type
+      from public.user_profiles
+      where user_id = ${userId}::uuid
+    `;
+
+    const [updated] = await trx`
+      select display_name, preferred_locale, user_type
+      from public.update_own_profile('Owner Smoke', 'en')
+    `;
+
+    const [restored] = await trx`
+      select display_name, preferred_locale, user_type
+      from public.update_own_profile(${before.display_name}, ${before.preferred_locale})
+    `;
+
+    return { before, updated, restored };
+  });
+}
+
 const owner = await getFarmPermissionSnapshot(users.owner);
 assert.equal(owner.can_view, true, "owner should view farm");
 assert.equal(owner.can_manage_alerts, true, "owner should manage alerts");
@@ -63,6 +85,12 @@ assert.equal(owner.can_send_safe_command, true, "owner should send safe commands
 assert.equal(owner.can_send_ota_apply, true, "owner should send ota_apply");
 assert.equal(owner.visibleFarmCount, 1, "owner should see dev farm");
 assert.deepEqual(owner.visibleDeviceIds, ["sb00-devkit-01"], "owner should see bound farm device only");
+
+const profileUpdate = await updateOwnProfileSnapshot(users.owner);
+assert.equal(profileUpdate.updated.display_name, "Owner Smoke", "profile RPC should update display name");
+assert.equal(profileUpdate.updated.preferred_locale, "en", "profile RPC should update locale");
+assert.equal(profileUpdate.updated.user_type, profileUpdate.before.user_type, "profile RPC must not change user type");
+assert.equal(profileUpdate.restored.preferred_locale, profileUpdate.before.preferred_locale, "profile smoke should restore locale");
 
 const operator = await getFarmPermissionSnapshot(users.operator);
 assert.equal(operator.can_view, true, "operator should view farm");

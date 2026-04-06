@@ -9,7 +9,8 @@
     "login": "Log in",
     "signup": "Sign up",
     "signout": "Sign out",
-    "newFarm": "New farm"
+    "newFarm": "New farm",
+    "settings": "Settings"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",
@@ -149,5 +150,21 @@
     "noCommands": "No command activity yet.",
     "notificationContacts": "Notification contacts",
     "noFarms": "No farms are visible to this operator session."
+  },
+  "settings": {
+    "eyebrow": "Account",
+    "title": "Account settings",
+    "body": "Choose the display name and language this browser should use across the portal.",
+    "displayName": "Display name",
+    "language": "Language",
+    "role": "Role",
+    "locale": "Locale",
+    "saveAction": "Save settings",
+    "saved": "Settings saved.",
+    "locales": {
+      "th": "Thai",
+      "en": "English",
+      "my": "Myanmar"
+    }
   }
 }
