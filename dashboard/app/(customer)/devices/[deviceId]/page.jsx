@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell.jsx";
+import { DeviceAlertActions } from "@/components/device-alert-actions.jsx";
 import { DeviceCommandForm } from "@/components/device-command-form.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
@@ -167,13 +168,24 @@ export default async function DeviceDetailPage({ params, searchParams }) {
                         <span className="muted">{formatDate(alert.opened_at)}</span>
                       </div>
                       {detail.permissions.canManageAlerts && ["open", "acknowledged"].includes(alert.status) ? (
-                        <form className="inline-actions" action={submitAlertAction}>
-                          <input type="hidden" name="device_id" value={deviceId} />
-                          <input type="hidden" name="alert_id" value={alert.id} />
-                          {["acknowledge", "suppress", "resolve"].map((action) => (
-                            <button className="button-secondary" type="submit" name="action" value={action} key={action}>{label(action)}</button>
-                          ))}
-                        </form>
+                        <DeviceAlertActions
+                          action={submitAlertAction}
+                          actions={["acknowledge", "suppress", "resolve"]}
+                          alertId={alert.id}
+                          deviceId={deviceId}
+                          labels={{
+                            actionLabels: {
+                              acknowledge: t(messages, "deviceDetail.acknowledgeAction"),
+                              suppress: t(messages, "deviceDetail.suppressAction"),
+                              resolve: t(messages, "deviceDetail.resolveAction")
+                            },
+                            confirmEyebrow: t(messages, "deviceDetail.alertConfirmEyebrow"),
+                            confirmTitle: t(messages, "deviceDetail.alertConfirmTitle"),
+                            confirmBody: t(messages, "deviceDetail.alertConfirmBody"),
+                            confirmAction: t(messages, "deviceDetail.alertConfirmAction"),
+                            cancelAction: t(messages, "deviceDetail.cancelAction")
+                          }}
+                        />
                       ) : <span className="pill">{alert.status}</span>}
                     </li>
                   ))}

@@ -144,6 +144,13 @@
     "cancelAction": "Cancel",
     "commandViewOnly": "You can view this device, but you cannot send commands.",
     "alerts": "Alerts",
+    "acknowledgeAction": "Acknowledge",
+    "suppressAction": "Suppress",
+    "resolveAction": "Resolve",
+    "alertConfirmEyebrow": "Confirm alert action",
+    "alertConfirmTitle": "Change alert status?",
+    "alertConfirmBody": "This will {action} the alert and write an audit entry.",
+    "alertConfirmAction": "Confirm action",
     "noAlerts": "No alerts found for this device.",
     "commandLog": "Command log",
     "noCommands": "No command activity yet."
