@@ -8,7 +8,8 @@
     "ops": "Ops",
     "login": "เข้าสู่ระบบ",
     "signup": "สมัครใช้งาน",
-    "signout": "ออกจากระบบ"
+    "signout": "ออกจากระบบ",
+    "newFarm": "สร้างฟาร์ม"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",
@@ -85,6 +86,16 @@
     "savePreference": "บันทึก preference",
     "audit": "Audit log",
     "noAudit": "ยังไม่มี audit entry"
+  },
+  "farmCreate": {
+    "eyebrow": "เริ่มต้นฟาร์ม",
+    "title": "สร้างฟาร์ม",
+    "body": "สร้างขอบเขตฟาร์มของลูกค้าก่อนผูกอุปกรณ์หรือเชิญสมาชิก",
+    "name": "ชื่อฟาร์ม",
+    "namePlaceholder": "ฟาร์มบ่อเหนือ",
+    "alertEmail": "อีเมลแจ้งเตือนสำรอง",
+    "alertLine": "LINE recipient สำรอง",
+    "createAction": "สร้างฟาร์ม"
   },
   "deviceDetail": {
     "eyebrow": "รายละเอียดอุปกรณ์",

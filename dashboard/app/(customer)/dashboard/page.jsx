@@ -22,6 +22,7 @@ export default async function DashboardPage() {
           <span>{t(messages, "brand.name")}</span>
         </Link>
         <div className="nav-links">
+          <Link className="nav-link" href="/farms/new">{t(messages, "nav.newFarm")}</Link>
           <Link className="nav-link" href="/provision">{t(messages, "nav.provision")}</Link>
           <Link className="nav-link" href="/ops">{t(messages, "nav.ops")}</Link>
           {authConfigured ? (
@@ -71,6 +72,10 @@ export default async function DashboardPage() {
       <section className="card dashboard-card">
         <h2>{t(messages, "dashboard.emptyTitle")}</h2>
         <p className="muted">{t(messages, "dashboard.emptyBody")}</p>
+        <div className="action-row">
+          <Link className="button" href="/farms/new">{t(messages, "farmCreate.createAction")}</Link>
+          <Link className="button-secondary" href="/provision">{t(messages, "nav.provision")}</Link>
+        </div>
       </section>
 
       <section className="dashboard-grid">

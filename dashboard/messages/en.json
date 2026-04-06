@@ -8,7 +8,8 @@
     "ops": "Ops",
     "login": "Log in",
     "signup": "Sign up",
-    "signout": "Sign out"
+    "signout": "Sign out",
+    "newFarm": "New farm"
   },
   "home": {
     "eyebrow": "Farm monitoring platform",
@@ -85,6 +86,16 @@
     "savePreference": "Save preference",
     "audit": "Audit log",
     "noAudit": "No audit entries yet."
+  },
+  "farmCreate": {
+    "eyebrow": "Farm onboarding",
+    "title": "Create a farm",
+    "body": "Set up the customer farm boundary before binding devices or inviting members.",
+    "name": "Farm name",
+    "namePlaceholder": "North pond farm",
+    "alertEmail": "Fallback alert email",
+    "alertLine": "Fallback LINE recipient",
+    "createAction": "Create farm"
   },
   "deviceDetail": {
     "eyebrow": "Device detail",
