@@ -1,0 +1,45 @@
+{
+  "brand": {
+    "name": "SB-00 Portal"
+  },
+  "nav": {
+    "dashboard": "แดชบอร์ด",
+    "provision": "เพิ่มอุปกรณ์",
+    "ops": "Ops",
+    "login": "เข้าสู่ระบบ",
+    "signup": "สมัครใช้งาน"
+  },
+  "home": {
+    "eyebrow": "Farm monitoring platform",
+    "title": "มอนิเตอร์ฟาร์มจากมือถือได้จริง",
+    "body": "โครง Next.js production shell สำหรับลูกค้า, reseller และทีม operator พร้อม Auth, RBAC และ provisioning flow ที่จะย้ายเข้ามาทีละส่วน",
+    "primary": "ไปแดชบอร์ด",
+    "secondary": "เข้าสู่ระบบ"
+  },
+  "auth": {
+    "loginTitle": "เข้าสู่ระบบ",
+    "signupTitle": "สร้างบัญชี",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "loginAction": "เข้าสู่ระบบ",
+    "signupAction": "สมัครใช้งาน",
+    "forgotPassword": "ลืมรหัสผ่าน",
+    "setupPending": "ยังไม่ได้ตั้งค่า Supabase Auth env สำหรับ frontend"
+  },
+  "dashboard": {
+    "eyebrow": "Customer dashboard",
+    "title": "ภาพรวมฟาร์ม",
+    "authPending": "Dashboard ถูก guard ไว้แล้ว แต่ยังไม่บังคับ login จนกว่าจะตั้งค่า NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "signedInAs": "เข้าสู่ระบบด้วย",
+    "emptyTitle": "พร้อมเชื่อมข้อมูลจริง",
+    "emptyBody": "ก้อนถัดไปจะต่อ device/farm API ด้วย session และ RLS จริง"
+  },
+  "placeholder": {
+    "provisionTitle": "เพิ่มอุปกรณ์",
+    "provisionBody": "หน้านี้จะย้าย QR provisioning เดิมเข้ามาเป็น Next.js mobile-first flow ในเฟสถัดไป",
+    "opsTitle": "Ops overview",
+    "opsBody": "หน้านี้จะย้าย operator dashboard, alerts, commands และ OTA controls เข้ามาใน Next.js",
+    "deviceTitle": "รายละเอียดอุปกรณ์",
+    "deviceBody": "หน้านี้จะต่อ device history, map, alerts และ command log ด้วย API production ต่อไป"
+  }
+}

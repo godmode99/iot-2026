@@ -4,7 +4,7 @@ This repository now contains the first runnable workspace for:
 
 - `firmware/` - ESP-IDF skeleton for `ESP32-S3`
 - `backend/` - local API and ingest placeholder
-- `dashboard/` - local dashboard placeholder
+- `dashboard/` - Next.js production frontend shell
 - `shared/` - contracts and baseline schemas
 - `ops/` - environment, secrets, and topic notes
 
@@ -66,6 +66,13 @@ Open:
 http://localhost:3000
 ```
 
+Dashboard notes:
+
+- The production shell now uses Next.js App Router.
+- Legacy MVP server code is preserved at `dashboard/src/legacy-server.mjs` while routes migrate into Next.js.
+- Public browser auth config must use `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Do not expose `SUPABASE_SERVICE_ROLE_KEY` or service-role behavior to browser code.
+
 ## Run Both Web Apps
 
 Run:
@@ -124,7 +131,7 @@ pnpm db:smoke:rbac
 - secret checklist
 - MQTT topic baseline
 - local Supabase workflow and first migration path
-- bootable backend and dashboard placeholders
+- bootable backend and Next.js dashboard shell
 - buildable firmware skeleton
 - production-oriented ops notes in `ops/incident-response.md`, `ops/support-flow.md`, and `ops/production-readiness-checklist.md`
 

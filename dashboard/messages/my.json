@@ -1,0 +1,45 @@
+{
+  "brand": {
+    "name": "SB-00 Portal"
+  },
+  "nav": {
+    "dashboard": "ဒက်ရှ်ဘုတ်",
+    "provision": "စက်ထည့်ရန်",
+    "ops": "Ops",
+    "login": "ဝင်ရန်",
+    "signup": "အကောင့်ဖွင့်ရန်"
+  },
+  "home": {
+    "eyebrow": "Farm monitoring platform",
+    "title": "ဖုန်းကနေ ဖားမ်အခြေအနေကို ကြည့်နိုင်ရန်",
+    "body": "Customer, reseller နှင့် operator အတွက် Auth, RBAC, provisioning ကို route အလိုက်ရွှေ့ပြောင်းရန် ပြင်ဆင်ထားသော Next.js production shell ဖြစ်သည်။",
+    "primary": "ဒက်ရှ်ဘုတ်သို့",
+    "secondary": "ဝင်ရန်"
+  },
+  "auth": {
+    "loginTitle": "ဝင်ရန်",
+    "signupTitle": "အကောင့်ဖွင့်ရန်",
+    "email": "အီးမေးလ်",
+    "password": "စကားဝှက်",
+    "loginAction": "ဝင်ရန်",
+    "signupAction": "အကောင့်ဖွင့်ရန်",
+    "forgotPassword": "စကားဝှက်မေ့နေပါသလား",
+    "setupPending": "Frontend အတွက် Supabase Auth env မသတ်မှတ်ရသေးပါ"
+  },
+  "dashboard": {
+    "eyebrow": "Customer dashboard",
+    "title": "ဖားမ်အနှစ်ချုပ်",
+    "authPending": "Dashboard route ကို guard ထားပြီးဖြစ်သည်။ NEXT_PUBLIC_SUPABASE_URL နှင့် NEXT_PUBLIC_SUPABASE_ANON_KEY သတ်မှတ်ပြီးမှ login ကို အပြည့်အဝအသုံးပြုပါမည်။",
+    "signedInAs": "ဝင်ထားသူ",
+    "emptyTitle": "Data အစစ်ချိတ်ရန် အသင့်",
+    "emptyBody": "နောက်တစ်ဆင့်တွင် session-aware RLS ဖြင့် device နှင့် farm API ကိုချိတ်ပါမည်။"
+  },
+  "placeholder": {
+    "provisionTitle": "စက်ထည့်ရန်",
+    "provisionBody": "ဤစာမျက်နှာတွင် QR provisioning MVP ကို mobile-first Next.js flow အဖြစ် နောက်တစ်ဆင့်တွင်ရွှေ့ပါမည်။",
+    "opsTitle": "Ops overview",
+    "opsBody": "ဤစာမျက်နှာတွင် operator dashboard, alerts, commands နှင့် OTA controls ကို Next.js သို့ရွှေ့ပါမည်။",
+    "deviceTitle": "စက်အသေးစိတ်",
+    "deviceBody": "ဤစာမျက်နှာတွင် device history, map, alerts နှင့် command log ကို production APIs ဖြင့် နောက်တစ်ဆင့်တွင်ချိတ်ပါမည်။"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "brand": {
+    "name": "SB-00 Portal"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "provision": "Provision",
+    "ops": "Ops",
+    "login": "Log in",
+    "signup": "Sign up"
+  },
+  "home": {
+    "eyebrow": "Farm monitoring platform",
+    "title": "Monitor farms from the phone first",
+    "body": "A production Next.js shell for customers, resellers, and operators with Auth, RBAC, and provisioning ready to migrate route by route.",
+    "primary": "Open dashboard",
+    "secondary": "Log in"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "signupTitle": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "loginAction": "Log in",
+    "signupAction": "Sign up",
+    "forgotPassword": "Forgot password",
+    "setupPending": "Supabase Auth env is not configured for the frontend yet"
+  },
+  "dashboard": {
+    "eyebrow": "Customer dashboard",
+    "title": "Farm overview",
+    "authPending": "The dashboard route is guarded, but login is deferred until NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are configured.",
+    "signedInAs": "Signed in as",
+    "emptyTitle": "Ready for real data",
+    "emptyBody": "Next up: connect device and farm APIs through session-aware RLS."
+  },
+  "placeholder": {
+    "provisionTitle": "Provision device",
+    "provisionBody": "This page will migrate the QR provisioning MVP into a mobile-first Next.js flow next.",
+    "opsTitle": "Ops overview",
+    "opsBody": "This page will migrate the operator dashboard, alerts, commands, and OTA controls into Next.js.",
+    "deviceTitle": "Device detail",
+    "deviceBody": "This page will connect device history, map, alerts, and command log through production APIs next."
+  }
+}

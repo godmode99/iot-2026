@@ -3,6 +3,8 @@ node_modules/
 .env.local
 backend/node_modules/
 dashboard/node_modules/
+dashboard/.next/
+dashboard/out/
 backend/.env
 dashboard/.env
 firmware/build/
