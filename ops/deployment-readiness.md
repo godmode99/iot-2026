@@ -10,6 +10,7 @@ This runbook prepares the Next.js dashboard and supporting backend for staging o
 - Keep `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, and backend-only secrets out of browser code.
 - Point `BACKEND_URL` to the deployed backend/API origin that serves admin, ingest, provisioning, OTA, and notification routes.
 - Use a separate Supabase project for staging and production.
+- Use `ops/vercel-env-template.md` as the source checklist for Vercel and backend runtime variables.
 
 ## Required Vercel Project Settings
 
@@ -52,6 +53,7 @@ Set these on the backend runtime, not in browser-exposed variables:
 - `LINE_CHANNEL_ACCESS_TOKEN`
 - `RESEND_API_KEY`
 - `OTA_SIGNING_KEY_PATH`
+- `BACKEND_RATE_LIMIT_ENABLED`
 
 Do not create `NEXT_PUBLIC_*` variants of service role keys, admin tokens, signing keys, or broker passwords.
 
@@ -65,6 +67,8 @@ These must be `false` in production:
 - `PROVISIONING_ALLOW_INSECURE_DEV`
 
 `NOTIFICATION_MODE=stub` is acceptable only for dry runs. Use `resend` or `line` before customer-facing alert delivery.
+
+Keep `BACKEND_RATE_LIMIT_ENABLED=true` outside local debugging and tune route limits after real device publish cadence is measured.
 
 ## Supabase Auth Checklist
 

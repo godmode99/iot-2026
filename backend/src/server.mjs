@@ -30,6 +30,12 @@ import {
   listDevicesWithStatus
 } from "./read-models.mjs";
 import {
+  buildRateLimitConfig,
+  createRateLimiter,
+  getRateLimitKey,
+  selectRateLimitPolicy
+} from "./rate-limit.mjs";
+import {
   acceptInvite,
   assignResellerToFarm,
   createFarmMemberInvite,
@@ -45,6 +51,8 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const telemetrySchemaPath = resolve(currentDir, "..", "..", "shared", "contracts", "telemetry.schema.json");
 const deviceIdentitySchemaPath = resolve(currentDir, "..", "..", "shared", "contracts", "device-identity.schema.json");
 const batteryProfilePath = resolve(currentDir, "..", "..", "shared", "contracts", "battery-profile.json");
+const rateLimiter = createRateLimiter();
+const rateLimitConfig = buildRateLimitConfig(process.env);
 
 function sendJson(response, statusCode, body) {
   const headers = { "content-type": "application/json; charset=utf-8" };
@@ -114,6 +122,50 @@ function logRequest(configValue, level, event, payload) {
   console.log(line);
 }
 
+function enforceRateLimit({ configValue, request, response, url, requestId }) {
+  const policy = selectRateLimitPolicy({
+    method: request.method ?? "GET",
+    pathname: url.pathname
+  }, {
+    ...rateLimitConfig,
+    enabled: configValue.rateLimitEnabled
+  });
+
+  if (!policy) {
+    return true;
+  }
+
+  const result = rateLimiter.check({
+    key: getRateLimitKey({
+      remoteAddress: request.socket.remoteAddress,
+      method: request.method ?? "GET",
+      pathname: url.pathname,
+      bucket: policy.bucket
+    }),
+    policy
+  });
+
+  if (result.allowed) {
+    return true;
+  }
+
+  response.setHeader("retry-after", String(result.retryAfterSec));
+  logRequest(configValue.requestLoggingEnabled, "error", "rate_limit.rejected", {
+    requestId,
+    bucket: policy.bucket,
+    pathname: url.pathname,
+    remoteAddress: request.socket.remoteAddress ?? "unknown",
+    retryAfterSec: result.retryAfterSec
+  });
+  sendJson(response, 429, {
+    ok: false,
+    code: "rate_limited",
+    details: [`retry_after_seconds:${result.retryAfterSec}`],
+    requestId
+  });
+  return false;
+}
+
 const server = createServer(async (request, response) => {
   const requestId = getRequestId(request);
 
@@ -123,6 +175,10 @@ const server = createServer(async (request, response) => {
   }
 
   const url = new URL(request.url, `http://${request.headers.host ?? `localhost:${config.port}`}`);
+
+  if (!enforceRateLimit({ configValue: config, request, response, url, requestId })) {
+    return;
+  }
 
   if (url.pathname === "/health") {
     sendJson(response, 200, {

@@ -12,9 +12,9 @@
     "newFarm": "New farm"
   },
   "home": {
-    "eyebrow": "Farm monitoring platform",
-    "title": "ဖုန်းကနေ ဖားမ်အခြေအနေကို ကြည့်နိုင်ရန်",
-    "body": "Customer, reseller နှင့် operator အတွက် Auth, RBAC, provisioning ကို route အလိုက်ရွှေ့ပြောင်းရန် ပြင်ဆင်ထားသော Next.js production shell ဖြစ်သည်။",
+    "eyebrow": "Farm monitoring portal",
+    "title": "ဖုန်းမှတစ်ဆင့် ဖားမ်အခြေအနေကို ချက်ချင်းကြည့်နိုင်ရန်",
+    "body": "ဖားမ်များကို စောင့်ကြည့်ရန်၊ စက်များကို ချိတ်ဆက်ရန်၊ alerts များကို စီမံရန်နှင့် reseller support ကို farm scope အတွင်းသာ ခွင့်ပြုရန် portal တစ်ခုတည်းတွင် စုစည်းထားပါသည်။",
     "primary": "ဒက်ရှ်ဘုတ်သို့",
     "secondary": "ဝင်ရန်"
   },

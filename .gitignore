@@ -12,4 +12,6 @@ firmware/sdkconfig
 eim_config.toml
 *.log
 artifacts/
+output/
+.playwright-cli/
 .vscode/

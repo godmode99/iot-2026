@@ -15,6 +15,8 @@ This checklist tracks the gap between the current pre-production stack and a rea
 - [ ] `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false` outside local debugging.
 - [ ] Supabase Auth redirect URLs include `/auth/callback` and `/reset-password`.
 - [ ] Supabase Auth custom SMTP is configured before customer-facing email flows.
+- [ ] `BACKEND_RATE_LIMIT_ENABLED=true` in staging and production.
+- [ ] Route limits are tuned for real device publish cadence before field rollout.
 - [ ] Alert notification contacts are set per farm.
 - [ ] `notification_log` is reviewed during alert tests.
 - [ ] OTA manifest entries use real artifact URLs and checksums.

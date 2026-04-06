@@ -167,6 +167,10 @@ function run() {
     if (valueFor(fileEnv, "NOTIFICATION_MODE") === "stub") {
       warnings.push("NOTIFICATION_MODE is stub. Production alerts will be audited but not delivered to users.");
     }
+
+    if (valueFor(fileEnv, "BACKEND_RATE_LIMIT_ENABLED") !== "true") {
+      errors.push("BACKEND_RATE_LIMIT_ENABLED must be true for production");
+    }
   }
 
   if (!["th", "en", "my"].includes(valueFor(fileEnv, "NEXT_PUBLIC_DEFAULT_LOCALE") || "th")) {

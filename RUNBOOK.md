@@ -46,11 +46,13 @@ Backend production notes:
 - `NOTIFICATION_MODE=stub` keeps local alert delivery in console-only mode
 - Farm-scoped notification contacts on `public.farms` are preferred over `.env` fallback recipients
 - Set `ADMIN_API_TOKEN` before exposing admin command or audit routes
+- Keep `BACKEND_RATE_LIMIT_ENABLED=true` outside local debugging; route-specific defaults are documented in `ops/vercel-env-template.md`
 - Supabase Auth/RBAC now has farm-scoped owner/member/reseller helpers in local migrations
 - Reseller support access must come from `public.reseller_farms`; do not infer it from email/domain alone
 - OTA manifest is served from `OTA_RELEASES_PATH` and should be backed by real artifact URLs plus checksums
 - Auth/RBAC API details live in `ops/auth-rbac-api.md`
 - Deployment readiness details live in `ops/deployment-readiness.md`
+- Vercel/backend environment variable templates live in `ops/vercel-env-template.md`
 - Run backend tests with `pnpm test:backend`
 
 ## Dashboard

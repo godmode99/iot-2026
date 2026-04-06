@@ -27,7 +27,8 @@ const defaults = {
   ALERT_LINE_USER_ID: "",
   ADMIN_ALLOW_INSECURE_DEV: "true",
   OTA_RELEASES_PATH: "ops/ota-releases.json",
-  OTA_RELEASE_CHANNEL: "stable"
+  OTA_RELEASE_CHANNEL: "stable",
+  BACKEND_RATE_LIMIT_ENABLED: "true"
 };
 
 export function getBackendConfig() {
@@ -58,6 +59,7 @@ export function getBackendConfig() {
     adminAllowInsecureDev: (process.env.ADMIN_ALLOW_INSECURE_DEV ?? defaults.ADMIN_ALLOW_INSECURE_DEV) === "true",
     otaReleasesPath: process.env.OTA_RELEASES_PATH ?? defaults.OTA_RELEASES_PATH,
     otaReleaseChannel: process.env.OTA_RELEASE_CHANNEL ?? defaults.OTA_RELEASE_CHANNEL,
+    rateLimitEnabled: (process.env.BACKEND_RATE_LIMIT_ENABLED ?? defaults.BACKEND_RATE_LIMIT_ENABLED) === "true",
     requestLoggingEnabled: (process.env.BACKEND_REQUEST_LOGGING ?? defaults.BACKEND_REQUEST_LOGGING) === "true",
     values,
     missing

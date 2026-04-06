@@ -12,9 +12,9 @@
     "newFarm": "สร้างฟาร์ม"
   },
   "home": {
-    "eyebrow": "Farm monitoring platform",
-    "title": "มอนิเตอร์ฟาร์มจากมือถือได้จริง",
-    "body": "โครง Next.js production shell สำหรับลูกค้า, reseller และทีม operator พร้อม Auth, RBAC และ provisioning flow ที่จะย้ายเข้ามาทีละส่วน",
+    "eyebrow": "ระบบมอนิเตอร์ฟาร์ม",
+    "title": "ดูสถานะฟาร์มจากมือถือได้ทันที",
+    "body": "มอนิเตอร์ฟาร์ม ผูกอุปกรณ์ จัดการแจ้งเตือน และให้ reseller ช่วยดูแลแบบจำกัดสิทธิ์โดยไม่เปิดข้อมูลลูกค้าเกินจำเป็น",
     "primary": "ไปแดชบอร์ด",
     "secondary": "เข้าสู่ระบบ"
   },
