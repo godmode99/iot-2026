@@ -94,6 +94,15 @@ After deploy:
 curl https://WORKER_URL/health
 ```
 
+Before pushing to a registry, smoke test the local image:
+
+```powershell
+docker build -f backend/Dockerfile -t iot-2026-device-worker:local .
+pnpm worker:smoke:docker
+```
+
+The smoke script runs the container with `.env.staging.local`, checks `http://localhost:8080/health`, prints non-secret health metadata, and removes the container.
+
 Then run a staging device flow:
 
 1. Use a staging device identity.

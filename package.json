@@ -17,6 +17,7 @@
     "env:init:staging": "node scripts/init-staging-env.mjs",
     "deploy:check": "node scripts/verify-deployment-readiness.mjs",
     "deploy:check:staging": "node scripts/verify-deployment-readiness.mjs --env .env.staging.local --target staging",
+    "worker:smoke:docker": "node scripts/smoke-device-worker-container.mjs",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:lint": "supabase db lint",
