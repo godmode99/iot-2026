@@ -17,7 +17,7 @@ You can create the local file and generate local-only tokens with:
 pnpm env:init:staging
 ```
 
-The command writes `.env.staging.local`, generates `ADMIN_API_TOKEN`, `INGEST_SHARED_TOKEN`, and `JWT_SECRET`, and does not print the generated values. If the file already exists, it refuses to overwrite unless you pass `--force`:
+The command writes `.env.staging.local`, generates `INGEST_SHARED_TOKEN` and `JWT_SECRET`, and does not print the generated values. If the file already exists, it refuses to overwrite unless you pass `--force`:
 
 ```powershell
 pnpm env:init:staging -- --force
@@ -32,12 +32,10 @@ Create or collect these before validation:
 - Supabase staging service role key.
 - Supabase staging database URL.
 - Dashboard staging URL.
-- Backend staging URL.
-- Generated `ADMIN_API_TOKEN`.
 - Generated `INGEST_SHARED_TOKEN`.
 - Generated `JWT_SECRET`.
 
-MQTT, LINE, Resend, and OTA signing can stay on placeholder/stub values until that specific integration is being tested. The staging checker warns on missing MQTT values but does not block dashboard/auth validation.
+MQTT, LINE, Resend, and OTA signing can stay on placeholder/stub values until that specific integration is being tested. The staging checker warns on missing worker/device values but does not block dashboard/auth validation.
 
 ## Supabase Auth Redirects
 
@@ -64,13 +62,15 @@ Set these Vercel variables for the dashboard project:
 
 - `APP_URL`
 - `DASHBOARD_URL`
-- `BACKEND_URL`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_DEFAULT_LOCALE`
 - `SUPABASE_DB_URL`
-- `ADMIN_API_TOKEN`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `INGEST_SHARED_TOKEN`
+- `JWT_SECRET`
 - `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false`
+- `BACKEND_RATE_LIMIT_ENABLED=true`
 
 Do not set database URLs, service role keys, or broker passwords as `NEXT_PUBLIC_*` variables.
 
@@ -81,7 +81,6 @@ Set backend-only secrets on the API/backend runtime:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_DB_URL`
-- `ADMIN_API_TOKEN`
 - `INGEST_SHARED_TOKEN`
 - `JWT_SECRET`
 - `ADMIN_ALLOW_INSECURE_DEV=false`

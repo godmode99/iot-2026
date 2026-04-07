@@ -15,18 +15,16 @@ const PLACEHOLDER_PATTERNS = [
 const REQUIRED_KEYS = [
   "APP_URL",
   "DASHBOARD_URL",
-  "BACKEND_URL",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_DB_URL",
-  "ADMIN_API_TOKEN",
   "INGEST_SHARED_TOKEN",
   "JWT_SECRET"
 ];
 
-const PRODUCTION_REQUIRED_KEYS = [
+const WORKER_KEYS = [
   "MQTT_BROKER_URL",
   "MQTT_USERNAME",
   "MQTT_PASSWORD",
@@ -43,7 +41,6 @@ const PRODUCTION_FALSE_FLAGS = [
 const HTTPS_KEYS = [
   "APP_URL",
   "DASHBOARD_URL",
-  "BACKEND_URL",
   "NEXT_PUBLIC_SUPABASE_URL",
   "SUPABASE_URL"
 ];
@@ -145,12 +142,10 @@ function run() {
     }
   }
 
-  for (const key of PRODUCTION_REQUIRED_KEYS) {
+  for (const key of WORKER_KEYS) {
     const value = valueFor(fileEnv, key);
-    if (args.target === "production" && (!value || isPlaceholder(value))) {
-      errors.push(value ? `Replace placeholder value for ${key}` : `Missing required env: ${key}`);
-    } else if (args.target === "staging" && (!value || isPlaceholder(value))) {
-      warnings.push(`${key} is still placeholder; staging device connectivity tests should wait until it is set`);
+    if (["staging", "production"].includes(args.target) && (!value || isPlaceholder(value))) {
+      warnings.push(`${key} is still placeholder; device worker connectivity tests should wait until it is set`);
     }
   }
 
@@ -192,7 +187,7 @@ function run() {
   }
 
   if (args.target === "staging") {
-    for (const key of ["SUPABASE_SERVICE_ROLE_KEY", "ADMIN_API_TOKEN", "INGEST_SHARED_TOKEN", "JWT_SECRET"]) {
+    for (const key of ["SUPABASE_SERVICE_ROLE_KEY", "INGEST_SHARED_TOKEN", "JWT_SECRET"]) {
       const value = valueFor(fileEnv, key);
       if (value && value.length < 24) {
         errors.push(`${key} should be at least 24 characters for staging`);

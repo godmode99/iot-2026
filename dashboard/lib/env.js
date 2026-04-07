@@ -19,10 +19,3 @@ export function getDefaultLocale() {
 export function getAppUrl() {
   return process.env.DASHBOARD_URL ?? process.env.APP_URL ?? "http://localhost:3000";
 }
-
-export function getBackendServerConfig() {
-  return {
-    backendUrl: process.env.BACKEND_URL ?? "http://localhost:3100",
-    adminApiToken: process.env.ADMIN_API_TOKEN ?? ""
-  };
-}

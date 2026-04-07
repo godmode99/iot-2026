@@ -5,7 +5,6 @@ import { resolve } from "node:path";
 const TEMPLATE_FILE = ".env.staging.example";
 const OUTPUT_FILE = ".env.staging.local";
 const GENERATED_KEYS = new Set([
-  "ADMIN_API_TOKEN",
   "INGEST_SHARED_TOKEN",
   "JWT_SECRET"
 ]);

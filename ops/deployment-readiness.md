@@ -2,13 +2,14 @@
 
 ## Purpose
 
-This runbook prepares the Next.js dashboard and supporting backend for staging or production deployment.
+This runbook prepares the Next.js dashboard for staging or production deployment. Device ingest, MQTT, and long-running workers are deployed separately after the worker service is packaged.
 
 ## Deployment Shape
 
 - Deploy the `dashboard/` workspace as the Vercel project root.
-- Keep `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_API_TOKEN`, and backend-only secrets out of browser code.
-- Point `BACKEND_URL` to the deployed backend/API origin that serves admin, ingest, provisioning, OTA, and notification routes.
+- Keep `SUPABASE_SERVICE_ROLE_KEY`, database URLs, ingest tokens, and backend-only secrets out of browser-exposed variables.
+- Run web-facing customer/admin actions inside Next.js server actions backed by Supabase/Postgres.
+- Deploy device ingest, MQTT, OTA workers, and scheduled background jobs as a separate worker service.
 - Use a separate Supabase project for staging and production.
 - Use `ops/vercel-env-template.md` as the source checklist for Vercel and backend runtime variables.
 
@@ -32,19 +33,21 @@ Set these in Vercel for preview and production:
 
 - `APP_URL`
 - `DASHBOARD_URL`
-- `BACKEND_URL`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_DEFAULT_LOCALE`
 - `SUPABASE_DB_URL`
-- `ADMIN_API_TOKEN`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `INGEST_SHARED_TOKEN`
+- `JWT_SECRET`
+- `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false`
+- `BACKEND_RATE_LIMIT_ENABLED=true`
 
-Set these on the backend runtime, not in browser-exposed variables:
+Set these on the device worker runtime when that service is deployed, not in browser-exposed variables:
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_DB_URL`
-- `ADMIN_API_TOKEN`
 - `INGEST_SHARED_TOKEN`
 - `MQTT_BROKER_URL`
 - `MQTT_USERNAME`
@@ -56,7 +59,7 @@ Set these on the backend runtime, not in browser-exposed variables:
 - `OTA_SIGNING_KEY_PATH`
 - `BACKEND_RATE_LIMIT_ENABLED`
 
-Do not create `NEXT_PUBLIC_*` variants of service role keys, admin tokens, signing keys, or broker passwords.
+Do not create `NEXT_PUBLIC_*` variants of service role keys, database URLs, ingest tokens, signing keys, or broker passwords.
 
 ## Production Flags
 

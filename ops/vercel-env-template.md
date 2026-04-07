@@ -12,15 +12,17 @@ Set these in the Vercel project that uses `dashboard/` as its root directory:
 | --- | --- | --- | --- |
 | `APP_URL` | `https://sb00-preview.vercel.app` | dashboard HTTPS origin | no |
 | `DASHBOARD_URL` | `https://sb00-preview.vercel.app` | dashboard HTTPS origin | no |
-| `BACKEND_URL` | `https://api-preview.example.com` | backend HTTPS origin | no |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase preview URL | Supabase production URL | yes |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase preview anon key | Supabase production anon key | yes |
 | `NEXT_PUBLIC_DEFAULT_LOCALE` | `th` | `th`, `en`, or `my` | yes |
 | `SUPABASE_DB_URL` | Supabase preview DB URL | Supabase production DB URL | no |
-| `ADMIN_API_TOKEN` | generated secret | generated secret | no |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase preview service role key | Supabase production service role key | no |
+| `INGEST_SHARED_TOKEN` | generated secret | generated secret until per-device credentials exist | no |
+| `JWT_SECRET` | generated secret | generated secret | no |
 | `DASHBOARD_ALLOW_ACTOR_OVERRIDE` | `false` | `false` | no |
+| `BACKEND_RATE_LIMIT_ENABLED` | `true` | `true` | no |
 
-Do not add `NEXT_PUBLIC_` variants for database URLs, admin tokens, service role keys, broker passwords, signing keys, or JWT secrets.
+Do not add `NEXT_PUBLIC_` variants for database URLs, service role keys, ingest tokens, broker passwords, signing keys, or JWT secrets.
 
 ## Backend Runtime
 
@@ -31,7 +33,6 @@ Set these only on the backend/API runtime:
 | `SUPABASE_URL` | Supabase production URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
 | `SUPABASE_DB_URL` | database connection string for migrations/admin tooling |
-| `ADMIN_API_TOKEN` | must match dashboard server-side token |
 | `INGEST_SHARED_TOKEN` | shared device ingest token until stronger per-device credentials exist |
 | `INGEST_ALLOW_INSECURE_DEV` | `false` |
 | `PROVISIONING_ALLOW_INSECURE_DEV` | `false` |
