@@ -9,7 +9,9 @@
     "login": "เข้าสู่ระบบ",
     "signup": "สมัครใช้งาน",
     "signout": "ออกจากระบบ",
-    "newFarm": "สร้างฟาร์ม"
+    "newFarm": "สร้างฟาร์ม",
+    "settings": "ตั้งค่าบัญชี",
+    "onboarding": "เริ่มต้นใช้งาน"
   },
   "home": {
     "eyebrow": "ระบบมอนิเตอร์ฟาร์ม",
@@ -23,17 +25,34 @@
     "signupTitle": "สร้างบัญชี",
     "email": "อีเมล",
     "password": "รหัสผ่าน",
-    "loginAction": "เข้าสู่ระบบ",
-    "signupAction": "สมัครใช้งาน",
-    "forgotPassword": "ลืมรหัสผ่าน",
+    "loginAction": "ดำเนินการต่อ",
+    "signupAction": "ดำเนินการต่อ",
+    "forgotPassword": "กู้คืนบัญชี",
     "setupPending": "ยังไม่ได้ตั้งค่า Supabase Auth env สำหรับ frontend",
-    "forgotPasswordBody": "กรอกอีเมล แล้วระบบจะส่งลิงก์รีเซ็ตรหัสผ่านแบบปลอดภัยให้",
-    "sendResetAction": "ส่งลิงก์รีเซ็ต",
-    "resetPassword": "รีเซ็ตรหัสผ่าน",
-    "resetPasswordBody": "ตั้งรหัสผ่านใหม่หลังจากเปิดลิงก์รีเซ็ตจากอีเมล",
+    "forgotPasswordBody": "SB-00 ใช้การเข้าสู่ระบบผ่าน Google, Facebook และ Apple เท่านั้น ให้กู้คืนบัญชีจากผู้ให้บริการที่คุณใช้เข้าสู่ระบบ",
+    "sendResetAction": "ไปหน้ากู้คืนบัญชี",
+    "resetPassword": "กู้คืนบัญชี",
+    "resetPasswordBody": "การเปลี่ยนรหัสผ่านจะจัดการโดย Google, Facebook หรือ Apple เพราะระบบนี้ไม่เก็บรหัสผ่านลูกค้า",
     "newPassword": "รหัสผ่านใหม่",
     "confirmPassword": "ยืนยันรหัสผ่าน",
-    "updatePasswordAction": "อัปเดตรหัสผ่าน"
+    "updatePasswordAction": "อัปเดตรหัสผ่าน",
+    "oauthOnlyBody": "ใช้บัญชี Google, Facebook หรือ Apple เดิมทุกครั้ง เพื่อให้สิทธิ์ฟาร์มและอุปกรณ์ผูกกับตัวตนเดียวกัน",
+    "signupOauthBody": "สร้างบัญชีพอร์ทัลด้วย Google, Facebook หรือ Apple แล้วค่อยตั้งค่าโปรไฟล์และฟาร์มหลังเข้าสู่ระบบครั้งแรก",
+    "oauthOptions": "ตัวเลือกเข้าสู่ระบบ",
+    "providers": {
+      "google": "ดำเนินการต่อด้วย Google",
+      "facebook": "ดำเนินการต่อด้วย Facebook",
+      "apple": "ดำเนินการต่อด้วย Apple"
+    },
+    "oauthRecoveryBody": "พอร์ทัลนี้ใช้ OAuth เท่านั้น หากเข้าไม่ได้ ให้กู้คืนบัญชีจาก Google, Facebook หรือ Apple แล้วกลับมาเข้าสู่ระบบอีกครั้ง",
+    "backToLogin": "กลับไปเข้าสู่ระบบ"
+  },
+  "onboarding": {
+    "eyebrow": "ตั้งค่าครั้งแรก",
+    "title": "ตั้งค่าโปรไฟล์พอร์ทัล",
+    "body": "ยืนยันชื่อและภาษาที่ operator และสมาชิกฟาร์มจะเห็น ก่อนสร้างฟาร์มหรือผูกอุปกรณ์",
+    "nextSteps": "ขั้นตอนถัดไป",
+    "continueAction": "บันทึกและดำเนินการต่อ"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

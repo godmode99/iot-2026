@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { AuthShell } from "@/components/auth-shell.jsx";
+import { OAuthButtons } from "@/components/oauth-buttons.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
-import { signInWithPassword } from "./actions.js";
+import { signInWithOAuth } from "./actions.js";
 
 export default async function LoginPage({ searchParams }) {
   const messages = await getMessages();
@@ -16,8 +17,6 @@ export default async function LoginPage({ searchParams }) {
       footer={(
         <>
           <Link href="/signup">{t(messages, "nav.signup")}</Link>
-          {" / "}
-          <Link href="/forgot-password">{t(messages, "auth.forgotPassword")}</Link>
         </>
       )}
       messages={messages}
@@ -29,18 +28,8 @@ export default async function LoginPage({ searchParams }) {
       )}
       title={t(messages, "auth.loginTitle")}
     >
-        <form className="form" action={signInWithPassword}>
-          <input type="hidden" name="returnUrl" value={returnUrl} />
-          <label>
-            {t(messages, "auth.email")}
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <label>
-            {t(messages, "auth.password")}
-            <input name="password" type="password" autoComplete="current-password" required />
-          </label>
-          <button className="button" type="submit">{t(messages, "auth.loginAction")}</button>
-        </form>
+      <p className="muted">{t(messages, "auth.oauthOnlyBody")}</p>
+      <OAuthButtons action={signInWithOAuth} messages={messages} returnUrl={returnUrl} />
     </AuthShell>
   );
 }

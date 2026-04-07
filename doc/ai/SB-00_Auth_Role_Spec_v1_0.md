@@ -61,6 +61,14 @@ It does not cover:
 
 Use Supabase Auth for the first production implementation unless a stronger operational reason appears.
 
+Production v1 uses OAuth-only login:
+
+- Google
+- Facebook
+- Apple
+
+Do not expose email/password signup, password reset, or user-selectable roles in the customer flow. First-login users complete `/onboarding`, which writes `user_profiles.profile_completed_at`.
+
 Reasons:
 
 - Supabase is already the database and RLS platform.
@@ -354,7 +362,7 @@ Write actions must use action-specific permission helpers instead of broad read 
 
 | Phase | Implement | Defer |
 | --- | --- | --- |
-| Phase 1 | `user_profiles`, `farm_members`, `reseller_farms`, helper functions, RLS foundations, login/signup, auth guard | enterprise SSO |
+| Phase 1 | `user_profiles`, `farm_members`, `reseller_farms`, helper functions, RLS foundations, OAuth login/signup, onboarding, auth guard | enterprise SSO |
 | Phase 2 | email invites, farm settings permission editor, notification preferences, customer command/alert permissions | billing tier enforcement |
 | Phase 3 | reseller portal, support views, reseller assignment UI, fine-grained reseller permissions | bulk OTA |
 
@@ -362,7 +370,7 @@ Write actions must use action-specific permission helpers instead of broad read 
 
 | Item | Current state | Required change |
 | --- | --- | --- |
-| Auth | internal token/dev actor fallback | Supabase Auth JWT session |
+| Auth | Supabase Auth session in dashboard; OAuth providers require dashboard setup | Google/Facebook/Apple enabled and tested in Supabase Auth |
 | user profiles | not implemented | create table and sign-up trigger |
 | farm members | not implemented | create table and invite lifecycle |
 | reseller scope | not implemented | create `reseller_farms` and helper policies |

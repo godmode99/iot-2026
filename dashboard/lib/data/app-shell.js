@@ -25,7 +25,7 @@ export async function loadAppShellContext() {
   const [profileResult, operatorResult] = await Promise.all([
     supabase
       .from("user_profiles")
-      .select("user_type,display_name,preferred_locale")
+      .select("user_type,display_name,preferred_locale,profile_completed_at")
       .eq("user_id", user.id)
       .maybeSingle(),
     supabase.rpc("is_admin_or_operator")
@@ -39,6 +39,7 @@ export async function loadAppShellContext() {
     canAccessOps: operatorResult.data === true,
     isReseller: userType === "reseller",
     isCustomer: userType === "customer",
-    email: user.email ?? ""
+    email: user.email ?? "",
+    profileCompletedAt: profileResult.data?.profile_completed_at ?? null
   };
 }

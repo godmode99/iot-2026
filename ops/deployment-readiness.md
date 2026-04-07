@@ -78,8 +78,9 @@ Keep `BACKEND_RATE_LIMIT_ENABLED=true` outside local debugging and tune route li
 
 - Add the production `DASHBOARD_URL` to Supabase Auth site URL.
 - Add callback redirect URL: `${DASHBOARD_URL}/auth/callback`.
-- Add password reset redirect URL: `${DASHBOARD_URL}/reset-password`.
-- Configure custom SMTP before customer-facing production email flows.
+- Enable Google, Facebook, and Apple providers in Supabase Auth.
+- Configure each provider's OAuth app/redirect URL in the provider dashboard.
+- Do not enable email/password signup for production v1 unless the auth decision is reopened.
 - Confirm RLS migrations have been applied.
 - Run `pnpm db:smoke:rbac` against the target database before launch.
 
@@ -112,7 +113,8 @@ pnpm deploy:check:staging
 
 Before promoting a preview deployment:
 
-- Login, signup, forgot password, and reset password work with Supabase Auth.
+- Google, Facebook, and Apple sign-in work with Supabase Auth.
+- First-login users are sent through `/onboarding` before the dashboard.
 - `/dashboard` shows only farms/devices visible to the session.
 - `/provision` binds an unbound QR device with a real session.
 - `/farms/[farmId]` member invite and notification preference actions audit correctly.

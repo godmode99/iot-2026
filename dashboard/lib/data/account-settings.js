@@ -27,7 +27,7 @@ export async function loadAccountSettings() {
 
   const { data: profile, error: profileError } = await supabase
     .from("user_profiles")
-    .select("user_type,display_name,preferred_locale,updated_at")
+    .select("user_type,display_name,preferred_locale,profile_completed_at,updated_at")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -38,6 +38,7 @@ export async function loadAccountSettings() {
       userType: profile?.user_type ?? "customer",
       displayName: profile?.display_name ?? user.email ?? "",
       preferredLocale: normalizeLocale(profile?.preferred_locale),
+      profileCompletedAt: profile?.profile_completed_at ?? null,
       updatedAt: profile?.updated_at ?? null
     },
     error: profileError?.message ?? null

@@ -9,7 +9,9 @@
     "login": "ဝင်ရန်",
     "signup": "အကောင့်ဖွင့်ရန်",
     "signout": "ထွက်ရန်",
-    "newFarm": "New farm"
+    "newFarm": "New farm",
+    "settings": "Settings",
+    "onboarding": "Onboarding"
   },
   "home": {
     "eyebrow": "Farm monitoring portal",
@@ -23,17 +25,34 @@
     "signupTitle": "အကောင့်ဖွင့်ရန်",
     "email": "အီးမေးလ်",
     "password": "စကားဝှက်",
-    "loginAction": "ဝင်ရန်",
-    "signupAction": "အကောင့်ဖွင့်ရန်",
-    "forgotPassword": "စကားဝှက်မေ့နေပါသလား",
+    "loginAction": "Continue",
+    "signupAction": "Continue",
+    "forgotPassword": "Account recovery",
     "setupPending": "Frontend အတွက် Supabase Auth env မသတ်မှတ်ရသေးပါ",
-    "forgotPasswordBody": "Enter your email and we will send a secure password reset link.",
-    "sendResetAction": "Send reset link",
-    "resetPassword": "Reset password",
-    "resetPasswordBody": "Set a new password after opening the secure reset link from your email.",
+    "forgotPasswordBody": "SB-00 uses Google, Facebook, and Apple sign-in only. Recover access from the provider account you used to log in.",
+    "sendResetAction": "Open provider recovery",
+    "resetPassword": "Account recovery",
+    "resetPasswordBody": "Password changes are handled by Google, Facebook, or Apple because this portal does not store customer passwords.",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
-    "updatePasswordAction": "Update password"
+    "updatePasswordAction": "Update password",
+    "oauthOnlyBody": "Use the same Google, Facebook, or Apple account every time so farm membership and device permissions stay attached to one identity.",
+    "signupOauthBody": "Create your portal account with Google, Facebook, or Apple. We will collect farm profile details after the first sign-in.",
+    "oauthOptions": "OAuth sign-in options",
+    "providers": {
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "apple": "Continue with Apple"
+    },
+    "oauthRecoveryBody": "This portal is OAuth-only. If you cannot access the account, recover it directly with Google, Facebook, or Apple, then return here and sign in again.",
+    "backToLogin": "Back to login"
+  },
+  "onboarding": {
+    "eyebrow": "First login setup",
+    "title": "Set your portal profile",
+    "body": "Confirm the name and language operators and farm members will see before you create a farm or bind a device.",
+    "nextSteps": "Onboarding next steps",
+    "continueAction": "Save and continue"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

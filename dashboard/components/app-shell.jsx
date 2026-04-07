@@ -16,6 +16,7 @@ export async function AppShell({ children, currentPath = "", ariaLabel = "Primar
   const context = await loadAppShellContext();
   const navItems = [
     navItem("/dashboard", t(messages, "nav.dashboard"), currentPath),
+    context.email && !context.profileCompletedAt ? navItem("/onboarding", t(messages, "nav.onboarding"), currentPath) : null,
     context.isReseller ? null : navItem("/farms/new", t(messages, "nav.newFarm"), currentPath),
     navItem("/provision", t(messages, "nav.provision"), currentPath),
     navItem("/settings", t(messages, "nav.settings"), currentPath),

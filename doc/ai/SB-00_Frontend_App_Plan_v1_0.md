@@ -62,6 +62,7 @@ It does not cover:
 | Languages | Thai (`th`), English (`en`), Myanmar (`my`) |
 | Pilot roles | `admin/operator`, `customer/farm_owner`, `reseller`, `farm_member` |
 | Customer provisioning | QR + Web/PWA only |
+| Public auth | OAuth-only via Google, Facebook, and Apple |
 | Native app | Not in baseline |
 
 ## Architecture Direction
@@ -75,7 +76,6 @@ app/
   (public)/
     login/
     signup/
-    forgot-password/
   (onboarding)/
     onboarding/
     farms/new/
@@ -114,7 +114,8 @@ Public routes:
 
 - `/login`
 - `/signup`
-- `/forgot-password`
+
+Public auth pages must use Google, Facebook, and Apple OAuth buttons only. Email/password registration and password reset are not in production v1.
 
 Protected routes:
 
@@ -132,7 +133,8 @@ Route guard behavior:
 request protected URL
   -> check session
   -> no session -> redirect to /login?returnUrl=...
-  -> session exists -> load role + farm scope
+  -> session exists -> complete first-login /onboarding if needed
+  -> load role + farm scope
   -> unauthorized -> show 403 or redirect to allowed landing page
   -> authorized -> render route
 ```
@@ -307,7 +309,7 @@ Migration steps:
 1. Create a real Next.js app under `dashboard/`.
 2. Preserve existing backend API paths.
 3. Move `/ops`, `/devices`, `/devices/:id`, and `/provision` into Next.js routes.
-4. Add `/login`, `/signup`, `/farms/new`, and `/farms/[farmId]`.
+4. Add OAuth-only `/login`, `/signup`, `/onboarding`, `/farms/new`, and `/farms/[farmId]`.
 5. Add i18n infrastructure before visual polish.
 6. Add role-aware navigation and route guards.
 7. Replace config actor fallback with authenticated user session.

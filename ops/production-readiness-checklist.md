@@ -12,8 +12,10 @@ This checklist tracks the gap between the current pre-production stack and a rea
 - [ ] `ADMIN_ALLOW_INSECURE_DEV=false` outside local development.
 - [ ] `PROVISIONING_ALLOW_INSECURE_DEV=false` outside local development.
 - [ ] `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false` outside local debugging.
-- [ ] Supabase Auth redirect URLs include `/auth/callback` and `/reset-password`.
-- [ ] Supabase Auth custom SMTP is configured before customer-facing email flows.
+- [ ] Supabase Auth redirect URLs include `/auth/callback`.
+- [ ] Supabase Auth Google, Facebook, and Apple providers are configured.
+- [ ] Supabase Auth email/password signup is disabled for production v1.
+- [ ] First-login onboarding writes `user_profiles.profile_completed_at`.
 - [ ] `BACKEND_RATE_LIMIT_ENABLED=true` in staging and production.
 - [ ] Route limits are tuned for real device publish cadence before field rollout.
 - [ ] Alert notification contacts are set per farm.

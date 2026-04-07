@@ -95,7 +95,7 @@ Production frontend target:
 ### Flow 1: Login and Auth
 
 **Users:** all users (operator and customer)
-**Auth system:** Supabase Auth (JWT session)
+**Auth system:** Supabase Auth (JWT session) with OAuth-only Google, Facebook, and Apple in production v1
 **Rule:** all routes except `/login` and `/signup` require a valid session
 
 #### Login Flow
@@ -104,12 +104,11 @@ Production frontend target:
 user visits any protected URL
   → auth guard checks JWT session
   → no valid session → redirect to /login?returnUrl=...
-  → user submits email + password
-  → Supabase Auth validates credentials
-  → success → check if user has at least one farm
-      → has farm  → redirect to /ops (or returnUrl)
-      → no farm   → redirect to /farms/new
-  → failure → show error message, stay on /login
+  → user chooses Google, Facebook, or Apple
+  → Supabase Auth validates OAuth callback
+  → first login without completed profile → redirect to /onboarding
+  → completed profile → redirect to returnUrl or dashboard
+  → failure → show provider/auth error, stay on /login
 ```
 
 #### Logout Flow
@@ -123,34 +122,34 @@ user clicks logout (any screen)
 
 #### SCR-01 Login — Required Elements
 
-- email input
-- password input
-- sign in button
+- Google sign-in button
+- Facebook sign-in button
+- Apple sign-in button
 - link to `/signup`
-- error state: "Invalid email or password"
+- error state: provider/auth failure
 - redirect to returnUrl after success
 
 #### SCR-02 Sign Up — Required Elements
 
-- email input
-- password input
-- confirm password input
-- sign up button
-- error states: email already exists, passwords do not match
-- after sign up: Supabase sends confirmation email
-- after email confirm: redirect to `/farms/new`
+- Google sign-up button
+- Facebook sign-up button
+- Apple sign-up button
+- after OAuth callback: redirect to `/onboarding`
+- after onboarding: redirect to `/dashboard`, `/farms/new`, or original returnUrl
 
 #### Auth Guard Rules
 
 - every route except `/login` and `/signup` must check for a valid JWT session
+- first-login users without `profile_completed_at` should complete `/onboarding`
 - `/provision` also requires auth — binding a device requires a known user identity
 - expired JWT must trigger silent refresh or redirect to `/login`
 - RLS in Supabase ensures users can only query their own farm data regardless of frontend routing
 
-#### Open Auth Decision
+#### Closed Auth Decision
 
-- it is not yet decided whether operator accounts and customer accounts are separate user types or the same Supabase user with different farm ownership
-- current dev mode uses a hardcoded `actor_user_id` query param — this must be replaced before pilot
+- all users share the same Supabase Auth pool
+- production v1 uses OAuth-only Google, Facebook, and Apple
+- role and farm scope live in `user_profiles`, `farm_members`, `reseller_farms`, and RLS
 
 ---
 
@@ -161,8 +160,11 @@ user clicks logout (any screen)
 #### New User Journey
 
 ```
-sign up complete + email confirmed
-  → redirect to /farms/new
+OAuth callback complete
+  → redirect to /onboarding if profile is incomplete
+  → user confirms display name and language
+  → redirect to /dashboard or original returnUrl
+  → dashboard empty state sends user to /farms/new
   → user creates first farm (name required)
   → redirect to /devices (Main Dashboard)
   → dashboard shows empty state: no devices

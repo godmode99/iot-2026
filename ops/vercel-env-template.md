@@ -60,9 +60,10 @@ Add these URLs to the Supabase Auth project:
 
 - `${DASHBOARD_URL}`
 - `${DASHBOARD_URL}/auth/callback`
-- `${DASHBOARD_URL}/reset-password`
 
 For preview deployments, add the preview domain or Vercel preview wildcard policy that the team approves.
+
+Production v1 uses OAuth-only login through Google, Facebook, and Apple. Keep email/password disabled unless the auth decision is reopened.
 
 ## Validation
 

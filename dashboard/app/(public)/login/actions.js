@@ -5,45 +5,34 @@ import { getAppUrl } from "@/lib/env.js";
 import { safeReturnUrl, withParams } from "@/lib/auth/urls.js";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server.js";
 
-export async function signInWithPassword(formData) {
+const OAUTH_PROVIDERS = new Set(["google", "facebook", "apple"]);
+
+export async function signInWithOAuth(formData) {
   const returnUrl = safeReturnUrl(formData.get("returnUrl"));
+  const provider = String(formData.get("provider") ?? "").trim();
 
   if (!hasSupabaseServerConfig()) {
     redirect(withParams("/login", { returnUrl, error: "auth_not_configured" }));
   }
 
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    redirect(withParams("/login", { returnUrl, error: "login_failed" }));
+  if (!OAUTH_PROVIDERS.has(provider)) {
+    redirect(withParams("/login", { returnUrl, error: "unsupported_provider" }));
   }
 
-  redirect(returnUrl);
-}
-
-export async function signUpWithPassword(formData) {
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!hasSupabaseServerConfig()) {
-    redirect(withParams("/signup", { error: "auth_not_configured" }));
-  }
+  const callbackUrl = new URL("/auth/callback", getAppUrl());
+  callbackUrl.searchParams.set("next", returnUrl);
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
     options: {
-      emailRedirectTo: `${getAppUrl()}/auth/callback?next=/dashboard`
+      redirectTo: callbackUrl.toString()
     }
   });
 
-  if (error) {
-    redirect(withParams("/signup", { error: "signup_failed" }));
+  if (error || !data?.url) {
+    redirect(withParams("/login", { returnUrl, error: "oauth_start_failed" }));
   }
 
-  redirect(withParams("/login", { notice: "check_email" }));
+  redirect(data.url);
 }

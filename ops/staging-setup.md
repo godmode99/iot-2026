@@ -43,9 +43,10 @@ Add these in Supabase Auth for the staging project:
 
 - `${DASHBOARD_URL}`
 - `${DASHBOARD_URL}/auth/callback`
-- `${DASHBOARD_URL}/reset-password`
 
 Use the final Vercel preview/staging URL, not localhost.
+
+Enable Google, Facebook, and Apple providers for the staging project before inviting testers. Email/password signup is not part of production v1.
 
 ## Vercel Dashboard Project
 
@@ -112,8 +113,8 @@ The staging deploy check validates required keys, HTTPS URLs, unsafe dev flags, 
 
 Before inviting anyone to test staging:
 
-- Login/signup works against Supabase staging.
-- Password reset returns through `/reset-password`.
+- Google, Facebook, and Apple login works against Supabase staging.
+- First-login users complete `/onboarding`.
 - `/dashboard` only shows farms visible to the signed-in user.
 - `/provision` binds a staging device to the selected farm.
 - `/farms/[farmId]` invite and notification preference actions write audit records.

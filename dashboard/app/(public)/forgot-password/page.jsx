@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { AuthShell } from "@/components/auth-shell.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
-import { requestPasswordReset } from "./actions.js";
 
 export default async function ForgotPasswordPage({ searchParams }) {
   const messages = await getMessages();
@@ -23,13 +22,10 @@ export default async function ForgotPasswordPage({ searchParams }) {
       )}
       title={t(messages, "auth.forgotPassword")}
     >
-        <form className="form" action={requestPasswordReset}>
-          <label>
-            {t(messages, "auth.email")}
-            <input name="email" type="email" autoComplete="email" required />
-          </label>
-          <button className="button" type="submit">{t(messages, "auth.sendResetAction")}</button>
-        </form>
+      <div className="notice">
+        {t(messages, "auth.oauthRecoveryBody")}
+      </div>
+      <Link className="button" href="/login">{t(messages, "auth.backToLogin")}</Link>
     </AuthShell>
   );
 }

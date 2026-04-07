@@ -10,7 +10,8 @@
     "signup": "Sign up",
     "signout": "Sign out",
     "newFarm": "New farm",
-    "settings": "Settings"
+    "settings": "Settings",
+    "onboarding": "Onboarding"
   },
   "home": {
     "eyebrow": "Farm monitoring portal",
@@ -61,17 +62,27 @@
     "signupTitle": "Create account",
     "email": "Email",
     "password": "Password",
-    "loginAction": "Log in",
-    "signupAction": "Sign up",
-    "forgotPassword": "Forgot password",
+    "loginAction": "Continue",
+    "signupAction": "Continue",
+    "forgotPassword": "Account recovery",
     "setupPending": "Supabase Auth env is not configured for the frontend yet",
-    "forgotPasswordBody": "Enter your email and we will send a secure password reset link.",
-    "sendResetAction": "Send reset link",
-    "resetPassword": "Reset password",
-    "resetPasswordBody": "Set a new password after opening the secure reset link from your email.",
+    "forgotPasswordBody": "SB-00 uses Google, Facebook, and Apple sign-in only. Recover access from the provider account you used to log in.",
+    "sendResetAction": "Open provider recovery",
+    "resetPassword": "Account recovery",
+    "resetPasswordBody": "Password changes are handled by Google, Facebook, or Apple because this portal does not store customer passwords.",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
     "updatePasswordAction": "Update password",
+    "oauthOnlyBody": "Use the same Google, Facebook, or Apple account every time so farm membership and device permissions stay attached to one identity.",
+    "signupOauthBody": "Create your portal account with Google, Facebook, or Apple. We will collect farm profile details after the first sign-in.",
+    "oauthOptions": "OAuth sign-in options",
+    "providers": {
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "apple": "Continue with Apple"
+    },
+    "oauthRecoveryBody": "This portal is OAuth-only. If you cannot access the account, recover it directly with Google, Facebook, or Apple, then return here and sign in again.",
+    "backToLogin": "Back to login",
     "portalEyebrow": "Secure access",
     "portalTitle": "One account for farms, devices, and alerts",
     "portalBody": "Sign in to monitor field devices, bind QR codes, and manage farm permissions from a mobile-first dashboard.",
@@ -79,6 +90,13 @@
     "proofSecure": "Supabase Auth",
     "proofMobile": "Mobile-first",
     "proofLanguages": "TH / EN / MY"
+  },
+  "onboarding": {
+    "eyebrow": "First login setup",
+    "title": "Set your portal profile",
+    "body": "Confirm the name and language operators and farm members will see before you create a farm or bind a device.",
+    "nextSteps": "Onboarding next steps",
+    "continueAction": "Save and continue"
   },
   "dashboard": {
     "eyebrow": "Customer dashboard",

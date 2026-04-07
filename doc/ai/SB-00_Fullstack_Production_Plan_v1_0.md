@@ -54,7 +54,7 @@ It does not cover:
 
 | Area | Decision |
 | --- | --- |
-| Auth provider | Supabase Auth by default unless a stronger operational reason appears |
+| Auth provider | Supabase Auth with OAuth-only Google, Facebook, and Apple for production v1 |
 | Farm model | one customer can own multiple farms |
 | Device model | one farm can have multiple devices |
 | Pilot roles | `admin/operator`, `customer/farm_owner`, `reseller`, `farm_member` |
@@ -70,12 +70,21 @@ It does not cover:
 
 Use Supabase Auth for the first production implementation.
 
+Production v1 login is OAuth-only:
+
+- Google
+- Facebook
+- Apple
+
+Do not expose email/password signup or password reset in the customer flow unless the auth decision is reopened.
+
 Reasons:
 
 - Supabase is already the database and RLS platform.
 - User JWT can map directly to RLS policies.
 - It avoids adding a second identity provider during pilot.
 - Operational burden is lower than introducing Clerk/Auth0 at this stage.
+- OAuth-only login reduces password reset, weak password, and credential stuffing support burden.
 
 Revisit only if:
 
@@ -278,7 +287,8 @@ Rules:
 | Screen | Backend/API Needs | Role Guard |
 | --- | --- | --- |
 | `/login` | Supabase Auth sign in | public |
-| `/signup` | Supabase Auth sign up + profile trigger | public |
+| `/signup` | OAuth account creation + profile trigger | public |
+| `/onboarding` | first-login display name and locale completion | authenticated |
 | `/farms/new` | create farm, create owner membership | authenticated customer |
 | `/dashboard` | customer farm summary API | farm owner/member |
 | `/farms/:id` | farm settings, members, notification settings | owner or member permission |
@@ -327,7 +337,7 @@ Backend:
 Frontend:
 
 - add Next.js scaffold
-- add `/login`, `/signup`, `/forgot-password`
+- add OAuth-only `/login`, `/signup`, and `/onboarding`
 - add auth guard
 - add role-aware landing redirect
 

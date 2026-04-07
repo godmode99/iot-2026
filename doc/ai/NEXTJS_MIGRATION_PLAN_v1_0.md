@@ -134,13 +134,13 @@ dashboard/
     (public)/
       login/page.tsx
       signup/page.tsx
-      forgot-password/page.tsx
     (customer)/
       dashboard/page.tsx
       devices/[deviceId]/page.tsx
       alerts/page.tsx
       farms/[farmId]/page.tsx
     (onboarding)/
+      onboarding/page.tsx
       provision/page.tsx
       farms/new/page.tsx
     (operator)/
@@ -224,9 +224,9 @@ Goal:
 Tasks:
 
 - add Supabase server/client helpers
-- add `/login`
-- add `/signup`
-- add `/forgot-password`
+- add OAuth-only `/login`
+- add OAuth-only `/signup`
+- add first-login `/onboarding`
 - add logout action
 - add simple `getCurrentUser()` helper
 - add route guard helper
@@ -234,7 +234,7 @@ Tasks:
 Acceptance:
 
 - unauthenticated user is redirected from protected routes
-- login/signup pages render
+- login/signup pages render Google, Facebook, and Apple OAuth buttons
 - session helper is server-safe
 
 ### Phase 2: i18n Shell
