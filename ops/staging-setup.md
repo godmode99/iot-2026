@@ -68,10 +68,11 @@ Set these Vercel variables for the dashboard project:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_DEFAULT_LOCALE`
+- `SUPABASE_DB_URL`
 - `ADMIN_API_TOKEN`
 - `DASHBOARD_ALLOW_ACTOR_OVERRIDE=false`
 
-Do not set service role keys or broker passwords as `NEXT_PUBLIC_*` variables.
+Do not set database URLs, service role keys, or broker passwords as `NEXT_PUBLIC_*` variables.
 
 ## Backend Runtime
 

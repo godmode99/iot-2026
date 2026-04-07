@@ -36,6 +36,7 @@ Set these in Vercel for preview and production:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_DEFAULT_LOCALE`
+- `SUPABASE_DB_URL`
 - `ADMIN_API_TOKEN`
 
 Set these on the backend runtime, not in browser-exposed variables:
