@@ -26,7 +26,7 @@ Do not add `NEXT_PUBLIC_` variants for database URLs, service role keys, ingest 
 
 ## Backend Runtime
 
-Set these only on the backend/API runtime:
+Set these only on the device worker runtime. See `ops/device-worker-deployment.md` for Cloud Run and Fly.io deployment notes.
 
 | key | production requirement |
 | --- | --- |

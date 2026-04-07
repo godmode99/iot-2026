@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "node --watch src/server.mjs",
     "start": "node src/server.mjs",
+    "worker:start": "node src/worker-server.mjs",
+    "worker:dev": "node --watch src/worker-server.mjs",
     "test": "node --test test/*.test.mjs",
     "smoke:rbac": "node scripts/rbac-smoke.mjs"
   },

@@ -9,7 +9,7 @@ This runbook prepares the Next.js dashboard for staging or production deployment
 - Deploy the `dashboard/` workspace as the Vercel project root.
 - Keep `SUPABASE_SERVICE_ROLE_KEY`, database URLs, ingest tokens, and backend-only secrets out of browser-exposed variables.
 - Run web-facing customer/admin actions inside Next.js server actions backed by Supabase/Postgres.
-- Deploy device ingest, MQTT, OTA workers, and scheduled background jobs as a separate worker service.
+- Deploy device ingest, MQTT, OTA workers, and scheduled background jobs as a separate worker service; see `ops/device-worker-deployment.md`.
 - Use a separate Supabase project for staging and production.
 - Use `ops/vercel-env-template.md` as the source checklist for Vercel and backend runtime variables.
 
