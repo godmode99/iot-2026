@@ -37,7 +37,7 @@ Create or collect these before validation:
 - Generated `INGEST_SHARED_TOKEN`.
 - Generated `JWT_SECRET`.
 
-MQTT, LINE, Resend, and OTA signing can stay on placeholder/stub values until that specific integration is being tested.
+MQTT, LINE, Resend, and OTA signing can stay on placeholder/stub values until that specific integration is being tested. The staging checker warns on missing MQTT values but does not block dashboard/auth validation.
 
 ## Supabase Auth Redirects
 

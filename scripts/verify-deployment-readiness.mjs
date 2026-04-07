@@ -23,11 +23,14 @@ const REQUIRED_KEYS = [
   "SUPABASE_DB_URL",
   "ADMIN_API_TOKEN",
   "INGEST_SHARED_TOKEN",
+  "JWT_SECRET"
+];
+
+const PRODUCTION_REQUIRED_KEYS = [
   "MQTT_BROKER_URL",
   "MQTT_USERNAME",
   "MQTT_PASSWORD",
-  "MQTT_TOPIC_PREFIX",
-  "JWT_SECRET"
+  "MQTT_TOPIC_PREFIX"
 ];
 
 const PRODUCTION_FALSE_FLAGS = [
@@ -139,6 +142,15 @@ function run() {
 
     if (args.target !== "template" && isPlaceholder(value)) {
       errors.push(`Replace placeholder value for ${key}`);
+    }
+  }
+
+  for (const key of PRODUCTION_REQUIRED_KEYS) {
+    const value = valueFor(fileEnv, key);
+    if (args.target === "production" && (!value || isPlaceholder(value))) {
+      errors.push(value ? `Replace placeholder value for ${key}` : `Missing required env: ${key}`);
+    } else if (args.target === "staging" && (!value || isPlaceholder(value))) {
+      warnings.push(`${key} is still placeholder; staging device connectivity tests should wait until it is set`);
     }
   }
 
