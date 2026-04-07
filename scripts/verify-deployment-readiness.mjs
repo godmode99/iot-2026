@@ -4,9 +4,11 @@ import { resolve } from "node:path";
 const PLACEHOLDER_PATTERNS = [
   /^$/,
   /^replace-me$/i,
+  /replace-me/i,
   /^your-/i,
+  /your-/i,
   /your-project/i,
-  /example\.com$/i,
+  /example\.com/i,
   /^postgresql:\/\/postgres:postgres@localhost/i
 ];
 
