@@ -278,5 +278,99 @@
       "en": "English",
       "my": "Myanmar"
     }
+  },
+  "legal": {
+    "lastUpdated": "Last updated: April 7, 2026",
+    "privacy": {
+      "eyebrow": "Privacy",
+      "title": "Privacy Policy",
+      "sections": [
+        {
+          "title": "What we collect",
+          "body": [
+            "SB-00 Portal uses Google, Facebook, or Apple sign-in to identify users. We store account profile details such as display name, email address, preferred language, role, farm membership, invite status, and audit records needed to operate the service.",
+            "For connected farms and devices, we may store farm names, device identifiers, device status, telemetry readings, alert history, command history, notification preferences, and provisioning records."
+          ]
+        },
+        {
+          "title": "How we use data",
+          "body": [
+            "We use this data to authenticate users, restrict access with farm-scoped permissions, show device dashboards, send or record alerts, process provisioning actions, and maintain operational audit trails.",
+            "We do not sell customer farm or device data."
+          ]
+        },
+        {
+          "title": "Service providers",
+          "body": [
+            "The portal is hosted with Vercel and uses Supabase for authentication and database services. OAuth identity providers such as Google, Facebook, and Apple process sign-in according to their own policies.",
+            "Notification providers such as email or messaging services may be used when farm owners configure alert delivery."
+          ]
+        },
+        {
+          "title": "Retention and access",
+          "body": [
+            "Farm data is retained while the farm account or device record remains active, unless deletion is requested or required by law. Access is limited by role, farm membership, reseller assignment, and administrative audit controls.",
+            "For privacy or access requests, contact the app owner using the support email configured in the OAuth provider profile."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "eyebrow": "Terms",
+      "title": "Terms of Service",
+      "sections": [
+        {
+          "title": "Use of the portal",
+          "body": [
+            "SB-00 Portal is provided to monitor farms, devices, alerts, provisioning, and operational support workflows. Users must sign in with an approved OAuth provider and may only access farms and devices they are authorized to view or manage.",
+            "Users are responsible for keeping their provider accounts secure and for using device commands carefully."
+          ]
+        },
+        {
+          "title": "Roles and permissions",
+          "body": [
+            "Farm owners control farm membership and notification settings. Farm members, resellers, and operators receive only the permissions assigned to them. Administrative or reseller activity may be logged for audit and support purposes."
+          ]
+        },
+        {
+          "title": "Operational limits",
+          "body": [
+            "Telemetry, alerts, and device commands depend on network connectivity, device firmware, external providers, and hardware availability. The service should not be treated as the only safety mechanism for critical farm operations until field validation and operating procedures are complete."
+          ]
+        },
+        {
+          "title": "Changes",
+          "body": [
+            "These terms may be updated as the pilot and production service mature. Continued use of the portal after updates means the user accepts the updated terms."
+          ]
+        }
+      ]
+    },
+    "dataDeletion": {
+      "eyebrow": "Data deletion",
+      "title": "Data Deletion Instructions",
+      "sections": [
+        {
+          "title": "How to request deletion",
+          "body": [
+            "To request deletion of portal account data, contact the app owner using the support email configured in the OAuth provider profile and include the email address used to sign in.",
+            "If you are a farm owner, specify whether you want to delete only your personal profile or also request removal of farm, device, telemetry, alert, and provisioning records under your farm."
+          ]
+        },
+        {
+          "title": "What happens next",
+          "body": [
+            "We will verify the requester, review farm ownership and legal or operational retention requirements, then remove or anonymize eligible account and farm records.",
+            "Some audit, security, or operational records may be retained where required to protect the service, investigate incidents, or comply with applicable obligations."
+          ]
+        },
+        {
+          "title": "OAuth provider data",
+          "body": [
+            "Deleting portal data does not delete the user account at Google, Facebook, or Apple. Manage provider-side account and app permissions directly through the provider account settings."
+          ]
+        }
+      ]
+    }
   }
 }

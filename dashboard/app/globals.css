@@ -598,6 +598,37 @@ h2 {
   margin: 18px 0 0;
 }
 
+.legal-shell {
+  max-width: 980px;
+}
+
+.legal-card {
+  display: grid;
+  gap: 20px;
+}
+
+.legal-card h1 {
+  max-width: 780px;
+}
+
+.legal-content {
+  display: grid;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.legal-content article {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  padding-top: 18px;
+}
+
+.legal-content p {
+  line-height: 1.7;
+  margin: 0;
+}
+
 .dashboard-card {
   margin-bottom: 18px;
 }
