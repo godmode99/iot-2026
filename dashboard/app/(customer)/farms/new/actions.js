@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import { withParams } from "@/lib/auth/urls.js";
 import { getCurrentUser } from "@/lib/auth/guards.js";
@@ -32,20 +33,20 @@ export async function createFarm(formData) {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
+  const farmId = randomUUID();
+  const { error } = await supabase
     .from("farms")
     .insert({
+      id: farmId,
       name,
       owner_user_id: user.id,
       alert_email_to: alertEmailTo,
       alert_line_user_id: alertLineUserId
-    })
-    .select("id")
-    .single();
+    });
 
-  if (error || !data?.id) {
+  if (error) {
     redirect(withParams("/farms/new", { error: error?.code ?? "farm_create_failed" }));
   }
 
-  redirect(withParams(`/farms/${data.id}`, { farm: "created" }));
+  redirect(withParams(`/farms/${farmId}`, { farm: "created" }));
 }
