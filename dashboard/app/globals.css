@@ -481,7 +481,7 @@ h2 {
 .home-hero {
   min-height: calc(100svh - 130px);
   display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1.14fr);
+  grid-template-columns: minmax(420px, 1.12fr) minmax(0, 0.88fr);
   gap: clamp(18px, 3vw, 34px);
   align-items: stretch;
 }
@@ -498,8 +498,8 @@ h2 {
 .home-hero-copy {
   min-height: 640px;
   display: grid;
-  align-content: space-between;
-  gap: 44px;
+  align-content: center;
+  gap: 36px;
   padding: clamp(30px, 6vw, 74px);
   border-radius: clamp(32px, 5vw, 58px);
   background:
@@ -588,8 +588,8 @@ h2 {
 .home-signal-panel {
   min-height: 640px;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: clamp(20px, 3vw, 36px);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: clamp(18px, 2.7vw, 30px);
   padding: clamp(24px, 4vw, 52px);
   border-radius: clamp(32px, 5vw, 58px);
   background:
@@ -622,10 +622,14 @@ h2 {
   max-width: 640px;
 }
 
+.home-stage-copy h2 {
+  max-width: 15ch;
+}
+
 .home-logo-stage {
   position: relative;
   z-index: 1;
-  min-height: clamp(300px, 40vw, 520px);
+  min-height: clamp(250px, 34vw, 440px);
   display: grid;
   place-items: center;
   isolation: isolate;
@@ -648,8 +652,8 @@ h2 {
 .home-logo-art {
   position: relative;
   z-index: 2;
-  width: min(90%, 560px);
-  max-height: 520px;
+  width: min(88%, 500px);
+  max-height: 440px;
   object-fit: contain;
   opacity: 0.76;
   mix-blend-mode: normal;
@@ -698,6 +702,34 @@ h2 {
   left: 6%;
   transform: rotate(18deg);
   opacity: 0.62;
+}
+
+.home-stage-actions {
+  position: relative;
+  z-index: 2;
+}
+
+.home-signal-panel .button {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+}
+
+.home-signal-panel .button:hover:not(:disabled) {
+  background: #FFFFFF;
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.28);
+}
+
+.home-signal-panel .button-secondary {
+  color: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.home-signal-panel .button-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(214, 168, 79, 0.5);
+  box-shadow: 0 14px 34px rgba(214, 168, 79, 0.1);
 }
 
 .home-proof-grid {

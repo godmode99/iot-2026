@@ -27,22 +27,6 @@ export default async function HomePage() {
       </nav>
 
       <section className="home-hero">
-        <div className="home-hero-copy">
-          <div className="home-kicker" aria-label="Brand and product">
-            <span>{t(messages, "brand.name")}</span>
-            <span>{t(messages, "home.eyebrow")}</span>
-          </div>
-          <div className="home-hero-heading">
-            <p className="eyebrow">{t(messages, "home.eyebrow")}</p>
-            <h1>{t(messages, "home.title")}</h1>
-            <p className="lede">{t(messages, "home.body")}</p>
-          </div>
-          <div className="action-row">
-            <Link className="button" href="/dashboard">{t(messages, "home.primary")}</Link>
-            <Link className="button-secondary" href="/login">{t(messages, "home.secondary")}</Link>
-          </div>
-        </div>
-
         <aside className="home-signal-panel home-brand-stage" aria-label={t(messages, "home.panelLabel")}>
           <div className="home-stage-copy">
             <p className="eyebrow">{t(messages, "home.panelEyebrow")}</p>
@@ -58,6 +42,10 @@ export default async function HomePage() {
               alt=""
             />
           </div>
+          <div className="action-row home-stage-actions">
+            <Link className="button" href="/dashboard">{t(messages, "home.primary")}</Link>
+            <Link className="button-secondary" href="/login">{t(messages, "home.secondary")}</Link>
+          </div>
           <div className="home-proof-grid">
             {proofItems.map((item) => (
               <div className="home-proof-item" key={item.label}>
@@ -67,6 +55,18 @@ export default async function HomePage() {
             ))}
           </div>
         </aside>
+
+        <div className="home-hero-copy">
+          <div className="home-kicker" aria-label="Brand and product">
+            <span>{t(messages, "brand.name")}</span>
+            <span>{t(messages, "home.eyebrow")}</span>
+          </div>
+          <div className="home-hero-heading">
+            <p className="eyebrow">{t(messages, "home.eyebrow")}</p>
+            <h1>{t(messages, "home.title")}</h1>
+            <p className="lede">{t(messages, "home.body")}</p>
+          </div>
+        </div>
       </section>
 
       <section className="home-lanes" aria-label={t(messages, "home.lanesLabel")}>
