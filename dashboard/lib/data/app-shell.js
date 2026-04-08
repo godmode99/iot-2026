@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server.js";
 const EMPTY_APP_SHELL = {
   userType: "guest",
   displayName: "",
+  email: "",
+  isAuthenticated: false,
   canAccessOps: false,
   isReseller: false,
   isCustomer: false
@@ -35,10 +37,11 @@ export async function loadAppShellContext() {
 
   return {
     userType,
-    displayName: profileResult.data?.display_name ?? user.email ?? "",
+    displayName: profileResult.data?.display_name ?? user.email ?? user.user_metadata?.full_name ?? "",
     canAccessOps: operatorResult.data === true,
     isReseller: userType === "reseller",
     isCustomer: userType === "customer",
+    isAuthenticated: true,
     email: user.email ?? "",
     profileCompletedAt: profileResult.data?.profile_completed_at ?? null
   };

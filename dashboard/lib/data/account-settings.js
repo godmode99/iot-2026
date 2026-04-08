@@ -36,7 +36,7 @@ export async function loadAccountSettings() {
     user,
     profile: {
       userType: profile?.user_type ?? "customer",
-      displayName: profile?.display_name ?? user.email ?? "",
+      displayName: profile?.display_name ?? user.email ?? user.user_metadata?.full_name ?? "",
       preferredLocale: normalizeLocale(profile?.preferred_locale),
       profileCompletedAt: profile?.profile_completed_at ?? null,
       updatedAt: profile?.updated_at ?? null

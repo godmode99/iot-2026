@@ -73,7 +73,7 @@ Use Supabase Auth for the first production implementation.
 Production v1 login is OAuth-only:
 
 - Google
-- Facebook
+- Facebook with `public_profile` only
 - Apple
 
 Do not expose email/password signup or password reset in the customer flow unless the auth decision is reopened.

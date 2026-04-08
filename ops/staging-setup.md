@@ -46,7 +46,7 @@ Add these in Supabase Auth for the staging project:
 
 Use the final Vercel preview/staging URL, not localhost.
 
-Enable Google, Facebook, and Apple providers for the staging project before inviting testers. Email/password signup is not part of production v1.
+Enable Google, Facebook, and Apple providers for the staging project before inviting testers. Email/password signup is not part of production v1. Facebook should request `public_profile` only; collect contact email later in onboarding/settings if the provider does not return one.
 
 ## Vercel Dashboard Project
 

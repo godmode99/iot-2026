@@ -64,7 +64,7 @@ Use Supabase Auth for the first production implementation unless a stronger oper
 Production v1 uses OAuth-only login:
 
 - Google
-- Facebook
+- Facebook (`public_profile` only; do not request Facebook `email` until Meta review is intentionally scheduled)
 - Apple
 
 Do not expose email/password signup, password reset, or user-selectable roles in the customer flow. First-login users complete `/onboarding`, which writes `user_profiles.profile_completed_at`.

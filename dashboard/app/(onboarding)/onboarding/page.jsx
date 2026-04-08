@@ -42,7 +42,7 @@ export default async function OnboardingPage({ searchParams }) {
               name="display_name"
               maxLength={120}
               defaultValue={settings.profile?.displayName ?? ""}
-              placeholder={settings.user?.email ?? "Farm owner"}
+              placeholder={settings.user?.user_metadata?.full_name ?? settings.user?.email ?? "Farm owner"}
             />
           </label>
           <label>

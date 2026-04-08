@@ -6,6 +6,9 @@ import { safeReturnUrl, withParams } from "@/lib/auth/urls.js";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server.js";
 
 const OAUTH_PROVIDERS = new Set(["google", "facebook", "apple"]);
+const PROVIDER_SCOPES = {
+  facebook: "public_profile"
+};
 
 export async function signInWithOAuth(formData) {
   const returnUrl = safeReturnUrl(formData.get("returnUrl"));
@@ -26,7 +29,8 @@ export async function signInWithOAuth(formData) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: callbackUrl.toString()
+      redirectTo: callbackUrl.toString(),
+      scopes: PROVIDER_SCOPES[provider]
     }
   });
 

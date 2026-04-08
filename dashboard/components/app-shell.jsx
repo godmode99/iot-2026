@@ -16,7 +16,7 @@ export async function AppShell({ children, currentPath = "", ariaLabel = "Primar
   const context = await loadAppShellContext();
   const navItems = [
     navItem("/dashboard", t(messages, "nav.dashboard"), currentPath),
-    context.email && !context.profileCompletedAt ? navItem("/onboarding", t(messages, "nav.onboarding"), currentPath) : null,
+    context.isAuthenticated && !context.profileCompletedAt ? navItem("/onboarding", t(messages, "nav.onboarding"), currentPath) : null,
     context.isReseller ? null : navItem("/farms/new", t(messages, "nav.newFarm"), currentPath),
     navItem("/provision", t(messages, "nav.provision"), currentPath),
     navItem("/settings", t(messages, "nav.settings"), currentPath),
@@ -32,12 +32,12 @@ export async function AppShell({ children, currentPath = "", ariaLabel = "Primar
         </Link>
         <div className="nav-links app-nav-links">
           {navItems}
-          {context.email ? (
+          {context.isAuthenticated ? (
             <span className="pill shell-user-pill" title={context.displayName || context.email}>
               {context.userType}
             </span>
           ) : null}
-          {context.email ? (
+          {context.isAuthenticated ? (
             <form action="/auth/signout" method="post">
               <button className="button-secondary nav-button" type="submit">{t(messages, "nav.signout")}</button>
             </form>
