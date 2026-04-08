@@ -63,7 +63,7 @@ Add these URLs to the Supabase Auth project:
 
 For preview deployments, add the preview domain or Vercel preview wildcard policy that the team approves.
 
-Production v1 uses OAuth-only login through Google, Facebook, and Apple. Keep email/password disabled unless the auth decision is reopened.
+Production v1 uses OAuth-only login. Control visible providers with `AUTH_PROVIDERS`; start with `google` and add `facebook` or `apple` only after their provider dashboards are production-ready. Keep email/password disabled unless the auth decision is reopened.
 
 ## Validation
 

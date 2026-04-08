@@ -1,15 +1,12 @@
 import { t } from "@/lib/i18n.js";
-
-const OAUTH_PROVIDERS = [
-  { id: "google", labelKey: "auth.providers.google" },
-  { id: "facebook", labelKey: "auth.providers.facebook" },
-  { id: "apple", labelKey: "auth.providers.apple" }
-];
+import { getEnabledOAuthProviders } from "@/lib/auth/oauth-providers.js";
 
 export function OAuthButtons({ action, messages, returnUrl = "/dashboard" }) {
+  const providers = getEnabledOAuthProviders();
+
   return (
     <div className="oauth-button-stack" aria-label={t(messages, "auth.oauthOptions")}>
-      {OAUTH_PROVIDERS.map((provider) => (
+      {providers.map((provider) => (
         <form action={action} key={provider.id}>
           <input name="provider" type="hidden" value={provider.id} />
           <input name="returnUrl" type="hidden" value={returnUrl} />

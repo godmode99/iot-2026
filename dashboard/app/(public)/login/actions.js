@@ -3,12 +3,8 @@
 import { redirect } from "next/navigation";
 import { getAppUrl } from "@/lib/env.js";
 import { safeReturnUrl, withParams } from "@/lib/auth/urls.js";
+import { getOAuthProviderScopes, isEnabledOAuthProvider } from "@/lib/auth/oauth-providers.js";
 import { createSupabaseServerClient, hasSupabaseServerConfig } from "@/lib/supabase/server.js";
-
-const OAUTH_PROVIDERS = new Set(["google", "facebook", "apple"]);
-const PROVIDER_SCOPES = {
-  facebook: "public_profile"
-};
 
 export async function signInWithOAuth(formData) {
   const returnUrl = safeReturnUrl(formData.get("returnUrl"));
@@ -18,7 +14,7 @@ export async function signInWithOAuth(formData) {
     redirect(withParams("/login", { returnUrl, error: "auth_not_configured" }));
   }
 
-  if (!OAUTH_PROVIDERS.has(provider)) {
+  if (!isEnabledOAuthProvider(provider)) {
     redirect(withParams("/login", { returnUrl, error: "unsupported_provider" }));
   }
 
@@ -30,7 +26,7 @@ export async function signInWithOAuth(formData) {
     provider,
     options: {
       redirectTo: callbackUrl.toString(),
-      scopes: PROVIDER_SCOPES[provider]
+      scopes: getOAuthProviderScopes(provider)
     }
   });
 

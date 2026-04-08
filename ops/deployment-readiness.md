@@ -78,8 +78,8 @@ Keep `BACKEND_RATE_LIMIT_ENABLED=true` outside local debugging and tune route li
 
 - Add the production `DASHBOARD_URL` to Supabase Auth site URL.
 - Add callback redirect URL: `${DASHBOARD_URL}/auth/callback`.
-- Enable Google, Facebook, and Apple providers in Supabase Auth.
-- Configure each provider's OAuth app/redirect URL in the provider dashboard.
+- Enable only reviewed/configured providers in `AUTH_PROVIDERS`. Start with `google`; add `facebook` or `apple` only after their provider dashboards are production-ready.
+- Configure each provider's OAuth app/redirect URL in the provider dashboard before adding it to `AUTH_PROVIDERS`.
 - Configure Facebook OAuth with `public_profile` only for production v1. Do not request Facebook `email` until Meta app review is intentionally scheduled.
 - Do not enable email/password signup for production v1 unless the auth decision is reopened.
 - Confirm RLS migrations have been applied.
