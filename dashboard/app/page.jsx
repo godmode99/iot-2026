@@ -13,7 +13,7 @@ export default async function HomePage() {
   }));
 
   return (
-    <main className="page-shell">
+    <main className="page-shell landing-shell">
       <nav className="topbar" aria-label="Primary">
         <Link className="brand" href="/">
           <span className="brand-mark" aria-hidden="true" />
@@ -27,6 +27,10 @@ export default async function HomePage() {
 
       <section className="home-hero">
         <div className="home-hero-copy">
+          <div className="home-kicker" aria-label="Brand and product">
+            <span>{t(messages, "brand.name")}</span>
+            <span>{t(messages, "home.eyebrow")}</span>
+          </div>
           <div className="home-hero-heading">
             <p className="eyebrow">{t(messages, "home.eyebrow")}</p>
             <h1>{t(messages, "home.title")}</h1>
@@ -38,17 +42,20 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <aside className="home-signal-panel" aria-label={t(messages, "home.panelLabel")}>
-          <div>
+        <aside className="home-signal-panel home-brand-stage" aria-label={t(messages, "home.panelLabel")}>
+          <div className="home-stage-copy">
             <p className="eyebrow">{t(messages, "home.panelEyebrow")}</p>
             <h2>{t(messages, "home.panelTitle")}</h2>
           </div>
-          <div className="home-signal-map" aria-hidden="true">
-            <span className="home-node home-node-primary" />
-            <span className="home-node home-node-secondary" />
-            <span className="home-node home-node-tertiary" />
-            <span className="home-signal-line home-signal-line-a" />
-            <span className="home-signal-line home-signal-line-b" />
+          <div className="home-logo-stage" aria-hidden="true">
+            <span className="home-gold-orbit" />
+            <span className="home-scan-line home-scan-line-a" />
+            <span className="home-scan-line home-scan-line-b" />
+            <img
+              className="home-logo-art"
+              src="/brand/arayashiki-lab-logo-full.svg"
+              alt=""
+            />
           </div>
           <div className="home-proof-grid">
             {proofItems.map((item) => (
