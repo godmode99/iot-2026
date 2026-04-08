@@ -17,7 +17,7 @@ export default async function HomePage() {
       <nav className="topbar" aria-label="Primary">
         <Link className="brand" href="/">
           <span className="brand-mark" aria-hidden="true" />
-          <span>{t(messages, "brand.name")}</span>
+          <span className="brand-name">{t(messages, "brand.name")}</span>
         </Link>
         <div className="nav-links">
           <Link className="nav-link" href="/login">{t(messages, "nav.login")}</Link>

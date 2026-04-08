@@ -86,6 +86,13 @@ select {
   letter-spacing: -0.03em;
 }
 
+.brand-lockup {
+  display: block;
+  width: auto;
+  height: 42px;
+  max-width: min(42vw, 190px);
+}
+
 .brand-mark {
   width: 44px;
   height: 44px;
@@ -1519,11 +1526,16 @@ h2 {
   }
 
   .landing-shell .topbar .brand {
-    max-width: min-content;
+    max-width: none;
   }
 
   .landing-shell .topbar .nav-links {
     justify-content: flex-end;
+  }
+
+  .brand-lockup {
+    height: 34px;
+    max-width: min(44vw, 156px);
   }
 
   .hero-grid {
