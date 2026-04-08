@@ -4,8 +4,8 @@ export const metadata = {
   title: "ArayaShiki Lab",
   description: "Production frontend shell for the SB-00 farm monitoring product by ArayaShiki Lab",
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg"
+    icon: "/brand/arayashiki-mark-square.png",
+    shortcut: "/brand/arayashiki-mark-square.png"
   }
 };
 
