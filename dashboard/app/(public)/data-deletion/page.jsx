@@ -1,7 +1,7 @@
 import { LegalPage } from "@/components/legal-page.jsx";
 
 export const metadata = {
-  title: "Data Deletion | SB-00 Portal"
+  title: "Data Deletion | ArayaShiki Lab"
 };
 
 export default function DataDeletionPage() {

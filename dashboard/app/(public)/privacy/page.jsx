@@ -1,7 +1,7 @@
 import { LegalPage } from "@/components/legal-page.jsx";
 
 export const metadata = {
-  title: "Privacy Policy | SB-00 Portal"
+  title: "Privacy Policy | ArayaShiki Lab"
 };
 
 export default function PrivacyPage() {

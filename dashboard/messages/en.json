@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "SB-00 Portal"
+    "name": "ArayaShiki Lab"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -14,7 +14,7 @@
     "onboarding": "Onboarding"
   },
   "home": {
-    "eyebrow": "Farm monitoring portal",
+    "eyebrow": "SB-00 farm monitoring portal",
     "title": "Field status, built for the phone in your hand",
     "body": "Monitor farms, bind devices, act on alerts, and give resellers scoped support access without exposing customer data.",
     "primary": "Open dashboard",
@@ -84,8 +84,8 @@
     "oauthRecoveryBody": "This portal is OAuth-only. If you cannot access the account, recover it directly with Google, Facebook, or Apple, then return here and sign in again.",
     "backToLogin": "Back to login",
     "portalEyebrow": "Secure access",
-    "portalTitle": "One account for farms, devices, and alerts",
-    "portalBody": "Sign in to monitor field devices, bind QR codes, and manage farm permissions from a mobile-first dashboard.",
+    "portalTitle": "ArayaShiki Lab access for SB-00 farms",
+    "portalBody": "Sign in to monitor field devices, bind QR codes, and manage SB-00 farm permissions from a mobile-first dashboard.",
     "portalProofLabel": "Portal capabilities",
     "proofSecure": "Supabase Auth",
     "proofMobile": "Mobile-first",
@@ -315,7 +315,7 @@
         {
           "title": "What we collect",
           "body": [
-            "SB-00 Portal uses Google, Facebook, or Apple sign-in to identify users. We store account profile details such as display name, email address, preferred language, role, farm membership, invite status, and audit records needed to operate the service.",
+            "ArayaShiki Lab uses Google, Facebook, or Apple sign-in for the SB-00 Portal to identify users. We store account profile details such as display name, email address, preferred language, role, farm membership, invite status, and audit records needed to operate the service.",
             "For connected farms and devices, we may store farm names, device identifiers, device status, telemetry readings, alert history, command history, notification preferences, and provisioning records."
           ]
         },
@@ -349,7 +349,7 @@
         {
           "title": "Use of the portal",
           "body": [
-            "SB-00 Portal is provided to monitor farms, devices, alerts, provisioning, and operational support workflows. Users must sign in with an approved OAuth provider and may only access farms and devices they are authorized to view or manage.",
+            "The SB-00 Portal by ArayaShiki Lab is provided to monitor farms, devices, alerts, provisioning, and operational support workflows. Users must sign in with an approved OAuth provider and may only access farms and devices they are authorized to view or manage.",
             "Users are responsible for keeping their provider accounts secure and for using device commands carefully."
           ]
         },
@@ -380,7 +380,7 @@
         {
           "title": "How to request deletion",
           "body": [
-            "To request deletion of portal account data, contact the app owner using the support email configured in the OAuth provider profile and include the email address used to sign in.",
+            "To request deletion of SB-00 Portal account data, contact ArayaShiki Lab using the support email configured in the OAuth provider profile and include the email address used to sign in.",
             "If you are a farm owner, specify whether you want to delete only your personal profile or also request removal of farm, device, telemetry, alert, and provisioning records under your farm."
           ]
         },

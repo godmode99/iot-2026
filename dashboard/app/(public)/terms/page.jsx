@@ -1,7 +1,7 @@
 import { LegalPage } from "@/components/legal-page.jsx";
 
 export const metadata = {
-  title: "Terms of Service | SB-00 Portal"
+  title: "Terms of Service | ArayaShiki Lab"
 };
 
 export default function TermsPage() {

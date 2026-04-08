@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "SB-00 Portal",
-  description: "Production frontend shell for SB-00 farm monitoring",
+  title: "ArayaShiki Lab",
+  description: "Production frontend shell for the SB-00 farm monitoring product by ArayaShiki Lab",
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg"
