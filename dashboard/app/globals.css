@@ -81,30 +81,56 @@ select {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
 }
 
-.brand-lockup {
-  display: block;
-  width: auto;
-  height: 42px;
-  max-width: min(42vw, 190px);
+.brand-name {
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  line-height: 1;
+}
+
+.brand-wordmark {
+  gap: 12px;
+  font-weight: 800;
+}
+
+.brand-wordmark-main {
+  font-size: clamp(1.26rem, 1.95vw, 1.6rem);
+  line-height: 0.94;
+  letter-spacing: -0.07em;
+}
+
+.brand-wordmark-sep {
+  width: 1px;
+  height: 22px;
+  flex: 0 0 auto;
+  background: linear-gradient(180deg, rgba(214, 168, 79, 0), rgba(214, 168, 79, 0.88), rgba(214, 168, 79, 0));
+}
+
+.brand-wordmark-sub {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(16, 24, 40, 0.64);
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 18px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 999px;
   background:
-    url("/brand/arayashiki-lab-logo-mark.svg") center / 78% auto no-repeat,
-    linear-gradient(145deg, #FFFFFF, #EFF3F8);
-  border: 1px solid rgba(16, 24, 40, 0.1);
+    url("/brand/arayashiki-lab-logo-mark.svg") center / 72% auto no-repeat,
+    linear-gradient(145deg, #FFFFFF, #F6F8FC);
+  border: 1px solid rgba(16, 24, 40, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 14px 34px rgba(16, 24, 40, 0.12),
-    0 0 0 4px rgba(214, 168, 79, 0.08);
+    0 10px 24px rgba(16, 24, 40, 0.08),
+    0 0 0 3px rgba(214, 168, 79, 0.06);
 }
 
 .nav-links {
@@ -423,12 +449,33 @@ h2 {
 
 .landing-shell .topbar {
   margin-bottom: clamp(18px, 4vw, 42px);
-  padding: 10px 12px;
-  border: 1px solid rgba(16, 24, 40, 0.1);
-  border-radius: 999px;
-  background: rgba(245, 248, 251, 0.78);
-  box-shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
-  backdrop-filter: blur(22px);
+  padding: 0 0 16px;
+  border: 0;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.1);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.landing-shell .topbar .brand {
+  min-height: 42px;
+}
+
+.landing-shell .topbar .nav-link,
+.landing-shell .topbar .button-secondary {
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow: none;
+}
+
+.landing-shell .topbar .button-secondary {
+  border-color: rgba(16, 24, 40, 0.12);
+}
+
+.landing-shell .topbar .nav-link {
+  border-color: transparent;
+  background: transparent;
+  color: rgba(16, 24, 40, 0.72);
 }
 
 .home-hero {
@@ -1518,11 +1565,11 @@ h2 {
   }
 
   .landing-shell .topbar {
-    align-items: center;
-    flex-direction: row;
+    align-items: flex-start;
+    flex-direction: column;
     margin-bottom: 14px;
-    padding: 10px;
-    border-radius: 26px;
+    padding: 0 0 14px;
+    border-radius: 0;
   }
 
   .landing-shell .topbar .brand {
@@ -1530,12 +1577,21 @@ h2 {
   }
 
   .landing-shell .topbar .nav-links {
-    justify-content: flex-end;
+    justify-content: flex-start;
+    width: 100%;
   }
 
-  .brand-lockup {
-    height: 34px;
-    max-width: min(44vw, 156px);
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-wordmark-main {
+    font-size: 1.18rem;
+  }
+
+  .brand-wordmark-sub {
+    font-size: 0.66rem;
+    letter-spacing: 0.22em;
   }
 
   .hero-grid {

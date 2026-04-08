@@ -15,9 +15,10 @@ export default async function HomePage() {
   return (
     <main className="page-shell landing-shell">
       <nav className="topbar" aria-label="Primary">
-        <Link className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span className="brand-name">{t(messages, "brand.name")}</span>
+        <Link className="brand brand-wordmark" href="/" aria-label={t(messages, "brand.name")}>
+          <span className="brand-wordmark-main">ArayaShiki</span>
+          <span className="brand-wordmark-sep" aria-hidden="true" />
+          <span className="brand-wordmark-sub">Lab</span>
         </Link>
         <div className="nav-links">
           <Link className="nav-link" href="/login">{t(messages, "nav.login")}</Link>
