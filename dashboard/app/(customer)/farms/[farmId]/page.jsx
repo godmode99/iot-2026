@@ -8,16 +8,34 @@ import { assignReseller, createMemberInvite, updateOwnNotificationPreference } f
 
 export const dynamic = "force-dynamic";
 
-function PermissionPills({ item }) {
+const MEMBER_PERMISSIONS = [
+  ["can_receive_alerts", "farmSettings.receiveAlerts", "Receive alerts"],
+  ["can_manage_alerts", "farmSettings.manageAlerts", "Manage alerts"],
+  ["can_send_commands", "farmSettings.sendCommands", "Send commands"]
+];
+
+const RESELLER_PERMISSIONS = [
+  ["can_manage_alerts", "farmSettings.manageAlerts", "Manage alerts"],
+  ["can_send_safe_commands", "farmSettings.sendSafeCommands", "Send safe commands"]
+];
+
+const ALERT_TYPES = [
+  ["threshold", "farmSettings.alertTypes.threshold", "Threshold"],
+  ["low_battery", "farmSettings.alertTypes.lowBattery", "Low battery"],
+  ["sensor_fault", "farmSettings.alertTypes.sensorFault", "Sensor fault"],
+  ["offline", "farmSettings.alertTypes.offline", "Offline"]
+];
+
+function PermissionPills({ item, messages }) {
   const permissions = [
-    item.can_view ? "view" : null,
-    item.can_receive_alerts ? "alerts" : null,
-    item.can_manage_alerts ? "manage alerts" : null,
-    item.can_send_commands ? "commands" : null,
-    item.can_send_safe_commands ? "safe commands" : null
+    item.can_view ? t(messages, "farmSettings.permissionView", "View") : null,
+    item.can_receive_alerts ? t(messages, "farmSettings.permissionReceiveAlerts", "Receive alerts") : null,
+    item.can_manage_alerts ? t(messages, "farmSettings.permissionManageAlerts", "Manage alerts") : null,
+    item.can_send_commands ? t(messages, "farmSettings.permissionCommands", "Commands") : null,
+    item.can_send_safe_commands ? t(messages, "farmSettings.permissionSafeCommands", "Safe commands") : null
   ].filter(Boolean);
 
-  return permissions.length ? permissions.map((permission) => <span className="pill" key={permission}>{permission}</span>) : <span className="muted">view only</span>;
+  return permissions.length ? permissions.map((permission) => <span className="pill" key={permission}>{permission}</span>) : <span className="muted">{t(messages, "farmSettings.viewMode", "View only")}</span>;
 }
 
 function formatDate(value) {
@@ -37,6 +55,34 @@ function inviteCookieName(farmId) {
 
 function inviteAcceptPath(inviteToken) {
   return `/invites/accept?token=${encodeURIComponent(inviteToken)}`;
+}
+
+function Panel({ eyebrow, title, body, children, className = "" }) {
+  return (
+    <section className={`farm-panel ${className}`.trim()}>
+      <div className="farm-panel-heading">
+        <div>
+          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+          <h2>{title}</h2>
+        </div>
+        {body ? <p className="muted">{body}</p> : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function EmptyPanel({ children }) {
+  return <div className="farm-empty-state">{children}</div>;
+}
+
+function CheckRow({ name, label, defaultChecked = false }) {
+  return (
+    <label className="settings-check-row">
+      <span>{label}</span>
+      <input type="checkbox" name={name} defaultChecked={defaultChecked} />
+    </label>
+  );
 }
 
 export default async function FarmSettingsPage({ params, searchParams }) {
@@ -109,33 +155,83 @@ export default async function FarmSettingsPage({ params, searchParams }) {
       ) : null}
 
       {settings?.canManage ? (
-        <>
-          <section className="dashboard-grid">
-            <div className="card">
-              <h2>{t(messages, "farmSettings.members")}</h2>
+        <section className="farm-settings-workspace">
+          <div className="farm-settings-main">
+            <Panel
+              eyebrow={t(messages, "farmSettings.accessEyebrow", "Team access")}
+              title={t(messages, "farmSettings.members")}
+              body={t(messages, "farmSettings.membersBody", "People who can view or operate this farm.")}
+            >
               {settings.members.length ? (
-                <ul className="status-list">
+                <ul className="farm-access-list">
                   {settings.members.map((member) => (
                     <li key={member.id}>
-                      <span>{member.email}</span>
-                      <span className="pill-row"><PermissionPills item={member} /></span>
+                      <div>
+                        <strong>{member.email}</strong>
+                        <span className="muted">{member.role}</span>
+                      </div>
+                      <span className="pill-row"><PermissionPills item={member} messages={messages} /></span>
                     </li>
                   ))}
                 </ul>
-              ) : <p className="muted">{t(messages, "farmSettings.noMembers")}</p>}
-            </div>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noMembers")}</EmptyPanel>}
+            </Panel>
 
-            <div className="card">
-              <h2>{t(messages, "farmSettings.inviteMember")}</h2>
+            <Panel
+              eyebrow={t(messages, "farmSettings.partnerEyebrow", "Partner access")}
+              title={t(messages, "farmSettings.resellers")}
+              body={t(messages, "farmSettings.resellersBody", "External support access stays scoped and auditable.")}
+            >
+              {settings.resellers.length ? (
+                <ul className="farm-access-list">
+                  {settings.resellers.map((assignment) => (
+                    <li key={assignment.id}>
+                      <div>
+                        <strong>{assignment.email}</strong>
+                        <span className="muted">{assignment.reseller_user_id}</span>
+                      </div>
+                      <span className="pill-row"><PermissionPills item={assignment} messages={messages} /></span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noResellers")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.auditEyebrow", "Audit")}
+              title={t(messages, "farmSettings.audit")}
+              body={t(messages, "farmSettings.auditBody", "Recent changes that affect this farm.")}
+            >
+              {settings.audit.length ? (
+                <ul className="farm-audit-list">
+                  {settings.audit.map((entry) => (
+                    <li key={entry.id}>
+                      <span>{entry.action}</span>
+                      <time>{new Date(entry.created_at).toLocaleDateString("en-CA")}</time>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noAudit")}</EmptyPanel>}
+            </Panel>
+          </div>
+
+          <aside className="farm-settings-side">
+            <Panel
+              eyebrow={t(messages, "farmSettings.inviteEyebrow", "Invite")}
+              title={t(messages, "farmSettings.inviteMember")}
+              body={t(messages, "farmSettings.inviteBody", "Invite by email and choose only the access they need.")}
+            >
               <form className="form" action={createMemberInvite}>
                 <input type="hidden" name="farm_id" value={farmId} />
                 <label>
                   {t(messages, "auth.email")}
                   <input name="email" type="email" required />
                 </label>
-                <label className="check-row"><input type="checkbox" name="can_receive_alerts" defaultChecked /> {t(messages, "farmSettings.receiveAlerts")}</label>
-                <label className="check-row"><input type="checkbox" name="can_manage_alerts" /> {t(messages, "farmSettings.manageAlerts")}</label>
-                <label className="check-row"><input type="checkbox" name="can_send_commands" /> {t(messages, "farmSettings.sendCommands")}</label>
+                <div className="permission-grid">
+                  {MEMBER_PERMISSIONS.map(([name, key, fallback], index) => (
+                    <CheckRow key={name} name={name} label={t(messages, key, fallback)} defaultChecked={index === 0} />
+                  ))}
+                </div>
                 <button className="button" type="submit">{t(messages, "farmSettings.createInvite")}</button>
               </form>
               {inviteToken ? (
@@ -147,71 +243,56 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                   <Link href={inviteAcceptPath(inviteToken)}>{t(messages, "inviteAccept.acceptLink")}</Link>
                 </p>
               ) : null}
-            </div>
-          </section>
+            </Panel>
 
-          <section className="dashboard-grid">
-            <div className="card">
-              <h2>{t(messages, "farmSettings.resellers")}</h2>
-              {settings.resellers.length ? (
-                <ul className="status-list">
-                  {settings.resellers.map((assignment) => (
-                    <li key={assignment.id}>
-                      <span>{assignment.email}</span>
-                      <span className="pill-row"><PermissionPills item={assignment} /></span>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="muted">{t(messages, "farmSettings.noResellers")}</p>}
-            </div>
-
-            <div className="card">
-              <h2>{t(messages, "farmSettings.assignReseller")}</h2>
+            <Panel
+              eyebrow={t(messages, "farmSettings.resellerEyebrow", "Reseller")}
+              title={t(messages, "farmSettings.assignReseller")}
+              body={t(messages, "farmSettings.assignResellerBody", "Grant support permissions to a known reseller user ID.")}
+            >
               <form className="form" action={assignReseller}>
                 <input type="hidden" name="farm_id" value={farmId} />
                 <label>
                   {t(messages, "farmSettings.resellerUserId")}
                   <input name="reseller_user_id" required placeholder="00000000-0000-0000-0000-000000000000" />
                 </label>
-                <label className="check-row"><input type="checkbox" name="can_manage_alerts" /> {t(messages, "farmSettings.manageAlerts")}</label>
-                <label className="check-row"><input type="checkbox" name="can_send_safe_commands" /> {t(messages, "farmSettings.sendSafeCommands")}</label>
+                <div className="permission-grid">
+                  {RESELLER_PERMISSIONS.map(([name, key, fallback]) => (
+                    <CheckRow key={name} name={name} label={t(messages, key, fallback)} />
+                  ))}
+                </div>
                 <button className="button" type="submit">{t(messages, "farmSettings.assignResellerAction")}</button>
               </form>
-            </div>
-          </section>
+            </Panel>
 
-          <section className="dashboard-grid">
-            <div className="card">
-              <h2>{t(messages, "farmSettings.notificationPreferences")}</h2>
+            <Panel
+              eyebrow={t(messages, "farmSettings.notificationEyebrow", "Notifications")}
+              title={t(messages, "farmSettings.notificationPreferences")}
+              body={t(messages, "farmSettings.notificationBody", "Choose where and when you personally receive alerts.")}
+            >
               <form className="form" action={updateOwnNotificationPreference}>
                 <input type="hidden" name="farm_id" value={farmId} />
-                <label className="check-row"><input type="checkbox" name="email_enabled" defaultChecked /> Email</label>
-                <label className="check-row"><input type="checkbox" name="line_enabled" /> LINE</label>
-                <label className="check-row"><input type="checkbox" name="critical_only" /> {t(messages, "farmSettings.criticalOnly")}</label>
-                {["threshold", "low_battery", "sensor_fault", "offline"].map((alertType) => (
-                  <label className="check-row" key={alertType}>
-                    <input type="checkbox" name={`alert_${alertType}`} defaultChecked /> {alertType}
-                  </label>
-                ))}
+                <div className="settings-fieldset">
+                  <span>{t(messages, "farmSettings.notificationChannels", "Channels")}</span>
+                  <div className="permission-grid">
+                    <CheckRow name="email_enabled" label={t(messages, "farmSettings.emailChannel", "Email")} defaultChecked />
+                    <CheckRow name="line_enabled" label={t(messages, "farmSettings.lineChannel", "LINE")} />
+                    <CheckRow name="critical_only" label={t(messages, "farmSettings.criticalOnly")} />
+                  </div>
+                </div>
+                <div className="settings-fieldset">
+                  <span>{t(messages, "farmSettings.alertTypeGroup", "Alert types")}</span>
+                  <div className="permission-grid">
+                    {ALERT_TYPES.map(([alertType, key, fallback]) => (
+                      <CheckRow key={alertType} name={`alert_${alertType}`} label={t(messages, key, fallback)} defaultChecked />
+                    ))}
+                  </div>
+                </div>
                 <button className="button" type="submit">{t(messages, "farmSettings.savePreference")}</button>
               </form>
-            </div>
-
-            <div className="card">
-              <h2>{t(messages, "farmSettings.audit")}</h2>
-              {settings.audit.length ? (
-                <ul className="status-list">
-                  {settings.audit.map((entry) => (
-                    <li key={entry.id}>
-                      <span>{entry.action}</span>
-                      <span className="pill">{new Date(entry.created_at).toLocaleDateString("en-CA")}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="muted">{t(messages, "farmSettings.noAudit")}</p>}
-            </div>
-          </section>
-        </>
+            </Panel>
+          </aside>
+        </section>
       ) : null}
     </AppShell>
   );
