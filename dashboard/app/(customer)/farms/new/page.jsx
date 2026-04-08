@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { createFarm } from "./actions.js";
@@ -34,7 +35,7 @@ export default async function NewFarmPage({ searchParams }) {
             {t(messages, "farmCreate.alertLine")}
             <input name="alert_line_user_id" placeholder="Uxxxxxxxxxxxxxxxx" />
           </label>
-          <button className="button" type="submit">{t(messages, "farmCreate.createAction")}</button>
+          <SubmitButton>{t(messages, "farmCreate.createAction")}</SubmitButton>
         </form>
       </section>
     </AppShell>

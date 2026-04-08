@@ -106,10 +106,20 @@ select {
   min-height: 42px;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   border-radius: 999px;
   padding: 10px 16px;
   border: 1px solid var(--line);
   font-weight: 750;
+  cursor: pointer;
+  transform: translateY(0);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
 }
 
 .button {
@@ -133,6 +143,55 @@ select {
 
 .nav-button {
   cursor: pointer;
+}
+
+.button:hover:not(:disabled),
+.nav-link:hover,
+.button-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--accent-strong);
+  box-shadow: 0 18px 38px rgba(15, 139, 98, 0.28);
+}
+
+.button-secondary:hover:not(:disabled),
+.nav-link:hover {
+  border-color: rgba(15, 139, 98, 0.32);
+  background: rgba(255, 255, 249, 0.9);
+  box-shadow: 0 12px 28px rgba(23, 42, 31, 0.1);
+}
+
+.button:active:not(:disabled),
+.button-secondary:active:not(:disabled),
+.nav-link:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.button:disabled,
+.button-secondary:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.submit-button {
+  position: relative;
+}
+
+.button-spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: button-spin 700ms linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .app-topbar {
@@ -843,6 +902,17 @@ h2 {
   border: 1px solid rgba(15, 139, 98, 0.12);
   border-radius: 20px;
   background: rgba(255, 255, 249, 0.62);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.farm-access-list li:hover,
+.farm-audit-list li:hover {
+  transform: translateX(2px);
+  border-color: rgba(15, 139, 98, 0.24);
+  background: rgba(255, 255, 249, 0.82);
 }
 
 .farm-access-list li > div {
@@ -876,6 +946,19 @@ h2 {
   text-align: center;
 }
 
+.farm-panel {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.farm-panel:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 139, 98, 0.22);
+  box-shadow: 0 18px 52px rgba(23, 42, 31, 0.1);
+}
+
 .permission-grid,
 .settings-fieldset {
   display: grid;
@@ -903,6 +986,24 @@ h2 {
   color: var(--ink) !important;
   font-size: 0.92rem !important;
   font-weight: 800 !important;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.settings-check-row:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 139, 98, 0.28);
+  background: rgba(255, 255, 249, 0.92);
+  box-shadow: 0 12px 26px rgba(23, 42, 31, 0.08);
+}
+
+.settings-check-row:has(input:checked) {
+  border-color: rgba(15, 139, 98, 0.36);
+  background: rgba(215, 239, 226, 0.7);
 }
 
 .settings-check-row input,
@@ -1031,6 +1132,16 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 22px;
   background: rgba(255, 255, 249, 0.62);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.provision-step:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15, 139, 98, 0.28);
+  background: rgba(255, 255, 249, 0.82);
 }
 
 .provision-step span {
@@ -1131,6 +1242,10 @@ h2 {
   cursor: pointer;
 }
 
+.inline-actions .button-secondary:disabled {
+  cursor: wait;
+}
+
 .command-risk-note {
   margin: 0;
 }
@@ -1194,6 +1309,32 @@ h2 {
   padding: 12px 14px;
   background: var(--panel-solid);
   color: var(--ink);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.form input:hover,
+.form select:hover {
+  border-color: rgba(15, 139, 98, 0.28);
+}
+
+.form input:focus-visible,
+.form select:focus-visible,
+.button:focus-visible,
+.button-secondary:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid rgba(15, 139, 98, 0.22);
+  outline-offset: 3px;
+}
+
+.form input:focus-visible,
+.form select:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(15, 139, 98, 0.12);
+  transform: translateY(-1px);
 }
 
 .notice {
@@ -1306,5 +1447,16 @@ h2 {
 
   .provision-step {
     min-height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

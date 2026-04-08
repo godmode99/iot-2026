@@ -23,6 +23,7 @@ export function DeviceAlertActions({
   const dialogRef = useRef(null);
   const actionInputRef = useRef(null);
   const [selectedAction, setSelectedAction] = useState("");
+  const [submittingAction, setSubmittingAction] = useState("");
 
   function queueAction(nextAction) {
     if (actionInputRef.current) {
@@ -36,10 +37,12 @@ export function DeviceAlertActions({
       return;
     }
 
+    setSubmittingAction(nextAction);
     formRef.current?.requestSubmit();
   }
 
   function confirmAction() {
+    setSubmittingAction(selectedAction);
     dialogRef.current?.close();
     formRef.current?.requestSubmit();
   }
@@ -53,11 +56,12 @@ export function DeviceAlertActions({
         {actions.map((nextAction) => (
           <button
             className="button-secondary"
+            disabled={Boolean(submittingAction)}
             key={nextAction}
             onClick={() => queueAction(nextAction)}
             type="button"
           >
-            {displayActionLabel(labels, nextAction)}
+            {submittingAction === nextAction ? `${displayActionLabel(labels, nextAction)}...` : displayActionLabel(labels, nextAction)}
           </button>
         ))}
       </form>
@@ -68,10 +72,10 @@ export function DeviceAlertActions({
           <h2>{labels.confirmTitle}</h2>
           <p className="muted">{labels.confirmBody.replace("{action}", displayActionLabel(labels, selectedAction))}</p>
           <div className="inline-actions">
-            <button className="button" onClick={confirmAction} type="button">
-              {labels.confirmAction}
+            <button className="button" disabled={Boolean(submittingAction)} onClick={confirmAction} type="button">
+              {submittingAction ? `${labels.confirmAction}...` : labels.confirmAction}
             </button>
-            <button className="button-secondary" onClick={() => dialogRef.current?.close()} type="button">
+            <button className="button-secondary" disabled={Boolean(submittingAction)} onClick={() => dialogRef.current?.close()} type="button">
               {labels.cancelAction}
             </button>
           </div>

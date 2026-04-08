@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { resolveProvisioningTarget } from "@/lib/backend/provisioning.js";
@@ -103,7 +104,7 @@ export default async function ProvisionPage({ searchParams }) {
               placeholder="sb00-devkit-02 or QR URL"
             />
           </label>
-          <button className="button" type="submit">{t(messages, "provision.resolveAction")}</button>
+          <SubmitButton>{t(messages, "provision.resolveAction")}</SubmitButton>
         </form>
       </section>
 
@@ -149,7 +150,7 @@ export default async function ProvisionPage({ searchParams }) {
                   ))}
                 </select>
               </label>
-              <button className="button" type="submit">{t(messages, "provision.bindAction")}</button>
+              <SubmitButton>{t(messages, "provision.bindAction")}</SubmitButton>
             </form>
           ) : (
             <div className="provision-empty-action">

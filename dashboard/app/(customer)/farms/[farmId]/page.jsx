@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadFarmSettings } from "@/lib/data/farm-settings.js";
@@ -232,7 +233,7 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                     <CheckRow key={name} name={name} label={t(messages, key, fallback)} defaultChecked={index === 0} />
                   ))}
                 </div>
-                <button className="button" type="submit">{t(messages, "farmSettings.createInvite")}</button>
+                <SubmitButton>{t(messages, "farmSettings.createInvite")}</SubmitButton>
               </form>
               {inviteToken ? (
                 <p className="notice invite-token">
@@ -261,7 +262,7 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                     <CheckRow key={name} name={name} label={t(messages, key, fallback)} />
                   ))}
                 </div>
-                <button className="button" type="submit">{t(messages, "farmSettings.assignResellerAction")}</button>
+                <SubmitButton>{t(messages, "farmSettings.assignResellerAction")}</SubmitButton>
               </form>
             </Panel>
 
@@ -288,7 +289,7 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                     ))}
                   </div>
                 </div>
-                <button className="button" type="submit">{t(messages, "farmSettings.savePreference")}</button>
+                <SubmitButton>{t(messages, "farmSettings.savePreference")}</SubmitButton>
               </form>
             </Panel>
           </aside>

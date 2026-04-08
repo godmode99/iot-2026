@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { requireUser } from "@/lib/auth/guards.js";
 import { safeReturnUrl } from "@/lib/auth/urls.js";
 import { getMessages, t } from "@/lib/i18n.js";
@@ -67,7 +68,7 @@ export default async function OnboardingPage({ searchParams }) {
               <span className="muted">{t(messages, "provision.stateBody")}</span>
             </Link>
           </div>
-          <button className="button" type="submit">{t(messages, "onboarding.continueAction")}</button>
+          <SubmitButton>{t(messages, "onboarding.continueAction")}</SubmitButton>
         </form>
       </section>
     </AppShell>

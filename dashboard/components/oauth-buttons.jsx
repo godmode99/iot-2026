@@ -1,5 +1,6 @@
 import { t } from "@/lib/i18n.js";
 import { getEnabledOAuthProviders } from "@/lib/auth/oauth-providers.js";
+import { SubmitButton } from "@/components/submit-button.jsx";
 
 export function OAuthButtons({ action, messages, returnUrl = "/dashboard" }) {
   const providers = getEnabledOAuthProviders();
@@ -10,9 +11,9 @@ export function OAuthButtons({ action, messages, returnUrl = "/dashboard" }) {
         <form action={action} key={provider.id}>
           <input name="provider" type="hidden" value={provider.id} />
           <input name="returnUrl" type="hidden" value={returnUrl} />
-          <button className="button oauth-button" type="submit">
+          <SubmitButton className="button oauth-button">
             {t(messages, provider.labelKey)}
-          </button>
+          </SubmitButton>
         </form>
       ))}
     </div>

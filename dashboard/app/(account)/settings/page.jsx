@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { requireUser } from "@/lib/auth/guards.js";
 import { getMessages, t } from "@/lib/i18n.js";
 import { loadAccountSettings } from "@/lib/data/account-settings.js";
@@ -63,7 +64,7 @@ export default async function SettingsPage({ searchParams }) {
               <span className="metric-value">{settings.profile?.preferredLocale ?? "th"}</span>
             </div>
           </div>
-          <button className="button" type="submit">{t(messages, "settings.saveAction")}</button>
+          <SubmitButton>{t(messages, "settings.saveAction")}</SubmitButton>
         </form>
       </section>
     </AppShell>

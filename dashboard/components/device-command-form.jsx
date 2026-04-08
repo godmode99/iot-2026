@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { SubmitButton } from "@/components/submit-button.jsx";
 
 const HIGH_RISK_COMMANDS = new Set(["reboot", "ota_apply"]);
 
@@ -63,7 +64,7 @@ export function DeviceCommandForm({
           {labels.commandNote}
           <input name="note" placeholder="optional audit note" />
         </label>
-        <button className="button" type="submit">{labels.queueCommand}</button>
+        <SubmitButton>{labels.queueCommand}</SubmitButton>
       </form>
 
       <dialog className="confirm-dialog" ref={dialogRef}>

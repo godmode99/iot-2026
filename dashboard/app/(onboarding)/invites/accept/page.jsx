@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell.jsx";
+import { SubmitButton } from "@/components/submit-button.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { withParams } from "@/lib/auth/urls.js";
@@ -31,7 +32,7 @@ export default async function AcceptInvitePage({ searchParams }) {
             {t(messages, "inviteAccept.token")}
             <input name="invite_token" defaultValue={token} required />
           </label>
-          <button className="button" type="submit">{t(messages, "inviteAccept.acceptAction")}</button>
+          <SubmitButton>{t(messages, "inviteAccept.acceptAction")}</SubmitButton>
         </form>
       </section>
     </AppShell>
