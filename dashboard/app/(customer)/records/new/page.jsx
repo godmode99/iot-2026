@@ -8,12 +8,27 @@ import { createOperationalRecord } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
+function resolveRecordFeedback(messages, feedback) {
+  if (!feedback) {
+    return "";
+  }
+
+  if (feedback.startsWith("required_field_missing:")) {
+    const fieldKey = feedback.split(":")[1] ?? "";
+    const fieldLabel = t(messages, `recordCreatePage.fieldsMap.${fieldKey}`, fieldKey || "field");
+    return t(messages, "recordCreatePage.errors.requiredFieldMissing", `Please complete the required field: ${fieldLabel}.`).replace("{field}", fieldLabel);
+  }
+
+  return t(messages, `recordCreatePage.errors.${feedback}`, feedback);
+}
+
 export default async function NewRecordPage({ searchParams }) {
   const messages = await getMessages();
   await requireUser({ returnUrl: "/records/new" });
   const query = await searchParams;
   const context = await loadOperationalRecordCreateContext();
   const feedback = typeof query?.error === "string" ? query.error : "";
+  const feedbackMessage = resolveRecordFeedback(messages, feedback);
 
   return (
     <AppShell currentPath="/records" ariaLabel="Record creation navigation">
@@ -28,10 +43,10 @@ export default async function NewRecordPage({ searchParams }) {
         </div>
       </section>
 
-      {feedback ? (
+      {feedbackMessage ? (
         <section className="notice">
           <strong>{t(messages, "recordCreatePage.errorTitle", "Record form issue")}</strong>
-          <span> {feedback}</span>
+          <span> {feedbackMessage}</span>
         </section>
       ) : null}
 

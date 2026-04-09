@@ -3,6 +3,7 @@ import { AppShell } from "@/components/app-shell.jsx";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadOperationalRecordDetail } from "@/lib/data/operational-records.js";
 import { getMessages, t } from "@/lib/i18n.js";
+import { createAlertFromRecordAction } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
@@ -156,8 +157,13 @@ function buildFollowUps(entries) {
   return recommendations;
 }
 
-function buildAlertCandidates(entries, farmId) {
+function buildAlertCandidates(entries, farmId, alerts = []) {
   const candidates = [];
+  const openAlertMap = new Map(
+    alerts
+      .filter((alert) => alert?.status === "open")
+      .map((alert) => [alert.alert_type, alert])
+  );
 
   entries.forEach((entry) => {
     const evaluation = evaluateEntry(entry);
@@ -171,12 +177,13 @@ function buildAlertCandidates(entries, farmId) {
         key: `do-${evaluation.level}`,
         level: evaluation.level,
         alertType: "dissolved_oxygen_threshold",
+        existingAlertId: openAlertMap.get("dissolved_oxygen_threshold")?.id ?? null,
         title: evaluation.level === "critical" ? "Escalate dissolved oxygen deviation" : "Watch dissolved oxygen trend",
         body:
           evaluation.level === "critical"
             ? "This reading is outside the critical band and should be treated as an active farm alert candidate."
             : "This reading is drifting outside the preferred band and is worth tracking as a warning-level alert candidate.",
-        href: `/alerts?farm=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
+        href: `/alerts?farmId=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
       });
       return;
     }
@@ -186,12 +193,13 @@ function buildAlertCandidates(entries, farmId) {
         key: `temp-${evaluation.level}`,
         level: evaluation.level,
         alertType: "water_temperature_threshold",
+        existingAlertId: openAlertMap.get("water_temperature_threshold")?.id ?? null,
         title: evaluation.level === "critical" ? "Escalate temperature deviation" : "Track temperature as a warning",
         body:
           evaluation.level === "critical"
             ? "The recorded temperature is outside the critical operating band and should be reviewed like an open incident."
             : "The recorded temperature is outside the preferred band and should be monitored before the next round.",
-        href: `/alerts?farm=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
+        href: `/alerts?farmId=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
       });
       return;
     }
@@ -201,12 +209,13 @@ function buildAlertCandidates(entries, farmId) {
         key: `salinity-${evaluation.level}`,
         level: evaluation.level,
         alertType: "salinity_threshold",
+        existingAlertId: openAlertMap.get("salinity_threshold")?.id ?? null,
         title: evaluation.level === "critical" ? "Escalate salinity deviation" : "Track salinity drift",
         body:
           evaluation.level === "critical"
             ? "This salinity value is outside the critical range and should be checked against mixing and water-source assumptions."
             : "This salinity value is drifting outside the preferred band and may justify a warning-level alert if the next round confirms it.",
-        href: `/alerts?farm=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
+        href: `/alerts?farmId=${farmId ?? ""}&severity=${evaluation.level === "critical" ? "critical" : "warning"}`
       });
     }
   });
@@ -238,9 +247,11 @@ export default async function RecordDetailPage({ params, searchParams }) {
   await requireUser({ returnUrl: `/records/${recordId}` });
   const detail = await loadOperationalRecordDetail({ recordId });
   const feedback = typeof query?.record === "string" ? query.record : "";
+  const alertFeedback = typeof query?.alert === "string" ? query.alert : "";
+  const errorFeedback = typeof query?.error === "string" ? query.error : "";
   const healthSummary = summarizeEntryHealth(detail.record?.record_entries ?? []);
   const followUps = buildFollowUps(detail.record?.record_entries ?? []);
-  const alertCandidates = buildAlertCandidates(detail.record?.record_entries ?? [], detail.record?.farm_id);
+  const alertCandidates = buildAlertCandidates(detail.record?.record_entries ?? [], detail.record?.farm_id, detail.alerts ?? []);
 
   return (
     <AppShell currentPath="/records" ariaLabel="Operational record navigation">
@@ -272,6 +283,20 @@ export default async function RecordDetailPage({ params, searchParams }) {
         <section className="notice">
           <strong>{t(messages, "recordDetailPage.noticeTitle", "Record status")}</strong>
           <span> {feedback}</span>
+        </section>
+      ) : null}
+
+      {alertFeedback ? (
+        <section className="notice">
+          <strong>{t(messages, "recordDetailPage.alertNoticeTitle", "Alert action")}</strong>
+          <span> {alertFeedback}</span>
+        </section>
+      ) : null}
+
+      {errorFeedback ? (
+        <section className="notice">
+          <strong>{t(messages, "recordDetailPage.errorNoticeTitle", "Workflow issue")}</strong>
+          <span> {errorFeedback}</span>
         </section>
       ) : null}
 
@@ -425,7 +450,27 @@ export default async function RecordDetailPage({ params, searchParams }) {
                       <Link className="button-secondary" href={candidate.href}>
                         {t(messages, "recordDetailPage.alertCandidateAction", "Review matching alerts")}
                       </Link>
+                      {candidate.existingAlertId ? (
+                        <Link className="button-secondary" href={`/alerts/${candidate.existingAlertId}`}>
+                          {t(messages, "recordDetailPage.alertCandidateExistingAction", "Open current alert")}
+                        </Link>
+                      ) : (
+                        <form action={createAlertFromRecordAction}>
+                          <input name="record_id" type="hidden" value={recordId} />
+                          <input name="alert_type" type="hidden" value={candidate.alertType} />
+                          <input name="severity" type="hidden" value={candidate.level === "critical" ? "critical" : "warning"} />
+                          <input name="note" type="hidden" value={`record_${recordId}_${candidate.alertType}`} />
+                          <button className="button" type="submit">
+                            {t(messages, "recordDetailPage.alertCandidateCreateAction", "Create alert")}
+                          </button>
+                        </form>
+                      )}
                     </div>
+                    {candidate.existingAlertId ? (
+                      <p className="muted">
+                        {t(messages, "recordDetailPage.alertCandidateExistingBody", "An open alert of this type already exists for this farm, so the system avoids creating a duplicate.")}
+                      </p>
+                    ) : null}
                   </article>
                 ))}
               </div>

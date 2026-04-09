@@ -10,6 +10,18 @@ function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
 
+function alertSourceLabel(value, messages) {
+  if (value === "record") {
+    return t(messages, "dashboard.alertSources.record", "Record-driven");
+  }
+
+  if (value === "telemetry") {
+    return t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven");
+  }
+
+  return t(messages, "dashboard.alertSources.system", "System");
+}
+
 function formatDate(value) {
   if (!value) {
     return "N/A";
@@ -177,6 +189,38 @@ export default async function DashboardPage() {
 
       <section className="dashboard-grid">
         <div className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.alertBreakdownTitle", "Alert breakdown")}</h2>
+            <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.viewAllAction", "View all alerts")}</Link>
+          </div>
+          <div className="records-field-group-grid">
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.alertSources.record", "Record-driven")}</h3>
+              <p>{dashboard?.alertMetrics.bySource.record ?? 0}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven")}</h3>
+              <p>{dashboard?.alertMetrics.bySource.telemetry ?? 0}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.alertSources.system", "System")}</h3>
+              <p>{dashboard?.alertMetrics.bySource.system ?? 0}</p>
+            </article>
+          </div>
+          <div className="record-meta-list">
+            {dashboard?.alertMetrics.topTypes.length ? (
+              dashboard.alertMetrics.topTypes.map((item) => (
+                <span key={item.alertType}>
+                  {label(item.alertType)}: {item.count}
+                </span>
+              ))
+            ) : (
+              <span>{t(messages, "dashboard.alertBreakdownEmpty", "No active alert types to summarize yet.")}</span>
+            )}
+          </div>
+        </div>
+
+        <div className="card">
           <h2>{t(messages, "dashboard.recentFarms")}</h2>
           {dashboard?.farms.length ? (
             <ul className="status-list">
@@ -266,6 +310,7 @@ export default async function DashboardPage() {
                   <span>
                     <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
                     <span className="list-meta">{deviceLabel}</span>
+                    <span className="list-meta">{alertSourceLabel(alert.source === "record_detail" ? "record" : alert.source === "device_telemetry" ? "telemetry" : "system", messages)}</span>
                   </span>
                   <span className={`pill ${statusClass(alert.severity)}`}>{alert.severity}</span>
                 </li>

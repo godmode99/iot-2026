@@ -1,4 +1,5 @@
 import {
+  actorTypeForUser,
   fail,
   getDashboardDb,
   ok,
@@ -131,4 +132,162 @@ export async function updateAlertStatus({ alertId, action, actorUserId, note }) 
   return ok("alert_status_updated", {
     alert: updatedRows[0] ?? null
   });
+}
+
+export async function createRecordDrivenAlert({
+  farmId,
+  recordId,
+  actorUserId,
+  alertType,
+  severity,
+  note,
+  details = {}
+}) {
+  if (!farmId || !recordId || !alertType) {
+    return fail("alert_create_invalid", [farmId, recordId, alertType]);
+  }
+
+  if (!["critical", "warning", "info"].includes(severity)) {
+    return fail("alert_severity_invalid", [severity]);
+  }
+
+  const sql = getDashboardDb();
+  const allowed = await userCanManageFarmAlerts(sql, actorUserId, farmId);
+  if (!allowed) {
+    return fail("alert_permission_denied", [farmId, alertType], 403);
+  }
+
+  const existingRows = await sql`
+    select id, alert_type, severity, status, opened_at
+    from public.alerts
+    where farm_id = ${farmId}::uuid
+      and alert_type = ${alertType}
+      and status = 'open'
+    order by opened_at desc
+    limit 1
+  `;
+  const existing = existingRows[0] ?? null;
+
+  if (existing) {
+    return ok("alert_already_open", { alert: existing }, 200);
+  }
+
+  const actorType = await actorTypeForUser(sql, actorUserId);
+  const insertedRows = await sql`
+    insert into public.alerts (
+      farm_id,
+      device_id,
+      alert_type,
+      severity,
+      status,
+      opened_at,
+      details_json
+    ) values (
+      ${farmId}::uuid,
+      null,
+      ${alertType},
+      ${severity},
+      'open',
+      timezone('utc', now()),
+      ${sql.json({
+        source: "record_detail",
+        source_record_id: recordId,
+        note: note ?? "",
+        created_by: actorUserId ?? null,
+        created_by_type: actorType,
+        ...details
+      })}::jsonb
+    )
+    returning id, alert_type, severity, status, opened_at, details_json
+  `;
+
+  return ok("alert_created", {
+    alert: insertedRows[0] ?? null
+  }, 201);
+}
+
+export async function createTelemetryDrivenAlert({
+  farmId,
+  deviceId,
+  actorUserId,
+  alertType,
+  severity,
+  note,
+  details = {}
+}) {
+  if (!farmId || !deviceId || !alertType) {
+    return fail("alert_create_invalid", [farmId, deviceId, alertType]);
+  }
+
+  if (!["critical", "warning", "info"].includes(severity)) {
+    return fail("alert_severity_invalid", [severity]);
+  }
+
+  const sql = getDashboardDb();
+  const allowed = await userCanManageFarmAlerts(sql, actorUserId, farmId);
+  if (!allowed) {
+    return fail("alert_permission_denied", [farmId, deviceId, alertType], 403);
+  }
+
+  const deviceRows = await sql`
+    select id, device_id, serial_number
+    from public.devices
+    where device_id = ${deviceId}
+    limit 1
+  `;
+  const device = deviceRows[0] ?? null;
+
+  if (!device) {
+    return fail("device_unknown", [deviceId], 404);
+  }
+
+  const existingRows = await sql`
+    select id, alert_type, severity, status, opened_at
+    from public.alerts
+    where farm_id = ${farmId}::uuid
+      and device_id = ${device.id}::uuid
+      and alert_type = ${alertType}
+      and status = 'open'
+    order by opened_at desc
+    limit 1
+  `;
+  const existing = existingRows[0] ?? null;
+
+  if (existing) {
+    return ok("alert_already_open", { alert: existing }, 200);
+  }
+
+  const actorType = await actorTypeForUser(sql, actorUserId);
+  const insertedRows = await sql`
+    insert into public.alerts (
+      farm_id,
+      device_id,
+      alert_type,
+      severity,
+      status,
+      opened_at,
+      details_json
+    ) values (
+      ${farmId}::uuid,
+      ${device.id}::uuid,
+      ${alertType},
+      ${severity},
+      'open',
+      timezone('utc', now()),
+      ${sql.json({
+        source: "device_telemetry",
+        source_device_id: device.device_id,
+        source_serial_number: device.serial_number,
+        note: note ?? "",
+        created_by: actorUserId ?? null,
+        created_by_type: actorType,
+        ...details
+      })}::jsonb
+    )
+    returning id, alert_type, severity, status, opened_at, details_json
+  `;
+
+  return ok("alert_created", {
+    alert: insertedRows[0] ?? null
+  }, 201);
 }

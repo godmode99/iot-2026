@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { withParams } from "@/lib/auth/urls.js";
 import { getCurrentUser } from "@/lib/auth/guards.js";
 import { createSupabaseServerClient } from "@/lib/supabase/server.js";
-import { queueDeviceCommand, updateAlertStatus } from "@/lib/backend/device-ops.js";
+import { createTelemetryDrivenAlert, queueDeviceCommand, updateAlertStatus } from "@/lib/backend/device-ops.js";
 
 const SAFE_COMMANDS = new Set(["reboot", "config_refresh", "ota_check", "telemetry_flush"]);
 const ALERT_ACTIONS = new Set(["acknowledge", "suppress", "resolve"]);
@@ -97,4 +97,76 @@ export async function submitAlertAction(formData) {
   }
 
   redirect(withParams(`/devices/${deviceId}`, { alert: action }));
+}
+
+const TELEMETRY_ALERT_SEVERITIES = new Set(["critical", "warning", "info"]);
+
+export async function createTelemetryAlertAction(formData) {
+  const deviceId = String(formData.get("device_id") ?? "").trim();
+  const alertType = String(formData.get("alert_type") ?? "").trim();
+  const severity = String(formData.get("severity") ?? "").trim();
+  const note = String(formData.get("note") ?? "").trim();
+
+  if (!deviceId || !alertType || !TELEMETRY_ALERT_SEVERITIES.has(severity)) {
+    redirect(withParams(`/devices/${deviceId}`, { error: "alert_create_invalid" }));
+  }
+
+  const user = await requireDevicePermission(deviceId, { manageAlerts: true });
+  const supabase = await createSupabaseServerClient();
+  const deviceResult = await supabase
+    .from("devices")
+    .select("id,farm_id")
+    .eq("device_id", deviceId)
+    .maybeSingle();
+
+  if (deviceResult.error || !deviceResult.data?.farm_id) {
+    redirect(withParams(`/devices/${deviceId}`, { error: "device_not_visible" }));
+  }
+
+  const latestTelemetryResult = await supabase
+    .from("telemetry")
+    .select("id,recorded_at,temperature_c,turbidity_raw,battery_percent,battery_mv,lat,lng")
+    .eq("device_id", deviceResult.data.id)
+    .order("recorded_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const telemetrySnapshot = latestTelemetryResult.data ?? null;
+  const result = await createTelemetryDrivenAlert({
+    farmId: deviceResult.data.farm_id,
+    deviceId,
+    actorUserId: user.id,
+    alertType,
+    severity,
+    note,
+    details: {
+      telemetry_recorded_at: telemetrySnapshot?.recorded_at ?? null,
+      telemetry_snapshot: telemetrySnapshot
+        ? {
+          temperature_c: telemetrySnapshot.temperature_c,
+          turbidity_raw: telemetrySnapshot.turbidity_raw,
+          battery_percent: telemetrySnapshot.battery_percent,
+          battery_mv: telemetrySnapshot.battery_mv,
+          lat: telemetrySnapshot.lat,
+          lng: telemetrySnapshot.lng
+        }
+        : null
+    }
+  });
+
+  const createdAlertId = result.result?.alert?.id;
+
+  if (!result.ok) {
+    redirect(withParams(`/devices/${deviceId}`, { error: result.code ?? "alert_create_failed" }));
+  }
+
+  if (result.code === "alert_already_open" && createdAlertId) {
+    redirect(withParams(`/alerts/${createdAlertId}`, { alert: "already_open" }));
+  }
+
+  if (createdAlertId) {
+    redirect(withParams(`/alerts/${createdAlertId}`, { alert: "created_from_telemetry" }));
+  }
+
+  redirect(withParams(`/devices/${deviceId}`, { alert: "created_from_telemetry" }));
 }

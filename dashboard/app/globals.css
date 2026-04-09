@@ -2990,6 +2990,25 @@ body::before {
   box-shadow: 0 14px 32px rgba(16, 24, 40, 0.05);
 }
 
+.records-template-meta-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.records-template-meta-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 18px;
+  background: rgba(245, 248, 251, 0.9);
+}
+
+.records-template-meta-card strong {
+  color: #101828;
+}
+
 .records-form-shell {
   display: grid;
   gap: 18px;

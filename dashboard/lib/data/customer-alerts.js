@@ -6,7 +6,13 @@ const EMPTY_CUSTOMER_ALERTS = {
   metrics: {
     total: 0,
     critical: 0,
-    warning: 0
+    warning: 0,
+    bySource: {
+      record: 0,
+      telemetry: 0,
+      system: 0
+    },
+    topTypes: []
   },
   filters: {
     farmId: "",
@@ -20,6 +26,7 @@ const EMPTY_ALERT_DETAIL = {
   alert: null,
   device: null,
   farm: null,
+  sourceRecord: null,
   relatedRecords: [],
   permissions: {
     canManageAlerts: false
@@ -46,8 +53,11 @@ function firstRelated(value) {
 }
 
 function normalizeAlert(alert) {
+  const source = alert?.details_json?.source ?? "system";
+
   return {
     ...alert,
+    source,
     farms: firstRelated(alert.farms),
     devices: firstRelated(alert.devices)
   };
@@ -63,6 +73,7 @@ function applyAlertSearch(alerts, search) {
     const haystack = [
       alert.alert_type,
       alert.severity,
+      alert.source,
       alert.farms?.name,
       alert.devices?.serial_number,
       alert.devices?.device_id
@@ -75,6 +86,21 @@ function applyAlertSearch(alerts, search) {
   });
 }
 
+function normalizeDateRange(value) {
+  return ["7d", "30d", "90d", "all"].includes(value) ? value : "30d";
+}
+
+function dateRangeStart(dateRange) {
+  if (dateRange === "all") {
+    return null;
+  }
+
+  const days = dateRange === "7d" ? 7 : dateRange === "90d" ? 90 : 30;
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() - days);
+  return date.toISOString();
+}
+
 export async function loadCustomerAlerts(filters = {}) {
   const supabase = await createSupabaseServerClient();
 
@@ -85,10 +111,11 @@ export async function loadCustomerAlerts(filters = {}) {
   const farmId = String(filters.farmId ?? "").trim();
   const severity = ["critical", "warning", "info"].includes(filters.severity) ? filters.severity : "";
   const search = String(filters.search ?? "").trim();
+  const dateRange = normalizeDateRange(String(filters.dateRange ?? "").trim());
 
   let alertsQuery = supabase
     .from("alerts")
-    .select("id,alert_type,severity,status,farm_id,device_id,opened_at,resolved_at,farms(id,name),devices(device_id,serial_number)")
+    .select("id,alert_type,severity,status,farm_id,device_id,opened_at,resolved_at,details_json,farms(id,name),devices(device_id,serial_number)")
     .eq("status", "open")
     .order("opened_at", { ascending: false })
     .limit(50);
@@ -99,6 +126,11 @@ export async function loadCustomerAlerts(filters = {}) {
 
   if (severity) {
     alertsQuery = alertsQuery.eq("severity", severity);
+  }
+
+  const startDate = dateRangeStart(dateRange);
+  if (startDate) {
+    alertsQuery = alertsQuery.gte("opened_at", startDate);
   }
 
   const [alertsResult, farmsResult] = await Promise.all([
@@ -120,12 +152,27 @@ export async function loadCustomerAlerts(filters = {}) {
     metrics: {
       total: normalizedAlerts.length,
       critical: normalizedAlerts.filter((alert) => alert.severity === "critical").length,
-      warning: normalizedAlerts.filter((alert) => alert.severity === "warning").length
+      warning: normalizedAlerts.filter((alert) => alert.severity === "warning").length,
+      bySource: {
+        record: normalizedAlerts.filter((alert) => alert.source === "record_detail").length,
+        telemetry: normalizedAlerts.filter((alert) => alert.source === "device_telemetry").length,
+        system: normalizedAlerts.filter((alert) => !["record_detail", "device_telemetry"].includes(alert.source)).length
+      },
+      topTypes: Object.entries(
+        normalizedAlerts.reduce((accumulator, alert) => {
+          accumulator[alert.alert_type] = (accumulator[alert.alert_type] ?? 0) + 1;
+          return accumulator;
+        }, {})
+      )
+        .sort((left, right) => right[1] - left[1])
+        .slice(0, 4)
+        .map(([alertType, count]) => ({ alertType, count }))
     },
     filters: {
       farmId,
       severity,
-      search
+      search,
+      dateRange
     },
     errors: [alerts.error, farms.error].filter(Boolean)
   };
@@ -167,7 +214,50 @@ export async function loadCustomerAlertDetail({ alertId }) {
   });
 
   let relatedRecords = [];
+  let sourceRecord = null;
   let recordsError = null;
+
+  const sourceRecordId = normalizedAlert.details_json?.source_record_id;
+
+  if (sourceRecordId) {
+    const sourceRecordResult = await supabase
+      .from("operational_records")
+      .select(`
+        id,
+        record_status,
+        recorded_for_date,
+        notes_summary,
+        created_at,
+        updated_at,
+        record_templates(name,code),
+        user_profiles(display_name),
+        record_entries(
+          id,
+          field_key,
+          label,
+          value_text,
+          value_number,
+          value_boolean,
+          unit,
+          sort_order
+        )
+      `)
+      .eq("id", sourceRecordId)
+      .maybeSingle();
+
+    if (sourceRecordResult.error) {
+      recordsError = `source_record: ${sourceRecordResult.error.message}`;
+    } else if (sourceRecordResult.data) {
+      sourceRecord = {
+        ...sourceRecordResult.data,
+        record_templates: firstRelated(sourceRecordResult.data.record_templates),
+        user_profiles: firstRelated(sourceRecordResult.data.user_profiles),
+        record_entries: Array.isArray(sourceRecordResult.data.record_entries)
+          ? [...sourceRecordResult.data.record_entries].sort((left, right) => (left.sort_order ?? 0) - (right.sort_order ?? 0))
+          : []
+      };
+    }
+  }
 
   if (normalizedAlert.farm_id) {
     const recordsResult = await supabase
@@ -192,6 +282,7 @@ export async function loadCustomerAlertDetail({ alertId }) {
     alert: normalizedAlert,
     device: normalizedAlert.devices ?? null,
     farm: normalizedAlert.farms ?? null,
+    sourceRecord,
     relatedRecords,
     permissions: {
       canManageAlerts: permissionResult.data === true

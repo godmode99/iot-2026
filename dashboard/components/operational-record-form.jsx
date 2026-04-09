@@ -23,7 +23,13 @@ function resolveVisibleFields(context, activeTemplateId) {
   const templates = context.templates ?? [];
   const fieldCatalog = context.fieldCatalog ?? context.fields ?? [];
   const templateFieldMap = context.templateFieldMap ?? {};
+  const templateFieldGroups = context.templateFieldGroups ?? {};
   const activeTemplate = templates.find((template) => template.id === activeTemplateId) ?? templates[0] ?? null;
+
+  if (activeTemplate?.code && templateFieldGroups[activeTemplate.code]?.length) {
+    return templateFieldGroups[activeTemplate.code];
+  }
+
   const allowedKeys = templateFieldMap[activeTemplate?.code] ?? fieldCatalog.map((field) => field.key);
 
   return fieldCatalog.filter((field) => allowedKeys.includes(field.key));
@@ -31,6 +37,31 @@ function resolveVisibleFields(context, activeTemplateId) {
 
 function message(messages, key, fallback = key) {
   return key.split(".").reduce((value, segment) => value?.[segment], messages) ?? fallback;
+}
+
+function isTemplateAvailableForFarm(template, farmId) {
+  if (!template || template.is_active === false) {
+    return false;
+  }
+
+  if (template.scope_type === "organization") {
+    return false;
+  }
+
+  if (template.scope_type !== "farm") {
+    return true;
+  }
+
+  const assignedFarmIds = template.assigned_farm_ids ?? [];
+  if (!assignedFarmIds.length) {
+    return true;
+  }
+
+  if (!farmId) {
+    return true;
+  }
+
+  return assignedFarmIds.includes(farmId);
 }
 
 export function OperationalRecordForm({
@@ -48,21 +79,32 @@ export function OperationalRecordForm({
 }) {
   const fieldValues = context.fieldValues ?? {};
   const [activeTemplateId, setActiveTemplateId] = useState(context.record?.template_id ?? context.defaultTemplateId ?? "");
+  const [selectedFarmId, setSelectedFarmId] = useState(context.record?.farm_id ?? "");
+  const availableTemplates = useMemo(
+    () => (context.templates ?? []).filter((template) => isTemplateAvailableForFarm(template, selectedFarmId)),
+    [context.templates, selectedFarmId]
+  );
+  const visibleTemplateOptions = availableTemplates.length ? availableTemplates : (context.templates ?? []);
 
   const visibleFields = useMemo(
-    () => resolveVisibleFields(context, activeTemplateId),
-    [activeTemplateId, context]
+    () => resolveVisibleFields({ ...context, templates: visibleTemplateOptions }, activeTemplateId),
+    [activeTemplateId, context, visibleTemplateOptions]
   );
 
   return (
     <form action={action} className="form records-form-shell">
-      {Object.entries(hiddenValues).map(([name, value]) => (
+        {Object.entries(hiddenValues).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
 
       <label>
         {message(messages, "recordCreatePage.fields.farm", "Farm")}
-        <select defaultValue={context.record?.farm_id ?? ""} name="farm_id" required>
+        <select
+          defaultValue={context.record?.farm_id ?? ""}
+          name="farm_id"
+          onChange={(event) => setSelectedFarmId(event.target.value)}
+          required
+        >
           <option disabled value="">{message(messages, "recordCreatePage.fields.farmPlaceholder", "Choose a farm")}</option>
           {context.farms.map((farm) => (
             <option key={farm.id} value={farm.id}>{farm.name}</option>
@@ -79,11 +121,15 @@ export function OperationalRecordForm({
           required
         >
           <option disabled value="">{message(messages, "recordCreatePage.fields.selectPlaceholder", "Choose a template")}</option>
-          {context.templates.map((template) => (
+          {visibleTemplateOptions.map((template) => (
             <option key={template.id} value={template.id}>{template.name}</option>
           ))}
         </select>
       </label>
+
+      {selectedFarmId && !availableTemplates.length ? (
+        <p className="muted">{message(messages, "recordCreatePage.noFarmTemplates", "No active templates are assigned to this farm yet.")}</p>
+      ) : null}
 
       <label>
         {message(messages, "recordCreatePage.fields.recordedDate", "Recorded for date")}
@@ -116,12 +162,16 @@ export function OperationalRecordForm({
       <div className="records-template-grid">
         {visibleFields.map((field) => (
           <label className="records-field-card" key={field.key}>
-            <span>{message(messages, `recordCreatePage.fieldsMap.${field.key}`, field.label)}</span>
+            <span>
+              {message(messages, `recordCreatePage.fieldsMap.${field.key}`, field.label)}
+              {field.required ? " *" : ""}
+            </span>
             {field.type === "number" ? (
               <input
                 defaultValue={fieldValues[field.key] ?? ""}
                 name={field.key}
                 placeholder={field.placeholder ?? ""}
+                required={field.required === true}
                 step="0.1"
                 type="number"
               />
@@ -131,16 +181,18 @@ export function OperationalRecordForm({
                 defaultValue={fieldValues[field.key] ?? ""}
                 name={field.key}
                 placeholder={field.placeholder ?? ""}
+                required={field.required === true}
                 rows={3}
               />
             ) : null}
             {field.type === "boolean" ? (
-              <select defaultValue={fieldValues[field.key] ?? ""} name={field.key}>
+              <select defaultValue={fieldValues[field.key] ?? ""} name={field.key} required={field.required === true}>
                 <option value="">{message(messages, "recordCreatePage.fields.booleanPlaceholder", "Select status")}</option>
                 <option value="true">{message(messages, "recordCreatePage.fields.booleanTrue", "Completed")}</option>
               </select>
             ) : null}
             {field.unit ? <span className="muted">{field.unit}</span> : null}
+            {field.required ? <span className="pill">{message(messages, "recordCreatePage.requiredField", "Required")}</span> : null}
           </label>
         ))}
       </div>

@@ -50,6 +50,22 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function label(value) {
+  return String(value ?? "unknown").replaceAll("_", " ");
+}
+
+function sourceLabel(value, messages) {
+  if (value === "record_detail") {
+    return t(messages, "farmSettings.alertSourceRecord", "Record-driven");
+  }
+
+  if (value === "device_telemetry") {
+    return t(messages, "farmSettings.alertSourceTelemetry", "Telemetry-driven");
+  }
+
+  return t(messages, "farmSettings.alertSourceSystem", "System");
+}
+
 function inviteCookieName(farmId) {
   return `sb_invite_token_${farmId}`;
 }
@@ -131,6 +147,10 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                 <span className="muted">{t(messages, "farmSettings.audit")}</span>
                 <span className="metric-value">{settings.audit.length}</span>
               </article>
+              <article className="metric">
+                <span className="muted">{t(messages, "farmSettings.devicesTitle", "Devices")}</span>
+                <span className="metric-value">{settings.summary.metrics.deviceCount}</span>
+              </article>
             </div>
             <div className="farm-contact-strip">
               <span className={`health-chip ${hasFarmContacts ? "is-online" : "is-stale"}`}>
@@ -158,6 +178,134 @@ export default async function FarmSettingsPage({ params, searchParams }) {
       {settings?.canManage ? (
         <section className="farm-settings-workspace">
           <div className="farm-settings-main">
+            <Panel
+              eyebrow={t(messages, "farmSettings.opsEyebrow", "Operations summary")}
+              title={t(messages, "farmSettings.opsTitle", "What is happening in this farm right now")}
+              body={t(messages, "farmSettings.opsBody", "Use this summary to scan devices, records, and alert pressure before moving into settings work.")}
+            >
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.devicesTitle", "Devices")}</h3>
+                  <p>{settings.summary.metrics.deviceCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.openAlertsTitle", "Open alerts")}</h3>
+                  <p>{settings.summary.metrics.openAlertCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.criticalAlertsTitle", "Critical alerts")}</h3>
+                  <p>{settings.summary.metrics.criticalAlertCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.recordsTitle", "Recent records")}</h3>
+                  <p>{settings.summary.metrics.recordCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.templatesTitle", "Available templates")}</h3>
+                  <p>{settings.summary.metrics.templateCount}</p>
+                </article>
+              </div>
+              <div className="record-meta-list">
+                <span>{t(messages, "farmSettings.alertSourceRecord", "Record-driven")}: {settings.summary.metrics.bySource.record}</span>
+                <span>{t(messages, "farmSettings.alertSourceTelemetry", "Telemetry-driven")}: {settings.summary.metrics.bySource.telemetry}</span>
+                <span>{t(messages, "farmSettings.alertSourceSystem", "System")}: {settings.summary.metrics.bySource.system}</span>
+              </div>
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.alertsEyebrow", "Current alerts")}
+              title={t(messages, "farmSettings.openAlertsTitle", "Open alerts")}
+              body={t(messages, "farmSettings.alertsBody", "Review the active issues linked to this farm before they escalate or drift across rounds.")}
+            >
+              {settings.summary.openAlerts.length ? (
+                <ul className="status-list">
+                  {settings.summary.openAlerts.map((alert) => (
+                    <li className="mobile-list-row" key={alert.id}>
+                      <span>
+                        <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
+                        <span className="list-meta">{alert.devices?.serial_number ?? alert.devices?.device_id ?? "Farm-level alert"}</span>
+                        <span className="list-meta">{sourceLabel(alert.source, messages)} Â· {formatDate(alert.opened_at)}</span>
+                      </span>
+                      <span className="pill-row">
+                        <span className="pill">{alert.severity}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noOpenAlerts", "No open alerts for this farm right now.")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.recordsEyebrow", "Record activity")}
+              title={t(messages, "farmSettings.recordsTitle", "Recent operational records")}
+              body={t(messages, "farmSettings.recordsBody", "Recent field records give the team context before alerts or commands are handled.")}
+            >
+              {settings.summary.recentRecords.length ? (
+                <ul className="status-list">
+                  {settings.summary.recentRecords.map((record) => (
+                    <li className="mobile-list-row" key={record.id}>
+                      <span>
+                        <Link href={`/records/${record.id}`}>{record.record_templates?.name ?? "Operational record"}</Link>
+                        <span className="list-meta">{formatDate(record.recorded_for_date ?? record.created_at)} Â· {record.user_profiles?.display_name ?? "Unknown"}</span>
+                        {record.notes_summary ? <span className="list-meta">{record.notes_summary}</span> : null}
+                      </span>
+                      <span className="pill">{record.record_status ?? "submitted"}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noRecentRecords", "No operational records for this farm yet.")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.templatesEyebrow", "Record templates")}
+              title={t(messages, "farmSettings.templatesTitle", "Available templates")}
+              body={t(messages, "farmSettings.templatesBody", "These are the active record templates currently available to this farm based on template scope and farm assignment rules.")}
+            >
+              {settings.summary.templates.length ? (
+                <ul className="status-list">
+                  {settings.summary.templates.map((template) => (
+                    <li className="mobile-list-row" key={template.id}>
+                      <span>
+                        <Link href="/records/templates">{template.name}</Link>
+                        <span className="list-meta">{template.code}</span>
+                        {template.description ? <span className="list-meta">{template.description}</span> : null}
+                      </span>
+                      <span className="pill-row">
+                        <span className="pill">{template.field_count} {t(messages, "farmSettings.templateFields", "fields")}</span>
+                        <span className="pill">{template.scope_type ?? "farm"}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noTemplates", "No active record templates are available to this farm yet.")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.devicesEyebrow", "Device activity")}
+              title={t(messages, "farmSettings.devicesTitle", "Devices")}
+              body={t(messages, "farmSettings.devicesBody", "Jump into device detail when a farm issue clearly traces back to one unit.")}
+            >
+              {settings.summary.devices.length ? (
+                <ul className="status-list">
+                  {settings.summary.devices.map((device) => {
+                    const status = Array.isArray(device.device_status) ? device.device_status[0] ?? null : device.device_status ?? null;
+
+                    return (
+                      <li className="mobile-list-row" key={device.id}>
+                        <span>
+                          <Link href={`/devices/${device.device_id}`}>{device.serial_number ?? device.device_id}</Link>
+                          <span className="list-meta">{status?.online_state ?? "unknown"} Â· {formatDate(status?.last_seen_at)}</span>
+                        </span>
+                        <span className="pill-row">
+                          <span className="pill">{status?.battery_percent ?? "N/A"}%</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noDevicesSummary", "No devices are currently assigned to this farm.")}</EmptyPanel>}
+            </Panel>
+
             <Panel
               eyebrow={t(messages, "farmSettings.accessEyebrow", "Team access")}
               title={t(messages, "farmSettings.members")}

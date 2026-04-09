@@ -5,7 +5,7 @@ import { DeviceCommandForm } from "@/components/device-command-form.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadDeviceDetail } from "@/lib/data/device-detail.js";
-import { submitAlertAction, submitDeviceCommand } from "./actions.js";
+import { createTelemetryAlertAction, submitAlertAction, submitDeviceCommand } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +49,64 @@ function batteryLabel(status) {
   }
 
   return `${Number(status.battery_percent).toFixed(0)}% battery`;
+}
+
+function buildTelemetryAlertCandidates({ latestTelemetry, status, alerts }) {
+  const openAlertMap = new Map(
+    (alerts ?? [])
+      .filter((alert) => alert?.status === "open")
+      .map((alert) => [alert.alert_type, alert])
+  );
+  const candidates = [];
+
+  const temperature = Number(latestTelemetry?.temperature_c);
+  if (Number.isFinite(temperature)) {
+    const level = temperature < 24 || temperature > 32 ? "critical" : temperature < 26 || temperature > 30 ? "warning" : null;
+    if (level) {
+      candidates.push({
+        key: `temperature-${level}`,
+        level,
+        alertType: "telemetry_temperature_threshold",
+        title: level === "critical" ? "Escalate telemetry temperature deviation" : "Watch telemetry temperature drift",
+        body:
+          level === "critical"
+            ? "The latest telemetry temperature is outside the critical band and should be reviewed as a live device alert."
+            : "The latest telemetry temperature is outside the preferred band and is worth opening as a warning if the next reading confirms the drift.",
+        existingAlertId: openAlertMap.get("telemetry_temperature_threshold")?.id ?? null
+      });
+    }
+  }
+
+  const battery = Number(status?.battery_percent ?? latestTelemetry?.battery_percent);
+  if (Number.isFinite(battery)) {
+    const level = battery <= 10 ? "critical" : battery <= 20 ? "warning" : null;
+    if (level) {
+      candidates.push({
+        key: `battery-${level}`,
+        level,
+        alertType: "telemetry_battery_low",
+        title: level === "critical" ? "Escalate low battery risk" : "Track battery degradation",
+        body:
+          level === "critical"
+            ? "Battery reserve is critically low and may threaten telemetry continuity or device uptime."
+            : "Battery reserve is trending low and should be reviewed before it becomes a device outage risk.",
+        existingAlertId: openAlertMap.get("telemetry_battery_low")?.id ?? null
+      });
+    }
+  }
+
+  if (status?.online_state === "offline") {
+    candidates.push({
+      key: "offline-critical",
+      level: "critical",
+      alertType: "device_offline",
+      title: "Escalate device offline state",
+      body: "The device is currently marked offline and should be treated as an active operational incident if this state persists.",
+      existingAlertId: openAlertMap.get("device_offline")?.id ?? null
+    });
+  }
+
+  return candidates;
 }
 
 function MiniHistory({ history }) {
@@ -97,6 +155,11 @@ export default async function DeviceDetailPage({ params, searchParams }) {
   const latestTelemetry = detail?.history.at(-1) ?? null;
   const openAlerts = detail?.alerts.filter((alert) => alert.status === "open") ?? [];
   const criticalAlerts = openAlerts.filter((alert) => alert.severity === "critical");
+  const telemetryAlertCandidates = buildTelemetryAlertCandidates({
+    latestTelemetry,
+    status,
+    alerts: detail?.alerts ?? []
+  });
 
   return (
     <AppShell currentPath={`/devices/${deviceId}`} ariaLabel="Device detail navigation">
@@ -223,6 +286,41 @@ export default async function DeviceDetailPage({ params, searchParams }) {
                   ))}
                 </ul>
               ) : <p className="muted">{t(messages, "deviceDetail.noAlerts")}</p>}
+            </article>
+
+            <article className="card">
+              <h2>{t(messages, "deviceDetail.telemetryAlertCandidates", "Telemetry alert candidates")}</h2>
+              {telemetryAlertCandidates.length ? (
+                <div className="records-template-grid">
+                  {telemetryAlertCandidates.map((candidate) => (
+                    <article className="records-field-group-card" key={candidate.key}>
+                      <span className={`pill ${statusClass(candidate.level)}`}>{candidate.level}</span>
+                      <h3>{candidate.title}</h3>
+                      <p className="muted">{candidate.body}</p>
+                      <div className="record-meta-list">
+                        <span>{t(messages, "deviceDetail.alertType", "Alert type")}: {label(candidate.alertType)}</span>
+                      </div>
+                      <div className="action-row">
+                        {candidate.existingAlertId ? (
+                          <Link className="button-secondary" href={`/alerts/${candidate.existingAlertId}`}>
+                            {t(messages, "deviceDetail.openCurrentAlert", "Open current alert")}
+                          </Link>
+                        ) : (
+                          <form action={createTelemetryAlertAction}>
+                            <input name="device_id" type="hidden" value={deviceId} />
+                            <input name="alert_type" type="hidden" value={candidate.alertType} />
+                            <input name="severity" type="hidden" value={candidate.level === "critical" ? "critical" : "warning"} />
+                            <input name="note" type="hidden" value={`telemetry_${candidate.alertType}`} />
+                            <button className="button" type="submit">
+                              {t(messages, "deviceDetail.createTelemetryAlert", "Create alert")}
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : <p className="muted">{t(messages, "deviceDetail.noTelemetryAlertCandidates", "Latest telemetry does not suggest a new alert candidate right now.")}</p>}
             </article>
 
             <article className="card">

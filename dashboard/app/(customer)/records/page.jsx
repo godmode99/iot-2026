@@ -24,15 +24,17 @@ export default async function RecordsPage({ searchParams }) {
   const farmId = typeof query?.farm === "string" ? query.farm : "";
   const status = typeof query?.status === "string" ? query.status : "";
   const search = typeof query?.q === "string" ? query.q : "";
+  const dateRange = typeof query?.dateRange === "string" ? query.dateRange : "";
 
   await requireUser({ returnUrl: "/records" });
   const overview = await loadOperationalRecordsOverview({
     farmId,
     status,
-    search
+    search,
+    dateRange
   });
   const feedback = typeof query?.record === "string" ? query.record : "";
-  const hasFilters = Boolean(overview.filters?.farmId || overview.filters?.status || overview.filters?.search);
+  const hasFilters = Boolean(overview.filters?.farmId || overview.filters?.status || overview.filters?.search || overview.filters?.dateRange !== "30d");
   const draftRecords = overview.records.filter((record) => record.record_status === "draft");
 
   return (
@@ -118,6 +120,15 @@ export default async function RecordsPage({ searchParams }) {
               <option value="draft">{t(messages, "recordsPage.filters.draft", "Draft")}</option>
             </select>
           </label>
+          <label>
+            {t(messages, "recordsPage.filters.dateRange", "Date range")}
+            <select defaultValue={overview.filters?.dateRange ?? "30d"} name="dateRange">
+              <option value="7d">{t(messages, "recordsPage.filters.last7Days", "Last 7 days")}</option>
+              <option value="30d">{t(messages, "recordsPage.filters.last30Days", "Last 30 days")}</option>
+              <option value="90d">{t(messages, "recordsPage.filters.last90Days", "Last 90 days")}</option>
+              <option value="all">{t(messages, "recordsPage.filters.allTime", "All time")}</option>
+            </select>
+          </label>
           <div className="records-filter-actions">
             <button className="button" type="submit">{t(messages, "recordsPage.applyFiltersAction", "Apply filters")}</button>
           </div>
@@ -126,13 +137,16 @@ export default async function RecordsPage({ searchParams }) {
 
       <section className="dashboard-grid">
         <div className="card">
-          <div className="split-heading">
-            <div>
-              <p className="eyebrow">{t(messages, "recordsPage.templatesEyebrow")}</p>
-              <h2>{t(messages, "recordsPage.templatesTitle")}</h2>
-            </div>
+        <div className="split-heading">
+          <div>
+            <p className="eyebrow">{t(messages, "recordsPage.templatesEyebrow")}</p>
+            <h2>{t(messages, "recordsPage.templatesTitle")}</h2>
+          </div>
+          <div className="inline-actions">
+            <Link className="button-secondary" href="/records/templates">{t(messages, "recordsPage.viewTemplatesAction", "View templates")}</Link>
             <Link className="button-secondary" href="/records/new">{t(messages, "recordsPage.newRecordAction")}</Link>
           </div>
+        </div>
           <div className="records-template-grid">
             {overview.templates.map((template) => (
               <article className="records-template-card" key={template.id}>

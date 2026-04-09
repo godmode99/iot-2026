@@ -156,3 +156,16 @@ export async function userCanSendFarmCommand(sql, actorUserId, farmId, commandTy
 
   return rows[0]?.allowed === true;
 }
+
+export async function userCanManageRecordTemplates(sql, actorUserId) {
+  const rows = await sql`
+    select exists (
+      select 1
+      from public.user_profiles profile
+      where profile.user_id = ${actorUserId}::uuid
+        and profile.user_type in ('super_admin', 'operator')
+    ) as allowed
+  `;
+
+  return rows[0]?.allowed === true;
+}

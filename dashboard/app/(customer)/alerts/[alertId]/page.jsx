@@ -36,6 +36,38 @@ function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
 
+function sourceLabel(value, messages) {
+  if (value === "record_detail") {
+    return t(messages, "alertDetailPage.sources.record", "Record-driven");
+  }
+
+  if (value === "device_telemetry") {
+    return t(messages, "alertDetailPage.sources.telemetry", "Telemetry-driven");
+  }
+
+  return t(messages, "alertDetailPage.sources.system", "System");
+}
+
+function formatEntryValue(entry) {
+  if (entry.value_number !== null && entry.value_number !== undefined) {
+    return `${entry.value_number}${entry.unit ? ` ${entry.unit}` : ""}`;
+  }
+
+  if (entry.value_boolean === true) {
+    return "Completed";
+  }
+
+  if (entry.value_boolean === false) {
+    return "No";
+  }
+
+  if (entry.value_text) {
+    return entry.value_text;
+  }
+
+  return "N/A";
+}
+
 export default async function AlertDetailPage({ params, searchParams }) {
   const messages = await getMessages();
   const { alertId } = await params;
@@ -107,6 +139,10 @@ export default async function AlertDetailPage({ params, searchParams }) {
                 <h3>{t(messages, "alertDetailPage.cards.opened", "Opened at")}</h3>
                 <p>{formatDate(detail.alert.opened_at)}</p>
               </article>
+              <article className="records-field-group-card">
+                <h3>{t(messages, "alertDetailPage.cards.source", "Source")}</h3>
+                <p>{sourceLabel(detail.alert.source, messages)}</p>
+              </article>
             </div>
             <article className="record-summary-card">
               <span className="eyebrow">{t(messages, "alertDetailPage.detailsEyebrow", "Details payload")}</span>
@@ -142,6 +178,65 @@ export default async function AlertDetailPage({ params, searchParams }) {
               />
             ) : (
               <p className="muted">{t(messages, "alertDetailPage.readOnlyBody", "This alert is already in a final state or the current account cannot manage alert actions.")}</p>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="split-heading">
+              <div>
+                <p className="eyebrow">{t(messages, "alertDetailPage.sourceEyebrow", "Source context")}</p>
+                <h2>{t(messages, "alertDetailPage.sourceTitle", "What triggered this alert")}</h2>
+              </div>
+            </div>
+            {detail.sourceRecord ? (
+              <>
+                <div className="records-field-group-grid">
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.sourceCards.template", "Record template")}</h3>
+                    <p>{detail.sourceRecord.record_templates?.name ?? "Operational record"}</p>
+                  </article>
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.sourceCards.recordedFor", "Recorded for")}</h3>
+                    <p>{formatDate(detail.sourceRecord.recorded_for_date ?? detail.sourceRecord.created_at)}</p>
+                  </article>
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.sourceCards.recordedBy", "Recorded by")}</h3>
+                    <p>{detail.sourceRecord.user_profiles?.display_name ?? "Unknown"}</p>
+                  </article>
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.sourceCards.status", "Record status")}</h3>
+                    <p>{detail.sourceRecord.record_status ?? "submitted"}</p>
+                  </article>
+                </div>
+                <article className="record-summary-card">
+                  <span className="eyebrow">{t(messages, "alertDetailPage.sourceNoteEyebrow", "Source summary")}</span>
+                  <p>{detail.sourceRecord.notes_summary ?? t(messages, "alertDetailPage.sourceNoteFallback", "No summary note was attached to the source record.")}</p>
+                </article>
+                {detail.sourceRecord.record_entries?.length ? (
+                  <div className="records-template-grid">
+                    {detail.sourceRecord.record_entries.map((entry) => (
+                      <article className="records-field-card" key={entry.id}>
+                        <span>{entry.label}</span>
+                        <strong>{formatEntryValue(entry)}</strong>
+                        <span className="muted">{entry.field_key}</span>
+                      </article>
+                    ))}
+                  </div>
+                ) : null}
+                <div className="action-row">
+                  <Link className="button-secondary" href={`/records/${detail.sourceRecord.id}`}>
+                    {t(messages, "alertDetailPage.sourceAction", "Open source record")}
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="empty-panel">
+                <div>
+                  <p className="eyebrow">{t(messages, "alertDetailPage.sourceEmptyEyebrow", "No source record")}</p>
+                  <h2>{t(messages, "alertDetailPage.sourceEmptyTitle", "This alert was not created from an operational record")}</h2>
+                  <p className="muted">{t(messages, "alertDetailPage.sourceEmptyBody", "Telemetry, device logic, or other workflows can still create alerts without a record as the source.")}</p>
+                </div>
+              </div>
             )}
           </div>
 

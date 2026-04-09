@@ -8,6 +8,20 @@ import { updateOperationalRecord } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
+function resolveRecordFeedback(messages, feedback) {
+  if (!feedback) {
+    return "";
+  }
+
+  if (feedback.startsWith("required_field_missing:")) {
+    const fieldKey = feedback.split(":")[1] ?? "";
+    const fieldLabel = t(messages, `recordCreatePage.fieldsMap.${fieldKey}`, fieldKey || "field");
+    return t(messages, "recordEditPage.errors.requiredFieldMissing", `Please complete the required field: ${fieldLabel}.`).replace("{field}", fieldLabel);
+  }
+
+  return t(messages, `recordEditPage.errors.${feedback}`, feedback);
+}
+
 export default async function EditRecordPage({ params, searchParams }) {
   const messages = await getMessages();
   const { recordId } = await params;
@@ -16,6 +30,7 @@ export default async function EditRecordPage({ params, searchParams }) {
   await requireUser({ returnUrl: `/records/${recordId}/edit` });
   const context = await loadOperationalRecordEditContext({ recordId });
   const feedback = typeof query?.error === "string" ? query.error : "";
+  const feedbackMessage = resolveRecordFeedback(messages, feedback);
 
   return (
     <AppShell currentPath="/records" ariaLabel="Operational record edit navigation">
@@ -38,10 +53,10 @@ export default async function EditRecordPage({ params, searchParams }) {
         </div>
       </section>
 
-      {feedback ? (
+      {feedbackMessage ? (
         <section className="notice">
           <strong>{t(messages, "recordEditPage.errorTitle", "Record form issue")}</strong>
-          <span> {feedback}</span>
+          <span> {feedbackMessage}</span>
         </section>
       ) : null}
 
