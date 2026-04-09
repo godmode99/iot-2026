@@ -554,44 +554,49 @@ h2 {
 }
 
 .home-kicker {
-  display: flex;
-  width: fit-content;
+  display: grid;
+  width: min(100%, 26rem);
   max-width: 100%;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 12px;
   color: rgba(16, 24, 40, 0.72);
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .home-kicker span {
   display: inline-flex;
-  min-height: 34px;
+  width: fit-content;
+  min-height: 32px;
   align-items: center;
   border-radius: 999px;
   border: 1px solid rgba(16, 24, 40, 0.12);
-  padding: 8px 12px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.62);
 }
 
-.home-kicker span:first-child {
+.home-kicker-brand {
   color: var(--gold-strong);
   border-color: rgba(214, 168, 79, 0.44);
   background: rgba(255, 243, 212, 0.78);
 }
 
+.home-kicker-system {
+  color: rgba(16, 24, 40, 0.78);
+  background: rgba(255, 255, 255, 0.34);
+}
+
 .home-hero-heading {
-  max-width: 29rem;
+  max-width: 33rem;
 }
 
 .home-hero h1 {
-  max-width: 8.5ch;
-  margin-bottom: 18px;
-  font-size: clamp(3.2rem, 5.7vw, 5.35rem);
-  line-height: 0.96;
+  max-width: 10.5ch;
+  margin-bottom: 20px;
+  font-size: clamp(3rem, 5.2vw, 5.1rem);
+  line-height: 0.92;
+  text-wrap: balance;
 }
 
 .home-hero-heading .eyebrow {
@@ -599,17 +604,17 @@ h2 {
 }
 
 .home-hero-heading .lede {
-  max-width: 30rem;
-  font-size: clamp(1rem, 1.8vw, 1.22rem);
-  line-height: 1.72;
+  max-width: 28rem;
+  font-size: clamp(0.98rem, 1.65vw, 1.12rem);
+  line-height: 1.68;
 }
 
 .home-caption {
-  max-width: 29rem;
-  margin-top: 18px;
-  color: rgba(16, 24, 40, 0.68);
-  font-size: 0.94rem;
-  line-height: 1.65;
+  max-width: 26rem;
+  margin-top: 14px;
+  color: rgba(16, 24, 40, 0.58);
+  font-size: 0.88rem;
+  line-height: 1.56;
 }
 
 .home-signal-panel {
@@ -1291,17 +1296,17 @@ h2 {
   }
 
   .home-hero-heading {
-    max-width: 22rem;
+    max-width: 24rem;
   }
 
   .home-hero h1 {
-    max-width: 7.2ch;
-    font-size: clamp(2.85rem, 6.1vw, 4.25rem);
+    max-width: 9.5ch;
+    font-size: clamp(2.55rem, 5.5vw, 3.95rem);
   }
 
   .home-hero-heading .lede {
-    max-width: 22rem;
-    font-size: 1rem;
+    max-width: 23rem;
+    font-size: 0.96rem;
   }
 
   .home-logo-stage {
@@ -2158,9 +2163,18 @@ h2 {
   }
 
   .home-hero-copy {
-    gap: 34px;
-    padding: 28px;
+    gap: 28px;
+    padding: 24px 22px 26px;
     margin-top: 0;
+  }
+
+  .home-kicker {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .home-kicker span {
+    max-width: 100%;
   }
 
   .home-signal-panel {
@@ -2174,6 +2188,21 @@ h2 {
 
   .home-logo-art {
     width: min(100%, 430px);
+  }
+
+  .home-hero h1 {
+    max-width: 8.2ch;
+    font-size: clamp(2.35rem, 10.5vw, 3.4rem);
+    line-height: 0.94;
+  }
+
+  .home-hero-heading .lede {
+    font-size: 0.95rem;
+    line-height: 1.62;
+  }
+
+  .home-caption {
+    display: none;
   }
 
   .home-proof-grid {

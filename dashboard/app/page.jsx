@@ -75,8 +75,8 @@ export default async function HomePage() {
 
         <div className="home-hero-copy">
           <div className="home-kicker" aria-label="Brand and product">
-            <span>{t(messages, "brand.name")}</span>
-            <span>{t(messages, "home.kicker")}</span>
+            <span className="home-kicker-brand">{t(messages, "brand.name")}</span>
+            <span className="home-kicker-system">{t(messages, "home.kicker")}</span>
           </div>
           <div className="home-hero-heading">
             <p className="eyebrow">{t(messages, "home.eyebrow")}</p>
