@@ -62,7 +62,6 @@ export default async function HomePage() {
             />
           </div>
           <div className="action-row home-stage-actions">
-            <Link className="button" href="/solutions">{t(messages, "home.panelPrimary")}</Link>
             <Link className="button-secondary" href="/login">{t(messages, "home.panelSecondary")}</Link>
           </div>
           <div className="home-proof-grid">
