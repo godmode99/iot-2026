@@ -2416,6 +2416,12 @@ body::before {
   100% { transform: translateX(170%) rotate(-14deg); opacity: 0; }
 }
 
+@keyframes logo-ring-drift {
+  0% { transform: rotate(-7deg) scale(0.98); opacity: 0.42; }
+  50% { transform: rotate(-3deg) scale(1.03); opacity: 0.74; }
+  100% { transform: rotate(-9deg) scale(1); opacity: 0.5; }
+}
+
 .landing-shell .topbar .brand,
 .solutions-shell .topbar .brand {
   min-width: 0;
@@ -2626,8 +2632,9 @@ body::before {
   width: min(72%, 420px);
   background:
     radial-gradient(circle, rgba(245, 248, 251, 0.08), transparent 56%),
-    conic-gradient(from 24deg, transparent, rgba(245, 248, 251, 0.08), transparent 36%, rgba(245, 248, 251, 0.18), transparent 72%, rgba(245, 248, 251, 0.06), transparent);
-  opacity: 0.6;
+    conic-gradient(from 24deg, transparent, rgba(245, 248, 251, 0.08), transparent 30%, rgba(214, 168, 79, 0.24), transparent 46%, rgba(245, 248, 251, 0.18), transparent 70%, rgba(214, 168, 79, 0.14), transparent);
+  opacity: 0.68;
+  animation: logo-ring-drift 9s ease-in-out infinite;
 }
 
 .home-logo-aura {
@@ -2636,9 +2643,10 @@ body::before {
   z-index: 1;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 50%, rgba(245, 248, 251, 0.12), transparent 52%),
-    radial-gradient(circle at 50% 50%, rgba(214, 168, 79, 0.14), transparent 68%);
-  filter: blur(20px);
+    radial-gradient(circle at 50% 50%, rgba(255, 244, 210, 0.16), transparent 42%),
+    radial-gradient(circle at 50% 50%, rgba(245, 248, 251, 0.12), transparent 58%),
+    radial-gradient(circle at 50% 50%, rgba(214, 168, 79, 0.2), transparent 74%);
+  filter: blur(22px);
   animation: logo-breathe 6.2s ease-in-out infinite;
   pointer-events: none;
 }
@@ -2670,10 +2678,23 @@ body::before {
   filter:
     invert(1)
     grayscale(1)
-    contrast(1.02)
-    brightness(1.26)
-    drop-shadow(0 24px 50px rgba(0, 0, 0, 0.42));
+    contrast(1.03)
+    brightness(1.27)
+    drop-shadow(0 24px 50px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 20px rgba(214, 168, 79, 0.1));
   animation: logo-float 6.8s ease-in-out infinite;
+}
+
+.home-gold-orbit {
+  width: min(76%, 440px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 168, 79, 0.22);
+  box-shadow:
+    inset 0 0 28px rgba(214, 168, 79, 0.08),
+    0 0 42px rgba(214, 168, 79, 0.08);
+  opacity: 0.9;
+  animation: logo-ring-drift 11s ease-in-out infinite reverse;
 }
 
 .home-gold-orbit,
