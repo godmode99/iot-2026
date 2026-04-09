@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Complete – Hourglass Card</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .card {
+    position: relative;
+    width: 340px;
+    min-height: 620px;
+    border-radius: 20px;
+    background: linear-gradient(160deg, #0d1b3e 0%, #061020 60%, #0a0f1e 100%);
+    overflow: hidden;
+    padding: 32px 28px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  }
+
+  /* ── Hourglass canvas sits behind all content ── */
+  #hourglassCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* ── Content ── */
+  .content { position: relative; z-index: 2; }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #7aa3d4;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #8ca8cc;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .logo-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1a2a4a 30%, #0d1830 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(80,140,255,0.2);
+  }
+
+  .logo-circle img {
+    width: 100px;
+    filter: brightness(1.1);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #2a5298, #1a3a6e);
+    color: #a8c8ff;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #3a6abf;
+    margin-bottom: 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: linear-gradient(135deg, #3a62b0, #2a4a8e); }
+
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .feature-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 10px;
+  }
+
+  .feature-box h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #cce0ff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .feature-box p {
+    font-size: 10px;
+    color: #7a9abf;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <canvas id="hourglassCanvas"></canvas>
+
+  <div class="content">
+    <div class="label">Daily Complete</div>
+    <div class="title">ขั้นการทำงาน<br>แรกของ Daily<br>Complete</div>
+    <div class="subtitle">
+      เริ่มจากงานที่ต้องใช้ทุกวัน เก็บข้อมูลให้เป็นระบบ<br>
+      มองเห็นสถานะหน้างานชัด แล้วค่อยต่อยอดไปสู่<br>
+      อุปกรณ์ การควบคุม และ automation
+    </div>
+
+    <div class="logo-wrap">
+      <div class="logo-circle">
+        <!-- SVG placeholder logo (bird in circle) -->
+        <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="45" cy="45" r="42" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <!-- Bird silhouette -->
+          <path d="M45 20 C38 28, 25 32, 22 42 C20 50, 28 56, 35 52 C38 50, 40 46, 45 44
+                   C50 46, 52 50, 55 52 C62 56, 70 50, 68 42 C65 32, 52 28, 45 20Z"
+                fill="rgba(255,255,255,0.85)" />
+          <path d="M45 44 C43 50, 42 56, 44 64 C45 68, 46 68, 46 64 C48 56, 47 50, 45 44Z"
+                fill="rgba(255,255,255,0.7)" />
+          <!-- wifi signal on wing -->
+          <path d="M54 35 Q58 32 62 35" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M56 32 Q61 28 66 32" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <text x="45" y="82" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.7)"
+                font-family="Georgia, serif" font-style="italic">ArayaShiki Lab</text>
+        </svg>
+      </div>
+    </div>
+
+    <div><span class="btn">เข้าสู่พอร์ทัล</span></div>
+
+    <div class="features">
+      <div class="feature-box">
+        <h4>3 กลุ่มหลัก</h4>
+        <p>วิจัย เกษตรกร และภาคเอกชน</p>
+      </div>
+      <div class="feature-box">
+        <h4>คน + อุปกรณ์</h4>
+        <p>รองรับทั้งข้อมูลจากคนและบอร์ด</p>
+      </div>
+      <div class="feature-box">
+        <h4>เริ่มที่ monitoring</h4>
+        <p>ค่อยต่อยอดสู่ automation ตาม roadmap</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('hourglassCanvas');
+const ctx = canvas.getContext('2d');
+
+// Resize canvas to match card
+function resizeCanvas() {
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+
+// ────────────────────────────────────────────────
+// Sand particle system
+// ────────────────────────────────────────────────
+const W = () => canvas.width;
+const H = () => canvas.height;
+
+// Hourglass geometry (relative to canvas size)
+function hgGeom() {
+  const cx = W() * 0.5;
+  const top    = H() * 0.08;
+  const bot    = H() * 0.92;
+  const midY   = (top + bot) / 2;
+  const halfW  = W() * 0.30;   // half-width at top/bottom
+  const neckW  = W() * 0.025;  // half-width at neck
+  return { cx, top, bot, midY, halfW, neckW };
+}
+
+// ── Sand particles ──
+const PARTICLE_COUNT = 320;
+const particles = [];
+
+function topEdgeX(y) {
+  const { cx, top, midY, halfW, neckW } = hgGeom();
+  const t = (y - top) / (midY - top);   // 0 at top, 1 at neck
+  return cx + (neckW + (halfW - neckW) * (1 - t));
+}
+function botEdgeX(y) {
+  const { cx, midY, bot, halfW, neckW } = hgGeom();
+  const t = (y - midY) / (bot - midY);  // 0 at neck, 1 at bottom
+  return cx + (neckW + (halfW - neckW) * t);
+}
+
+function insideHourglass(x, y) {
+  const { cx, top, bot, midY } = hgGeom();
+  if (y < top || y > bot) return false;
+  const limit = y <= midY ? topEdgeX(y) : botEdgeX(y);
+  return Math.abs(x - cx) < limit - cx;
+}
+
+// Sand pile height tracker for bottom chamber
+const PILE_COLS = 80;
+let pileHeight = new Float32Array(PILE_COLS).fill(0);
+
+function getPileY(px) {
+  const { cx, bot, halfW } = hgGeom();
+  const col = Math.floor(((px - (cx - halfW)) / (halfW * 2)) * PILE_COLS);
+  const c   = Math.max(0, Math.min(PILE_COLS - 1, col));
+  return bot - pileHeight[c];
+}
+
+function depositAtX(px, amount) {
+  const { cx, bot, halfW } = hgGeom();
+  const col = Math.floor(((px - (cx - halfW)) / (halfW * 2)) * PILE_COLS);
+  const c   = Math.max(0, Math.min(PILE_COLS - 1, col));
+  pileHeight[c] = Math.min(pileHeight[c] + amount, H() * 0.42);
+
+  // Smooth neighbours (avalanche)
+  const slope = 3;
+  for (let i = c - 1; i >= 0; i--) {
+    if (pileHeight[i+1] - pileHeight[i] > slope) pileHeight[i] = pileHeight[i+1] - slope;
+    else break;
+  }
+  for (let i = c + 1; i < PILE_COLS; i++) {
+    if (pileHeight[i-1] - pileHeight[i] > slope) pileHeight[i] = pileHeight[i-1] - slope;
+    else break;
+  }
+}
+
+function spawnParticle() {
+  const { cx, top, midY, halfW, neckW } = hgGeom();
+  // Random position in upper chamber
+  const y = top + Math.random() * (midY - top) * 0.85;
+  const hw = neckW + (halfW - neckW) * (1 - (y - top)/(midY - top));
+  const x = cx + (Math.random() * 2 - 1) * hw * 0.8;
+  return {
+    x, y,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: 0.5 + Math.random() * 1.2,
+    r:  1 + Math.random() * 1.5,
+    // colour: warm gold → amber
+    hue: 32 + Math.random() * 20,
+    sat: 70 + Math.random() * 25,
+    lit: 55 + Math.random() * 25,
+    alpha: 0.6 + Math.random() * 0.4,
+    settled: false,
+    settling: false
+  };
+}
+
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  particles.push(spawnParticle());
+}
+
+let neckFlowTime = 0;  // flash glow at neck
+
+// ── Stream particles that fall through neck ──
+const streamParticles = [];
+function spawnStream() {
+  const { cx, midY } = hgGeom();
+  streamParticles.push({
+    x: cx + (Math.random() - 0.5) * 4,
+    y: midY,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: 2.5 + Math.random() * 1.5,
+    r: 1 + Math.random(),
+    hue: 38 + Math.random() * 14,
+    sat: 80, lit: 60,
+    alpha: 0.9
+  });
+}
+
+// ────────────────────────────────────────────────
+// Draw hourglass frame
+// ────────────────────────────────────────────────
+function drawFrame() {
+  const { cx, top, bot, midY, halfW, neckW } = hgGeom();
+
+  // Glass silhouette path
+  const path = new Path2D();
+  path.moveTo(cx - halfW, top);
+  path.lineTo(cx + halfW, top);
+  path.lineTo(cx + neckW, midY);
+  path.lineTo(cx + halfW, bot);
+  path.lineTo(cx - halfW, bot);
+  path.lineTo(cx - neckW, midY);
+  path.closePath();
+
+  // Tinted glass fill
+  ctx.save();
+  ctx.fillStyle = 'rgba(30, 60, 120, 0.08)';
+  ctx.fill(path);
+
+  // Glass border glow
+  ctx.strokeStyle = 'rgba(120, 180, 255, 0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = 'rgba(100, 160, 255, 0.4)';
+  ctx.shadowBlur = 8;
+  ctx.stroke(path);
+  ctx.restore();
+
+  // Top & bottom caps
+  ctx.save();
+  ctx.fillStyle = 'rgba(80, 140, 220, 0.18)';
+  ctx.beginPath();
+  ctx.rect(cx - halfW - 4, top - 6, halfW * 2 + 8, 6);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.rect(cx - halfW - 4, bot, halfW * 2 + 8, 6);
+  ctx.fill();
+  ctx.restore();
+
+  return path;
+}
+
+// ────────────────────────────────────────────────
+// Draw sand pile (bottom)
+// ────────────────────────────────────────────────
+function drawPile() {
+  const { cx, bot, halfW, midY, neckW } = hgGeom();
+  ctx.save();
+
+  // Clip to bottom chamber
+  const clipPath = new Path2D();
+  clipPath.moveTo(cx - neckW, midY);
+  clipPath.lineTo(cx + halfW, bot);
+  clipPath.lineTo(cx - halfW, bot);
+  clipPath.closePath();
+  ctx.clip(clipPath);
+
+  // Fill gradient for the pile surface
+  const colW = (halfW * 2) / PILE_COLS;
+  for (let c = 0; c < PILE_COLS; c++) {
+    const px = cx - halfW + c * colW;
+    const py = bot - pileHeight[c];
+    if (pileHeight[c] > 0) {
+      const grad = ctx.createLinearGradient(0, py, 0, bot);
+      grad.addColorStop(0, 'rgba(220,160,40,0.55)');
+      grad.addColorStop(0.3, 'rgba(200,130,20,0.45)');
+      grad.addColorStop(1,   'rgba(150,90,10,0.35)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(px, py, colW + 0.5, pileHeight[c]);
+    }
+  }
+  ctx.restore();
+}
+
+// ────────────────────────────────────────────────
+// Draw sand in upper chamber (bulk)
+// ────────────────────────────────────────────────
+function drawUpperSand() {
+  const { cx, top, midY, halfW, neckW } = hgGeom();
+  ctx.save();
+
+  const clipPath = new Path2D();
+  clipPath.moveTo(cx - halfW, top);
+  clipPath.lineTo(cx + halfW, top);
+  clipPath.lineTo(cx + neckW, midY);
+  clipPath.lineTo(cx - neckW, midY);
+  clipPath.closePath();
+  ctx.clip(clipPath);
+
+  // Draw a gradient bulk fill for top sand (shrinking as time passes)
+  const grad = ctx.createLinearGradient(0, top, 0, midY);
+  grad.addColorStop(0,   'rgba(200,150,40,0.22)');
+  grad.addColorStop(0.7, 'rgba(180,120,20,0.14)');
+  grad.addColorStop(1,   'rgba(160,100,10,0.06)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(cx - halfW, top, halfW * 2, midY - top);
+
+  ctx.restore();
+}
+
+// ────────────────────────────────────────────────
+// Animation loop
+// ────────────────────────────────────────────────
+let frame = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, W(), H());
+
+  const g = hgGeom();
+  frame++;
+
+  // Spawn stream particles
+  if (frame % 3 === 0) spawnStream();
+
+  // ── Update & draw stream particles ──
+  for (let i = streamParticles.length - 1; i >= 0; i--) {
+    const p = streamParticles[i];
+    p.vy += 0.18;  // gravity
+    p.x  += p.vx;
+    p.y  += p.vy;
+
+    const pileY = getPileY(p.x);
+    if (p.y >= pileY) {
+      depositAtX(p.x, 0.8);
+      streamParticles.splice(i, 1);
+      continue;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue},${p.sat}%,${p.lit}%,${p.alpha})`;
+    ctx.fill();
+  }
+
+  // ── Update & draw upper-chamber particles ──
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    if (p.settled) {
+      // Occasionally reset to keep flow infinite
+      if (Math.random() < 0.0008) {
+        Object.assign(p, spawnParticle());
+      }
+      continue;
+    }
+
+    p.vy += 0.12;  // gravity
+    p.vx *= 0.98;
+    p.x  += p.vx;
+    p.y  += p.vy;
+
+    // Funnel walls
+    if (p.y <= g.midY) {
+      const limit = topEdgeX(p.y);
+      if (Math.abs(p.x - g.cx) > limit - g.cx) {
+        p.x  = g.cx + Math.sign(p.x - g.cx) * (limit - g.cx - 0.5);
+        p.vx = -p.vx * 0.3;
+      }
+    }
+
+    // Through neck → settle or recycle
+    if (p.y >= g.midY) {
+      if (p.y < g.bot) {
+        const limit = botEdgeX(p.y);
+        if (Math.abs(p.x - g.cx) > limit - g.cx) {
+          p.x  = g.cx + Math.sign(p.x - g.cx) * (limit - g.cx - 0.5);
+          p.vx = -p.vx * 0.2;
+        }
+      }
+      // Hit pile?
+      if (p.y >= getPileY(p.x) - p.r) {
+        p.settled = true;
+        continue;
+      }
+    }
+
+    // Out of bounds → recycle
+    if (p.y > g.bot || !insideHourglass(p.x, p.y) && p.y > g.midY) {
+      Object.assign(p, spawnParticle());
+      continue;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue},${p.sat}%,${p.lit}%,${p.alpha * 0.7})`;
+    ctx.fill();
+  }
+
+  // ── Draw layers (order matters) ──
+  drawUpperSand();
+  drawPile();
+  drawFrame();
+
+  // Neck glow
+  ctx.save();
+  const glowR = 6 + Math.sin(frame * 0.15) * 2;
+  const radGrad = ctx.createRadialGradient(g.cx, g.midY, 0, g.cx, g.midY, glowR);
+  radGrad.addColorStop(0, 'rgba(255,210,80,0.55)');
+  radGrad.addColorStop(1, 'rgba(255,180,40,0)');
+  ctx.fillStyle = radGrad;
+  ctx.beginPath();
+  ctx.arc(g.cx, g.midY, glowR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+animate();
+
+// Handle resize
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  pileHeight = new Float32Array(PILE_COLS).fill(0);
+});
+</script>
+</body>
+</html>
