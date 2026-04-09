@@ -33,8 +33,10 @@ export default async function HomePage() {
           <span className="brand-wordmark-sub">Lab</span>
         </Link>
         <div className="nav-links">
+          <Link className="nav-link" href="/about">{t(messages, "home.nav.about")}</Link>
           <Link className="nav-link" href="#ecosystem">{t(messages, "home.nav.ecosystem")}</Link>
-          <Link className="nav-link" href="#solutions">{t(messages, "home.nav.solutions")}</Link>
+          <Link className="nav-link" href="/solutions">{t(messages, "home.nav.solutions")}</Link>
+          <Link className="nav-link" href="/packages">{t(messages, "home.nav.packages")}</Link>
           <Link className="nav-link" href="#roadmap">{t(messages, "home.nav.roadmap")}</Link>
           <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
         </div>
@@ -58,7 +60,7 @@ export default async function HomePage() {
             />
           </div>
           <div className="action-row home-stage-actions">
-            <Link className="button" href="#solutions">{t(messages, "home.panelPrimary")}</Link>
+            <Link className="button" href="/solutions">{t(messages, "home.panelPrimary")}</Link>
             <Link className="button-secondary" href="/login">{t(messages, "home.panelSecondary")}</Link>
           </div>
           <div className="home-proof-grid">
@@ -81,8 +83,8 @@ export default async function HomePage() {
             <h1>{t(messages, "home.title")}</h1>
             <p className="lede">{t(messages, "home.body")}</p>
             <div className="action-row">
-              <Link className="button" href="#solutions">{t(messages, "home.primary")}</Link>
-              <Link className="button-secondary" href="#ecosystem">{t(messages, "home.secondary")}</Link>
+              <Link className="button" href="/solutions">{t(messages, "home.primary")}</Link>
+              <Link className="button-secondary" href="/packages">{t(messages, "home.secondary")}</Link>
             </div>
             <p className="home-caption">{t(messages, "home.caption")}</p>
           </div>
@@ -157,8 +159,8 @@ export default async function HomePage() {
           <p className="muted">{t(messages, "home.ctaBody")}</p>
         </div>
         <div className="action-row">
-          <Link className="button" href="#solutions">{t(messages, "home.ctaPrimary")}</Link>
-          <Link className="button-secondary" href="/login">{t(messages, "home.ctaSecondary")}</Link>
+          <Link className="button" href="/packages">{t(messages, "home.ctaPrimary")}</Link>
+          <Link className="button-secondary" href="/solutions">{t(messages, "home.ctaSecondary")}</Link>
         </div>
       </section>
     </main>

@@ -19,3 +19,13 @@ export function getDefaultLocale() {
 export function getAppUrl() {
   return process.env.DASHBOARD_URL ?? process.env.APP_URL ?? "http://localhost:3000";
 }
+
+export function getContactEmail() {
+  return process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? process.env.CONTACT_EMAIL ?? "";
+}
+
+export function getFacebookPageUrl() {
+  return process.env.NEXT_PUBLIC_FACEBOOK_PAGE_URL
+    ?? process.env.FACEBOOK_PAGE_URL
+    ?? "https://www.facebook.com/profile.php?id=61574298551231";
+}

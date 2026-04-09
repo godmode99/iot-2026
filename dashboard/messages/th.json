@@ -7,27 +7,29 @@
   },
   "home": {
     "nav": {
+      "about": "เกี่ยวกับเรา",
       "ecosystem": "ภาพรวมระบบ",
+      "packages": "แพ็กเกจ",
       "solutions": "โซลูชัน",
       "roadmap": "โรดแมป"
     },
     "kicker": "Smart hatchery and aquaculture ecosystem",
     "eyebrow": "ภาพรวมบริษัท",
-    "title": "สร้าง ecosystem การทำงานให้ครบก่อน แล้วค่อยแตกเป็นแพ็กเกจที่ลูกค้าเลือก",
+    "title": "สร้าง ecosystem การทำงานให้ครบก่อน แล้วค่อยแตกเป็นแพ็กเกจที่ลูกค้าเลือกได้",
     "body": "ArayaShiki Lab พัฒนาระบบนิเวศอัจฉริยะสำหรับโรงเพาะและฟาร์ม ที่เชื่อมข้อมูลจากคน ข้อมูลจากบอร์ด การมอนิเตอร์ และการต่อยอดไปสู่อัตโนมัติไว้ในแพลตฟอร์มเดียว",
-    "caption": "เริ่มจากสิ่งที่ใช้งานได้จริงในหน้างานวันนี้ แล้วค่อยขยายไปสู่ rule-based automation และ process automation โดยไม่ต้องเปลี่ยนเรื่องเล่าของระบบใหม่ทุกครั้ง",
+    "caption": "เริ่มจากสิ่งที่ใช้ได้จริงในหน้างานวันนี้ แล้วค่อยขยายไปสู่ rule-based automation และ process automation โดยไม่ต้องเปลี่ยนเรื่องเล่าของระบบใหม่ทุกครั้ง",
     "primary": "ดูโซลูชัน",
-    "secondary": "ดูภาพรวมระบบ",
+    "secondary": "เปรียบเทียบแพ็กเกจ",
     "panelLabel": "Flagship solution",
     "panelEyebrow": "Daily Complete",
     "panelTitle": "ชั้นการทำงานแรกของ ArayaShiki ecosystem",
-    "panelBody": "Daily Complete เริ่มจากงานประจำวันจริง การบันทึกข้อมูลแบบมีโครงสร้าง และการมอนิเตอร์ ก่อนจะขยายไปสู่การเชื่อมอุปกรณ์ ตรรกะการควบคุม และอัตโนมัติที่ลึกขึ้น",
+    "panelBody": "Daily Complete เริ่มจากงานประจำจริง การบันทึกข้อมูลแบบมีโครงสร้าง และการมอนิเตอร์ ก่อนจะขยายไปสู่การเชื่อมอุปกรณ์ ตรรกะการควบคุม และอัตโนมัติที่ลึกขึ้น",
     "panelPrimary": "ดู Daily Complete",
     "panelSecondary": "เข้าสู่พอร์ทัล",
     "proof": {
       "audiences": {
         "value": "3 กลุ่มผู้ใช้",
-        "label": "สถาบันวิจัย เกษตรกร และเอกชน"
+        "label": "สถาบันวิจัย เกษตรกร และภาคเอกชน"
       },
       "inputs": {
         "value": "คน + บอร์ด",
@@ -63,7 +65,7 @@
       },
       "board": {
         "title": "Board and sensor input",
-        "body": "รองรับข้อมูล telemetry, สถานะอุปกรณ์ และ event จากบอร์ดหรือเซนเซอร์ในระบบเดียวกัน"
+        "body": "รองรับข้อมูล telemetry, สถานะอุปกรณ์ และ event จากบอร์ดหรือเซ็นเซอร์ในระบบเดียวกัน"
       },
       "rules": {
         "title": "Rule-based automation",
@@ -92,7 +94,7 @@
       }
     },
     "roadmapEyebrow": "Capability roadmap",
-    "roadmapTitle": "ระบบเติบโตเป็นชั้น ๆ แทนการพูดเหมือนทุกอย่าง automate ได้หมดแล้ว",
+    "roadmapTitle": "ระบบเติบโตเป็นชั้น ๆ แทนการพูดเหมือนว่าทุกอย่าง automate ได้หมดแล้ว",
     "roadmapBody": "สิ่งที่มีจริงตอนนี้คือ monitoring เป็นหลัก จากนั้นค่อยขยายไปสู่การควบคุมแบบ rule-based และต่อยอดเป็น automation ระดับกระบวนการ เช่น การผสมน้ำตามค่าความเค็มเป้าหมาย",
     "roadmap": {
       "monitoring": {
@@ -109,9 +111,352 @@
       }
     },
     "ctaEyebrow": "เริ่มจากมุมมองที่ถูกต้อง",
-    "ctaTitle": "ให้ภาพบริษัทเป็น ecosystem ก่อน แล้วค่อยพาไปที่ flagship solution ตัวแรก",
+    "ctaTitle": "ให้ภาพบริษัทเป็น ecosystem ก่อน แล้วค่อยพาไปสู่ flagship solution ตัวแรก",
     "ctaBody": "ใช้เรื่องเล่าระดับ ecosystem เพื่ออธิบายทิศทางทั้งหมดของบริษัท และใช้ Daily Complete เพื่อแสดงว่าชั้นการทำงานแรกจับงานจริงได้อย่างไร",
-    "ctaPrimary": "ดูโซลูชัน",
-    "ctaSecondary": "เข้าสู่พอร์ทัล"
+    "ctaPrimary": "เปรียบเทียบแพ็กเกจ",
+    "ctaSecondary": "ดูโซลูชัน"
+  },
+  "solutionsPage": {
+    "nav": {
+      "about": "เกี่ยวกับเรา",
+      "home": "หน้าแรก",
+      "packages": "แพ็กเกจ",
+      "roadmap": "โรดแมป"
+    },
+    "eyebrow": "ภาพรวมโซลูชัน",
+    "title": "หนึ่ง ecosystem แต่แยกวิธีเล่าเป็น 3 solution tracks",
+    "body": "ArayaShiki Lab สามารถสร้างแกนระบบให้กว้างภายใน แล้วค่อยจัดรูปแบบการนำเสนอให้เหมาะกับทีมวิจัย หน้างานฟาร์ม และงานเอกชนโดยไม่ต้องแยกเรื่องเล่าของบริษัทออกจากกัน",
+    "primary": "เปรียบเทียบแพ็กเกจ",
+    "secondary": "กลับไปภาพรวมระบบ",
+    "highlightEyebrow": "Flagship layer",
+    "highlightTitle": "Daily Complete คือ operating surface ตัวแรกที่พร้อมนำไปใช้อธิบายงานจริง",
+    "highlightBody": "เริ่มจากงานประจำ การบันทึกข้อมูลแบบมีโครงสร้าง และการมอนิเตอร์ ก่อนจะโตไปสู่การควบคุมและ automation เมื่อ hardware และ process layer พร้อมขึ้น",
+    "tracksEyebrow": "Solution tracks",
+    "tracksTitle": "ลูกค้าแต่ละกลุ่มต้องการคนละจุดเริ่ม แต่ไม่ควรได้คนละ company story",
+    "tracksBody": "แต่ละ track คือการเล่า ecosystem เดียวกันจากมุมของงานที่ต่างกัน ตัว product surface อาจต่างกันได้ แต่ architecture และ narrative ต้องเชื่อมกัน",
+    "tracks": {
+      "research": {
+        "title": "Research & education",
+        "body": "เหมาะกับสถาบัน ห้องปฏิบัติการ และสภาพแวดล้อมการเรียนรู้ที่ต้องการข้อมูลเชิงระบบและการทำงานที่ทำซ้ำได้",
+        "bullets": [
+          "บันทึกการทดลองและการสังเกตอย่างเป็นระบบ",
+          "รวมข้อมูลจากคนและ sensor ในระบบเดียว",
+          "รองรับงานวิจัยประยุกต์และการเรียนรู้ภาคปฏิบัติ"
+        ]
+      },
+      "operations": {
+        "title": "Farm operations",
+        "body": "เหมาะกับโรงเพาะและฟาร์มที่ต้องการ workflow ที่ใช้ได้จริงก่อน แล้วค่อยขยายสู่ automation",
+        "bullets": [
+          "แบบฟอร์มงานประจำวันที่สอดคล้องกับงานจริง",
+          "Monitoring และ alerts สำหรับทีมขนาดเล็ก",
+          "ค่อยต่อจากการบันทึกข้อมูลไปสู่ automation"
+        ]
+      },
+      "enterprise": {
+        "title": "Enterprise & custom automation",
+        "body": "เหมาะกับเอกชนที่ต้องการ integration, permissions และ process control ที่ลึกกว่าแพ็กเกจมาตรฐาน",
+        "bullets": [
+          "การเชื่อมระบบและสิทธิ์การเข้าถึงที่ออกแบบเฉพาะ",
+          "รองรับการขยายไปยัง board, actuator และ workflow",
+          "ปูทางสู่ process automation และ orchestration"
+        ]
+      }
+    },
+    "layersEyebrow": "Capability layers",
+    "layersTitle": "ทุกแพ็กเกจยังวางอยู่บน operating stack เดียวกัน",
+    "layersBody": "ArayaShiki Lab ไม่ได้แยกเป็นหลายผลิตภัณฑ์ที่ไม่เกี่ยวกัน แต่ใช้ capability ladder เดียวกันและต่างกันแค่จังหวะการนำไปใช้",
+    "layers": {
+      "capture": {
+        "title": "Capture",
+        "body": "เริ่มจากการเก็บข้อมูลจากคน งานประจำ และ checkpoint หน้างานให้เชื่อถือได้"
+      },
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "เชื่อมข้อมูลจากบอร์ดและเซ็นเซอร์เพื่อให้ทีมเห็นสถานะ แนวโน้ม และความผิดปกติ"
+      },
+      "automation": {
+        "title": "Rule-based control",
+        "body": "เพิ่มการทำงานแบบ if-then การตอบสนองตาม threshold และการควบคุมที่ปลอดภัยขึ้น"
+      },
+      "orchestration": {
+        "title": "Process orchestration",
+        "body": "ขยายไปสู่ workflow หลายขั้น เช่น การผสมน้ำ การเตรียมน้ำ และ automation ที่บันทึกย้อนกลับได้"
+      }
+    },
+    "ctaEyebrow": "ขั้นต่อไป",
+    "ctaTitle": "เปิดการคุยด้วยภาพ ecosystem แล้วค่อยลงลึกด้วย solution track ที่ตรงกับลูกค้า",
+    "ctaBody": "วิธีนี้ทำให้ positioning ของบริษัทกว้างพอ แต่บทสนทนากับลูกค้ายังชัดและจับต้องได้",
+    "ctaPrimary": "เปรียบเทียบแพ็กเกจ",
+    "ctaSecondary": "กลับหน้าแรก"
+  },
+  "aboutPage": {
+    "nav": {
+      "home": "หน้าแรก",
+      "packages": "แพ็กเกจ",
+      "solutions": "โซลูชัน",
+      "roadmap": "โรดแมป"
+    },
+    "eyebrow": "เกี่ยวกับบริษัท",
+    "title": "ArayaShiki Lab กำลังสร้าง operating ecosystem ไม่ใช่เครื่องมือเดี่ยวที่แยกขาดจากกัน",
+    "body": "เรากำลังพัฒนาระบบนิเวศอัจฉริยะสำหรับโรงเพาะและฟาร์ม ที่เชื่อมการบันทึกข้อมูลจากคน ข้อมูลจากบอร์ด การมอนิเตอร์ และการต่อยอดไปสู่อัตโนมัติ เพื่อให้ฟาร์ม โรงเพาะ และทีมวิจัยเติบโตบนสถาปัตยกรรมเดียวกันได้",
+    "primary": "ดูโซลูชัน",
+    "secondary": "เปรียบเทียบแพ็กเกจ",
+    "highlightEyebrow": "ความหมายของสิ่งนี้",
+    "highlightTitle": "เรื่องเล่าของบริษัทต้องกว้างกว่าตัว pilot device หรือ dashboard ใดตัวหนึ่ง",
+    "highlightBody": "นั่นคือเหตุผลที่เราเล่า ArayaShiki Lab ในระดับบริษัท เล่า Daily Complete เป็น flagship operating layer และวาง SB-00 เป็นหนึ่ง monitoring path ภายใน ecosystem เดียวกัน",
+    "principlesEyebrow": "หลักการทำงาน",
+    "principlesTitle": "ecosystem นี้ถูกออกแบบจากงานจริงก่อนเสมอ",
+    "principlesBody": "เราไม่ได้เริ่มจากคำสัญญาเรื่อง automation ที่ลอยอยู่ แต่เริ่มจากงานปฏิบัติการที่ใช้งานได้จริง แล้วค่อยขยายเมื่อแต่ละชั้นของระบบพร้อมพอ",
+    "principles": {
+      "operations": {
+        "title": "งานจริงต้องมาก่อน",
+        "body": "ระบบต้องเข้ากับงานประจำวันจริง ไม่ใช่แค่ดูดีในเดโม"
+      },
+      "connected": {
+        "title": "หนึ่ง stack ที่เชื่อมกัน",
+        "body": "ข้อมูลจากคน อุปกรณ์ การแจ้งเตือน และการควบคุมในอนาคตควรอยู่ในเรื่องเล่าและระบบเดียวกัน"
+      },
+      "growth": {
+        "title": "เติบโตเป็นชั้น ๆ",
+        "body": "ทีมควรเริ่มจาก records และ monitoring ได้ แล้วค่อยขยับไปสู่ automation โดยไม่ต้องเปลี่ยนแพลตฟอร์ม"
+      }
+    },
+    "audiencesEyebrow": "กลุ่มผู้ใช้",
+    "audiencesTitle": "ผู้ใช้ต่างกลุ่มเริ่มต้นคนละมุมได้ แต่ยังอยู่ใน ecosystem เดียวกัน",
+    "audiencesBody": "บริษัทให้บริการหลายกลุ่ม แต่ทุกกลุ่มควรมองเห็น platform foundation เดียวกันอยู่เบื้องหลังการจัดแพ็กเกจ",
+    "audiences": {
+      "research": {
+        "title": "ทีมวิจัยและการศึกษา",
+        "body": "ต้องการข้อมูลที่เก็บซ้ำได้ การสังเกตอย่างเป็นระบบ และเครื่องมือที่รองรับการเรียนรู้เชิงปฏิบัติ"
+      },
+      "farm": {
+        "title": "ผู้ปฏิบัติงานฟาร์มและโรงเพาะ",
+        "body": "ต้องการ workflow ประจำวัน การมอนิเตอร์ที่ชัด และเส้นทางที่ค่อย ๆ พาไปสู่ automation อย่างปลอดภัย"
+      },
+      "enterprise": {
+        "title": "เอกชนและงานออกแบบเฉพาะ",
+        "body": "ต้องการสิทธิ์การเข้าถึง การเชื่อมระบบ และ process control ที่ขยายเกิน deployment มาตรฐานได้"
+      }
+    },
+    "roadmapEyebrow": "เส้นทางการเติบโต",
+    "roadmapTitle": "roadmap ของบริษัทขยับจากการมองเห็นข้อมูลไปสู่การควบคุม",
+    "roadmapBody": "แนวทางนี้ทำให้ ArayaShiki Lab รองรับลูกค้าที่มีระดับความพร้อมต่างกันได้ โดยไม่ทำให้สถาปัตยกรรมแตกเป็นหลายชิ้น",
+    "roadmap": {
+      "capture": {
+        "title": "Capture",
+        "body": "จัดระเบียบข้อมูลจากคน งานประจำ และกิจกรรมหน้างาน"
+      },
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "เชื่อม telemetry และสถานะจากบอร์ดหรือเซ็นเซอร์"
+      },
+      "control": {
+        "title": "Rule-based control",
+        "body": "เพิ่มการตอบสนองต่อเงื่อนไขและ threshold ที่ชัดเจน"
+      },
+      "process": {
+        "title": "Process orchestration",
+        "body": "ขยายไปสู่ workflow หลายขั้น เช่น การเตรียมน้ำและการผสม"
+      }
+    },
+    "ctaEyebrow": "ไปต่อที่ไหน",
+    "ctaTitle": "เริ่มจากเรื่องเล่าระดับบริษัท แล้วค่อยลงสู่โซลูชันที่เหมาะกับบทสนทนานั้น",
+    "ctaBody": "วิธีนี้ช่วยให้ positioning ชัดและยังพาคนอ่านไปยังจุดเริ่มที่จับต้องได้",
+    "ctaPrimary": "เปรียบเทียบแพ็กเกจ",
+    "ctaSecondary": "กลับหน้าแรก"
+  },
+  "packagesPage": {
+    "nav": {
+      "home": "หน้าแรก",
+      "about": "เกี่ยวกับเรา",
+      "solutions": "โซลูชัน",
+      "requestDemo": "ขอนัดเดโม"
+    },
+    "eyebrow": "ภาพรวมแพ็กเกจ",
+    "title": "เลือกจุดเริ่มต้นที่เหมาะ โดยไม่ทำให้ ecosystem แตกเป็นคนละระบบ",
+    "body": "ArayaShiki Lab สร้าง operating foundation ชุดเดียว แล้วค่อยจัดชั้นเริ่มต้นให้เหมาะกับลูกค้าแต่ละแบบ แพ็กเกจเปลี่ยนได้ แต่เรื่องเล่าของระบบยังเชื่อมกัน",
+    "primary": "ขอนัดเดโม",
+    "secondary": "เข้าสู่พอร์ทัล",
+    "highlightEyebrow": "Packaging principle",
+    "highlightTitle": "แพ็กเกจคือวิธีที่ลูกค้าเริ่มต้น ไม่ใช่ผลิตภัณฑ์คนละตัวที่มี architecture คนละชุด",
+    "highlightBody": "แนวทางนี้ทำให้ positioning ของบริษัทชัด ขณะเดียวกันก็ทำให้ทีมวิจัย ผู้ปฏิบัติงานฟาร์ม และงานเอกชน มีจุดเริ่มต้นทางการค้าที่จับต้องได้",
+    "packagesEyebrow": "Starting packages",
+    "packagesTitle": "3 จุดเริ่มต้นบน stack เดียวกัน",
+    "packagesBody": "แต่ละแพ็กเกจเน้นปัญหาการทำงานคนละแบบ เมื่อเวลาผ่านไปลูกค้าสามารถขยายไปสู่ monitoring, control และ custom automation ได้โดยไม่ต้องเปลี่ยนแพลตฟอร์ม",
+    "packages": {
+      "research": {
+        "fit": "สำหรับสถาบันและสภาพแวดล้อมการเรียนรู้",
+        "title": "Research & education package",
+        "body": "ออกแบบมาสำหรับการเก็บข้อมูล การสังเกตที่ทำซ้ำได้ และ workflow ด้านการเรียนรู้หรืองานวิจัยประยุกต์",
+        "deliverables": [
+          "การบันทึกข้อมูลด้วยมือและการติดตามการทดลองอย่างเป็นระบบ",
+          "การมองเห็นข้อมูลจาก sensor คู่กับข้อมูลจากคน",
+          "มุมมองการทำงานที่เหมาะกับทีมสอนและทีมวิจัย"
+        ]
+      },
+      "operations": {
+        "fit": "สำหรับโรงเพาะและฟาร์มที่ทำงานทุกวัน",
+        "title": "Farm operations package",
+        "body": "ออกแบบมาเพื่อรองรับงานโรงเพาะจริงก่อน แล้วค่อยยกระดับการมอนิเตอร์ alerts และ automation ตามความพร้อมของทีม",
+        "deliverables": [
+          "Daily work logs และ operational checklists",
+          "หน้ามอนิเตอร์สำหรับการมองเห็นอุปกรณ์และหน้างาน",
+          "เส้นทางแบบค่อยเป็นค่อยไปสู่ rule-based automation"
+        ]
+      },
+      "enterprise": {
+        "fit": "สำหรับภาคเอกชนและงานออกแบบเฉพาะ",
+        "title": "Enterprise & custom automation package",
+        "body": "ออกแบบมาสำหรับองค์กรที่ต้องการ permissions, integrations และ process logic ที่ลึกกว่า rollout มาตรฐาน",
+        "deliverables": [
+          "ขอบเขตสิทธิ์และการเชื่อมระบบที่ออกแบบเฉพาะ",
+          "แผนขยายไปยัง boards, actuators และ workflows",
+          "เส้นทางต่อยอดสู่ process orchestration"
+        ]
+      }
+    },
+    "principlesEyebrow": "Commercial logic",
+    "principlesTitle": "แพ็กเกจกำหนดบทสนทนาแรก ไม่ได้กำหนดทั้ง roadmap",
+    "principlesBody": "นี่คือวิธีที่ทำให้ ArayaShiki Lab กว้างพอในระดับบริษัท แต่ยังเสนอข้อเสนอที่ชัดให้ลูกค้าแต่ละกลุ่มได้",
+    "principles": {
+      "start": {
+        "title": "เริ่มจากปัญหาการทำงานที่สำคัญที่สุด",
+        "body": "นำเสนอจากงานที่ลูกค้าต้องการทำให้นิ่งก่อน ไม่ว่าจะเป็นการบันทึกข้อมูล การมอนิเตอร์ หรือความต้องการด้าน process แบบเฉพาะ"
+      },
+      "shared": {
+        "title": "คง architecture เดียวร่วมกัน",
+        "body": "ไม่ควรสร้างผลิตภัณฑ์ที่แยกขาดกันสำหรับแต่ละกลุ่ม แต่ให้ทุกแพ็กเกจยังอยู่ใน ecosystem และ data model เดียวกัน"
+      },
+      "expand": {
+        "title": "ขยายตามความพร้อม ไม่ใช่ขยายด้วยการรื้อใหม่",
+        "body": "ลูกค้าควรค่อย ๆ ขยับจาก monitoring ไปสู่ control และ orchestration ได้ เมื่อ hardware, process และความเชื่อมั่นพร้อมขึ้น"
+      }
+    },
+    "ctaEyebrow": "Next move",
+    "ctaTitle": "เปิดด้วย company story ทำให้แคบลงด้วย solutions แล้วปิดการคุยด้วยแพ็กเกจที่เหมาะ",
+    "ctaBody": "ลำดับนี้ทำให้ ArayaShiki Lab ดูน่าเชื่อถือในระดับ ecosystem และยังคง practical ในบทสนทนากับลูกค้า",
+    "ctaPrimary": "ขอนัดเดโม",
+    "ctaSecondary": "กลับหน้าแรก"
+  },
+  "requestDemoPage": {
+    "nav": {
+      "home": "หน้าแรก",
+      "solutions": "โซลูชัน",
+      "packages": "แพ็กเกจ"
+    },
+    "eyebrow": "ขอนัด walkthrough",
+    "title": "เริ่มบทสนทนาจากรูปแบบการทำงานของคุณ ไม่ใช่จาก product pitch แบบกว้าง ๆ",
+    "body": "ใช้หน้านี้เพื่อจัดกรอบการคุยกับ ArayaShiki Lab จากประเภทของสถานที่ที่คุณดูแล ข้อมูลที่มีอยู่แล้ว และระดับของ monitoring หรือ automation ที่อยากค่อย ๆ ไปให้ถึง",
+    "primary": "ทบทวนแพ็กเกจก่อน",
+    "secondary": "เข้าสู่พอร์ทัล",
+    "highlightEyebrow": "จุดเริ่มที่ดีที่สุด",
+    "highlightTitle": "เดโมที่ดีเริ่มจาก use case และระดับความพร้อมที่ชัด",
+    "highlightBody": "ArayaShiki Lab สามารถเล่า ecosystem เดียวกันผ่านมุมมองของงานวิจัย หน้างานฟาร์ม หรือภาคเอกชน ยิ่งกำหนดจุดเริ่มชัดเท่าไร การ walkthrough ครั้งแรกก็จะยิ่งมีประโยชน์",
+    "pathsEyebrow": "เส้นทางของบทสนทนา",
+    "pathsTitle": "เลือกการคุยที่ตรงกับงานจริงของคุณ",
+    "pathsBody": "สิ่งเหล่านี้ไม่ใช่ผลิตภัณฑ์คนละตัว แต่เป็นวิธีเข้าสู่ platform story เดียวกันจากมุมของงานที่ต่างกัน",
+    "paths": {
+      "research": {
+        "title": "Research and education walkthrough",
+        "body": "โฟกัสเดโมที่การเก็บข้อมูลอย่างเป็นระบบ การสังเกตที่ทำซ้ำได้ และการเชื่อมระหว่างงาน manual กับข้อมูลจาก sensor"
+      },
+      "operations": {
+        "title": "Farm operations walkthrough",
+        "body": "โฟกัสเดโมที่งานโรงเพาะประจำวัน การมอนิเตอร์ alerts และเส้นทางสู่ rule-based automation ที่ปลอดภัยขึ้น"
+      },
+      "enterprise": {
+        "title": "Enterprise and custom automation walkthrough",
+        "body": "โฟกัสเดโมที่ integrations, permissions, multi-site workflows และความต้องการด้าน process orchestration ในอนาคต"
+      }
+    },
+    "checklistEyebrow": "ก่อนเดโม",
+    "checklistTitle": "พกบริบทมาเล็กน้อย ก็ทำให้การคุยครั้งแรกชัดขึ้นมาก",
+    "checklistBody": "คุณยังไม่จำเป็นต้องมี specification ครบ แค่มีภาพการทำงานจริงสั้น ๆ ก็เพียงพอที่จะทำให้บทสนทนาแม่นขึ้น",
+    "checklist": {
+      "workflow": {
+        "title": "Current workflow",
+        "body": "อธิบายงานประจำวันที่สำคัญที่สุดตอนนี้ เช่น การสังเกต การเช็กถัง การเตรียมน้ำ หรือ routine ในโรงเพาะ"
+      },
+      "inputs": {
+        "title": "Current inputs",
+        "body": "อธิบายว่าข้อมูลอะไรยังมาจากคนวันนี้ และข้อมูลอะไรอาจมาจาก sensor, board หรือเครื่องจักรในอนาคต"
+      },
+      "outcomes": {
+        "title": "Target outcomes",
+        "body": "ระบุให้ชัดว่าเป้าหมายแรกคือ visibility, คุณภาพข้อมูล, alerts, operator support หรือเส้นทางสู่ automation"
+      },
+      "scale": {
+        "title": "Deployment scope",
+        "body": "บอกว่าต้องการเริ่มจากศูนย์การเรียนรู้ โรงเพาะเดียว ทีมฟาร์มเดียว หรือ rollout ที่กว้างกว่านั้น"
+      }
+    },
+    "formEyebrow": "เตรียมคำขอ",
+    "formTitle": "ร่าง brief สำหรับเดโมครั้งแรกได้ตรงนี้",
+    "formBody": "กรอกรายละเอียดสั้น ๆ แล้วหน้านี้จะสรุป brief แบบกระชับให้คุณคัดลอก หรือเปิดในอีเมลได้ทันทีเมื่อมีการตั้งค่า contact address",
+    "form": {
+      "organizationType": "ประเภทองค์กร",
+      "organizationName": "ชื่อองค์กร",
+      "organizationNamePlaceholder": "ArayaShiki Learning Hatchery",
+      "useCase": "Primary use case",
+      "useCasePlaceholder": "อธิบาย operation หรือ process ที่อยากให้เดโมครั้งแรกโฟกัส",
+      "currentInputs": "Current inputs",
+      "currentInputsPlaceholder": "อธิบายว่าข้อมูลอะไรยังมาจากคนวันนี้ และในอนาคตจะมีบอร์ดหรือเซ็นเซอร์อะไรเข้ามา",
+      "nearTermGoals": "Near-term goals",
+      "nearTermGoalsPlaceholder": "เช่น คุณภาพข้อมูลที่ดีขึ้น, monitoring, alerts หรือ automation ชั้นแรก",
+      "deploymentScope": "Deployment scope",
+      "deploymentScopePlaceholder": "เช่น ศูนย์การเรียนรู้เดียว โรงเพาะเดียว หรือ rollout หลายพื้นที่",
+      "selectPlaceholder": "เลือกประเภทองค์กร",
+      "organizationOptions": [
+        "สถาบันวิจัย",
+        "ศูนย์การเรียนรู้",
+        "ฟาร์มหรือโรงเพาะ",
+        "บริษัทเอกชน"
+      ],
+      "previewEyebrow": "Brief ที่เตรียมไว้",
+      "previewTitle": "ใช้สรุปนี้เป็นข้อความติดต่อครั้งแรกได้เลย",
+      "previewBody": "คุณสามารถคัดลอกข้อความด้านล่าง หรือเปิดเป็น draft ในอีเมลได้ทันทีเมื่อมีการตั้งค่า contact address",
+      "copyAction": "คัดลอก brief",
+      "copiedAction": "คัดลอกแล้ว",
+      "facebookAction": "ทักผ่าน Facebook",
+      "emailAction": "เปิดอีเมล draft",
+      "facebookReady": "คุณสามารถนำ brief นี้ไปคุยต่อใน Facebook Messenger ได้ทันที",
+      "contactReady": "เลือกช่องทางที่สะดวกได้เลย: Facebook สำหรับการคุยเร็ว หรืออีเมลสำหรับการแนะนำตัวแบบทางการมากขึ้น",
+      "emailReady": "ระบบจะเปิดโปรแกรมอีเมลพร้อมข้อความ brief ที่เตรียมไว้",
+      "emailMissing": "ตั้งค่า NEXT_PUBLIC_CONTACT_EMAIL เพื่อเปิดอีเมลได้โดยตรง ระหว่างนี้สามารถคัดลอก brief นี้ไปส่งผ่านช่องทางที่คุณใช้ได้",
+      "emailSubject": "Request demo | ArayaShiki Lab"
+    },
+    "templateEyebrow": "Brief template",
+    "templateTitle": "ใช้โครงนี้เมื่อเตรียมคำขอเดโม",
+    "templateBody": "template นี้ช่วยให้การคุยครั้งแรก practical และสอดคล้องกับ package และ solution track ที่เหมาะที่สุด",
+    "template": {
+      "lines": {
+        "organization": {
+          "label": "ประเภทองค์กร:",
+          "value": "สถาบันวิจัย ศูนย์การเรียนรู้ ฟาร์ม โรงเพาะ หรือบริษัทเอกชน"
+        },
+        "useCase": {
+          "label": "Primary use case:",
+          "value": "อยากให้เดโมครั้งแรกโฟกัสที่ operation หรือ process ไหน"
+        },
+        "inputs": {
+          "label": "Data and device inputs:",
+          "value": "วันนี้บันทึกอะไรด้วยมือ และในอนาคตจะมีอุปกรณ์หรือบอร์ดใดเข้ามาเชื่อม"
+        },
+        "goals": {
+          "label": "Near-term goals:",
+          "value": "Monitoring, คุณภาพข้อมูล, alerts, control หรือ process automation"
+        },
+        "nextStep": {
+          "label": "Preferred next step:",
+          "value": "Intro walkthrough, review ความเหมาะของแพ็กเกจ หรือคุย solution เชิงลึก"
+        }
+      }
+    },
+    "ctaEyebrow": "ไปต่อ",
+    "ctaTitle": "ใช้แพ็กเกจเพื่อกำหนดจุดเริ่ม แล้วใช้เดโมเพื่อออกแบบ rollout",
+    "ctaBody": "ลำดับนี้ทำให้ company narrative ยังกว้างพอ ขณะเดียวกันก็กำหนดขั้นถัดไปทางการค้าให้ชัดและมีประโยชน์",
+    "ctaPrimary": "กลับไปดูแพ็กเกจ",
+    "ctaSecondary": "กลับหน้าแรก"
   }
 }

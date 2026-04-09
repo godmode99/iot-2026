@@ -15,7 +15,9 @@
   },
   "home": {
     "nav": {
+      "about": "About",
       "ecosystem": "Ecosystem",
+      "packages": "Packages",
       "solutions": "Solutions",
       "roadmap": "Roadmap"
     },
@@ -25,7 +27,7 @@
     "body": "ArayaShiki Lab connects human records, board data, monitoring, and future automation in one platform for farms, hatcheries, research institutes, and private operators.",
     "caption": "Start with what works in the field today, then expand toward rule-based and process-level automation without rebuilding the system story every time.",
     "primary": "View solutions",
-    "secondary": "See the ecosystem",
+    "secondary": "Compare packages",
     "panelLabel": "Flagship solution",
     "panelEyebrow": "Daily Complete",
     "panelTitle": "The first operating layer inside the ArayaShiki ecosystem.",
@@ -119,8 +121,351 @@
     "ctaEyebrow": "Start with the right view",
     "ctaTitle": "See the company as an ecosystem, then explore the first flagship solution.",
     "ctaBody": "Use the ecosystem story to explain the whole direction, and use Daily Complete to prove how the first operational layer works in practice.",
-    "ctaPrimary": "Review solutions",
-    "ctaSecondary": "Enter portal"
+    "ctaPrimary": "Compare packages",
+    "ctaSecondary": "Review solutions"
+  },
+  "solutionsPage": {
+    "nav": {
+      "about": "About",
+      "home": "Home",
+      "packages": "Packages",
+      "roadmap": "Roadmap"
+    },
+    "eyebrow": "Solutions overview",
+    "title": "One ecosystem, three market-facing solution tracks.",
+    "body": "ArayaShiki Lab can build a broad operational foundation internally, then package the right layer for research teams, farm operators, and private-sector projects.",
+    "primary": "Compare packages",
+    "secondary": "Back to ecosystem",
+    "highlightEyebrow": "Flagship layer",
+    "highlightTitle": "Daily Complete is the first production-facing operating surface.",
+    "highlightBody": "It starts with real daily work, structured records, and monitoring, then grows toward integrated control and automation as the hardware and process layers mature.",
+    "tracksEyebrow": "Solution tracks",
+    "tracksTitle": "Different customers need different starting points, not different company stories.",
+    "tracksBody": "Each track highlights the same ecosystem from a different operational need. The product surface can change, but the architecture and narrative stay connected.",
+    "tracks": {
+      "research": {
+        "title": "Research & education",
+        "body": "Built for institutes, labs, and training environments that need structured data capture and repeatable operational records.",
+        "bullets": [
+          "Structured observation and experiment records",
+          "Manual and sensor data in one system",
+          "Usable for applied research and learning environments"
+        ]
+      },
+      "operations": {
+        "title": "Farm operations",
+        "body": "Built for hatcheries and farms that need practical daily workflows before they can move into deeper automation.",
+        "bullets": [
+          "Daily work logs that fit real operations",
+          "Monitoring and alerts for limited staff teams",
+          "A path from records into controlled automation"
+        ]
+      },
+      "enterprise": {
+        "title": "Enterprise & custom automation",
+        "body": "Built for private-sector operators who need integrations, permissions, and future process control beyond a standard package.",
+        "bullets": [
+          "Custom integrations and permission models",
+          "Board, actuator, and workflow expansion",
+          "Roadmap toward process automation and orchestration"
+        ]
+      }
+    },
+    "layersEyebrow": "Capability layers",
+    "layersTitle": "Every package still sits on the same operating stack.",
+    "layersBody": "ArayaShiki Lab is not separating the company into unrelated products. Each solution track moves through the same capability ladder at a different pace.",
+    "layers": {
+      "capture": {
+        "title": "Capture",
+        "body": "Start with reliable records from people, tasks, and operational checkpoints."
+      },
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "Bring in board and sensor data so teams can see state, trends, and deviations."
+      },
+      "automation": {
+        "title": "Rule-based control",
+        "body": "Add safer if-then actions, threshold handling, and controlled responses."
+      },
+      "orchestration": {
+        "title": "Process orchestration",
+        "body": "Expand into multi-step workflows such as water preparation, mixing, and traceable automation."
+      }
+    },
+    "ctaEyebrow": "Next step",
+    "ctaTitle": "Use the ecosystem story to open the conversation, then use the right solution track to narrow it.",
+    "ctaBody": "This keeps the company positioning broad while making the first customer conversation concrete.",
+    "ctaPrimary": "Compare packages",
+    "ctaSecondary": "Return home"
+  },
+  "aboutPage": {
+    "nav": {
+      "home": "Home",
+      "packages": "Packages",
+      "solutions": "Solutions",
+      "roadmap": "Roadmap"
+    },
+    "eyebrow": "About the company",
+    "title": "ArayaShiki Lab is building an operating ecosystem, not a single isolated tool.",
+    "body": "We are developing a smart hatchery and aquaculture ecosystem that connects manual records, board data, monitoring, and future automation so farms, hatcheries, and research teams can grow on one architecture.",
+    "primary": "View solutions",
+    "secondary": "Compare packages",
+    "highlightEyebrow": "What this means",
+    "highlightTitle": "The company story starts broader than any one pilot device or dashboard.",
+    "highlightBody": "That is why we present ArayaShiki Lab at the company level, Daily Complete as the flagship operating layer, and SB-00 as one active monitoring path inside the ecosystem.",
+    "principlesEyebrow": "Operating principles",
+    "principlesTitle": "The ecosystem is designed around real work first.",
+    "principlesBody": "We are not starting with abstract automation promises. The architecture begins with practical operations and expands only when the next layer becomes trustworthy.",
+    "principles": {
+      "operations": {
+        "title": "Operations come first",
+        "body": "The system must fit daily work, not just look advanced in a demo."
+      },
+      "connected": {
+        "title": "One connected stack",
+        "body": "Human records, device data, alerts, and future control should live in the same system story."
+      },
+      "growth": {
+        "title": "Growth by layers",
+        "body": "Teams should be able to start with records and monitoring, then move toward automation without changing platforms."
+      }
+    },
+    "audiencesEyebrow": "Who it is for",
+    "audiencesTitle": "Different users can enter the same ecosystem from different starting points.",
+    "audiencesBody": "The company serves multiple audiences, but each one should still recognize the same platform foundation behind the packaging.",
+    "audiences": {
+      "research": {
+        "title": "Research and education teams",
+        "body": "Need repeatable records, structured observations, and systems that support applied learning and experiments."
+      },
+      "farm": {
+        "title": "Farm and hatchery operators",
+        "body": "Need practical daily workflows, clear monitoring, and a realistic path into safer automation."
+      },
+      "enterprise": {
+        "title": "Private-sector and custom projects",
+        "body": "Need permissions, integrations, and process-level control that can expand beyond a standard deployment."
+      }
+    },
+    "roadmapEyebrow": "Growth path",
+    "roadmapTitle": "The company roadmap moves from visibility into control.",
+    "roadmapBody": "This is how ArayaShiki Lab can support different customers at different maturity levels without fragmenting the architecture.",
+    "roadmap": {
+      "capture": {
+        "title": "Capture",
+        "body": "Structure records from people, tasks, and field activity."
+      },
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "Connect telemetry and status from boards and sensors."
+      },
+      "control": {
+        "title": "Rule-based control",
+        "body": "Add controlled responses to clear conditions and thresholds."
+      },
+      "process": {
+        "title": "Process orchestration",
+        "body": "Expand into multi-step operational workflows such as water preparation and mixing."
+      }
+    },
+    "ctaEyebrow": "Where to go next",
+    "ctaTitle": "Start with the company story, then move into the solution that fits the conversation.",
+    "ctaBody": "This keeps the positioning coherent while giving each audience a practical entry point.",
+    "ctaPrimary": "Compare packages",
+    "ctaSecondary": "Return home"
+  },
+  "packagesPage": {
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "solutions": "Solutions",
+      "requestDemo": "Request demo"
+    },
+    "eyebrow": "Packaging overview",
+    "title": "Choose the right entry point without fragmenting the ecosystem.",
+    "body": "ArayaShiki Lab builds one operating foundation, then packages the starting layer that best fits each customer. The package changes, but the system story stays connected.",
+    "primary": "Request a demo",
+    "secondary": "Enter portal",
+    "highlightEyebrow": "Packaging principle",
+    "highlightTitle": "Packages are how customers enter, not separate products with separate architecture.",
+    "highlightBody": "This keeps the company positioning clear while giving research teams, farm operators, and private-sector projects a concrete commercial starting point.",
+    "packagesEyebrow": "Starting packages",
+    "packagesTitle": "Three starting points built on the same stack.",
+    "packagesBody": "Each package focuses on a different operating need. Over time, customers can expand into more monitoring, control, and custom automation without replacing the platform.",
+    "packages": {
+      "research": {
+        "fit": "For institutes and learning environments",
+        "title": "Research & education package",
+        "body": "Designed for data capture, repeatable observations, and practical learning or applied-research workflows.",
+        "deliverables": [
+          "Structured manual records and experiment tracking",
+          "Sensor data visibility alongside human observations",
+          "Operational views suitable for teaching and research teams"
+        ]
+      },
+      "operations": {
+        "fit": "For hatcheries and farms running daily work",
+        "title": "Farm operations package",
+        "body": "Designed to support daily hatchery operations first, then improve monitoring, alerts, and controlled automation as the team is ready.",
+        "deliverables": [
+          "Daily work logs and operational checklists",
+          "Monitoring surfaces for device and field visibility",
+          "A phased path into safer rule-based automation"
+        ]
+      },
+      "enterprise": {
+        "fit": "For private-sector and custom projects",
+        "title": "Enterprise & custom automation package",
+        "body": "Designed for organizations that need permissions, integrations, and more advanced process logic beyond a standard rollout.",
+        "deliverables": [
+          "Custom permissions and integration scope",
+          "Roadmap planning for boards, actuators, and workflows",
+          "Expansion path toward process orchestration"
+        ]
+      }
+    },
+    "principlesEyebrow": "Commercial logic",
+    "principlesTitle": "The package shapes the first conversation, not the entire roadmap.",
+    "principlesBody": "This is how ArayaShiki Lab can stay broad as a company while still presenting a clear offer to each type of customer.",
+    "principles": {
+      "start": {
+        "title": "Start with the right operating problem",
+        "body": "Lead with the work the customer is trying to stabilize first, whether that is record keeping, monitoring, or a custom process requirement."
+      },
+      "shared": {
+        "title": "Keep one shared architecture",
+        "body": "Do not create disconnected products for each audience. Each package should remain part of the same ecosystem and data model."
+      },
+      "expand": {
+        "title": "Expand by readiness, not by rewrite",
+        "body": "Customers should be able to move from monitoring into control and orchestration as hardware, process, and trust mature."
+      }
+    },
+    "ctaEyebrow": "Next move",
+    "ctaTitle": "Open with the company story, narrow with solutions, and close with the right package.",
+    "ctaBody": "That sequence lets ArayaShiki Lab look credible at the ecosystem level while staying practical in customer conversations.",
+    "ctaPrimary": "Request a demo",
+    "ctaSecondary": "Return home"
+  },
+  "requestDemoPage": {
+    "nav": {
+      "home": "Home",
+      "solutions": "Solutions",
+      "packages": "Packages"
+    },
+    "eyebrow": "Request a walkthrough",
+    "title": "Start the conversation around your operating model, not a generic product pitch.",
+    "body": "Use this page to frame the first discussion with ArayaShiki Lab around the kind of facility you run, the data you already have, and the level of monitoring or automation you want to grow into.",
+    "primary": "Review packages first",
+    "secondary": "Enter portal",
+    "highlightEyebrow": "Best first step",
+    "highlightTitle": "A strong demo starts with the right use case and readiness level.",
+    "highlightBody": "ArayaShiki Lab can show the same ecosystem through a research, farm-operations, or enterprise lens. The more clearly that starting point is defined, the more useful the first walkthrough becomes.",
+    "pathsEyebrow": "Conversation paths",
+    "pathsTitle": "Choose the conversation that matches the real work.",
+    "pathsBody": "These are not different products. They are different ways to enter the same platform story depending on what your team needs first.",
+    "paths": {
+      "research": {
+        "title": "Research and education walkthrough",
+        "body": "Focus the demo on structured records, repeatable observations, and the connection between manual work and sensor-supported data."
+      },
+      "operations": {
+        "title": "Farm operations walkthrough",
+        "body": "Focus the demo on day-to-day hatchery work, monitoring, alerts, and the practical path into safer rule-based automation."
+      },
+      "enterprise": {
+        "title": "Enterprise and custom automation walkthrough",
+        "body": "Focus the demo on integrations, permissions, multi-site workflows, and future process orchestration requirements."
+      }
+    },
+    "checklistEyebrow": "Before the demo",
+    "checklistTitle": "Bring enough context to make the first session concrete.",
+    "checklistBody": "You do not need a full specification yet. A short operational picture is enough to make the conversation much sharper.",
+    "checklist": {
+      "workflow": {
+        "title": "Current workflow",
+        "body": "Explain the daily work that matters most right now, such as observations, tank checks, water preparation, or routine hatchery operations."
+      },
+      "inputs": {
+        "title": "Current inputs",
+        "body": "Describe what data comes from people today and what might come from sensors, boards, or machines later."
+      },
+      "outcomes": {
+        "title": "Target outcomes",
+        "body": "Clarify whether the first goal is visibility, cleaner records, alerts, operator support, or a future automation path."
+      },
+      "scale": {
+        "title": "Deployment scope",
+        "body": "Share whether this starts as a learning center, one hatchery, one farm team, or a broader private-sector rollout."
+      }
+    },
+    "formEyebrow": "Prepare the request",
+    "formTitle": "Draft the first demo brief here.",
+    "formBody": "Fill in a few details and the page will prepare a concise brief you can copy or open in your email client.",
+    "form": {
+      "organizationType": "Organization type",
+      "organizationName": "Organization name",
+      "organizationNamePlaceholder": "ArayaShiki Learning Hatchery",
+      "useCase": "Primary use case",
+      "useCasePlaceholder": "Describe the operation or process you want the first demo to focus on.",
+      "currentInputs": "Current inputs",
+      "currentInputsPlaceholder": "Describe what is recorded by people today and what may come from boards or sensors later.",
+      "nearTermGoals": "Near-term goals",
+      "nearTermGoalsPlaceholder": "For example: cleaner records, monitoring, alerts, or the first automation layer.",
+      "deploymentScope": "Deployment scope",
+      "deploymentScopePlaceholder": "For example: one learning center, one hatchery, or multi-site rollout.",
+      "selectPlaceholder": "Select organization type",
+      "organizationOptions": [
+        "Research institute",
+        "Learning center",
+        "Farm or hatchery",
+        "Private company"
+      ],
+      "previewEyebrow": "Prepared brief",
+      "previewTitle": "Use this summary as the first contact message.",
+      "previewBody": "You can copy the text below or open it directly in your email client when a contact address is configured.",
+      "copyAction": "Copy brief",
+      "copiedAction": "Copied",
+      "facebookAction": "Message on Facebook",
+      "emailAction": "Open email draft",
+      "facebookReady": "You can take this brief to Facebook Messenger right away.",
+      "contactReady": "Choose the contact path that fits best: Facebook for quick conversation, or email for a more formal introduction.",
+      "emailReady": "Your email client will open with the prepared brief.",
+      "emailMissing": "Set NEXT_PUBLIC_CONTACT_EMAIL to enable direct email drafting. Until then, copy this brief and send it through your preferred channel.",
+      "emailSubject": "Request demo | ArayaShiki Lab"
+    },
+    "templateEyebrow": "Brief template",
+    "templateTitle": "Use this structure when preparing a demo request.",
+    "templateBody": "This template helps keep the first conversation practical and aligned with the package and solution track that fits best.",
+    "template": {
+      "lines": {
+        "organization": {
+          "label": "Organization type:",
+          "value": "Research institute, learning center, farm, hatchery, or private company"
+        },
+        "useCase": {
+          "label": "Primary use case:",
+          "value": "What operation or process should the first demo focus on?"
+        },
+        "inputs": {
+          "label": "Data and device inputs:",
+          "value": "What is recorded manually today, and what devices or boards may connect later?"
+        },
+        "goals": {
+          "label": "Near-term goals:",
+          "value": "Monitoring, record quality, alerts, control, or process automation"
+        },
+        "nextStep": {
+          "label": "Preferred next step:",
+          "value": "Intro walkthrough, package fit review, or deeper solution discussion"
+        }
+      }
+    },
+    "ctaEyebrow": "Keep going",
+    "ctaTitle": "Use packages to define the entry point, then use the demo to shape the rollout.",
+    "ctaBody": "That sequence keeps the company narrative broad while making the next commercial step specific and useful.",
+    "ctaPrimary": "Back to packages",
+    "ctaSecondary": "Return home"
   },
   "auth": {
     "loginTitle": "Log in",

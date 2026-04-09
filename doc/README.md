@@ -1,25 +1,42 @@
 # Documentation Structure
 
-โฟลเดอร์ `doc/` ถูกแยกเป็น 2 ชุด:
+The `doc/` folder is split into two main layers:
 
 - `doc/ai/`
-  - source of truth สำหรับ AI assistants เช่น Codex, Claude
-  - ใช้ไฟล์ Markdown ที่อ้างอิงกันชัด อ่านง่าย และเหมาะกับ diff/review
-  - มีทั้ง baseline docs, decision register, pricing baseline, และ execution task list
+  - source-of-truth Markdown for AI assistants and implementation work
+  - includes both company-level narrative and product-level execution docs
 - `doc/human/`
-  - เอกสาร `.docx` สำหรับคนอ่าน
-  - สร้างจากชุด grouped docs ใน `doc/ai/` เพื่อให้จำนวนไฟล์น้อยลงและอ่านง่ายขึ้นใน Word
-  - มีไฟล์ index กลางคือ `SB-00_Document_Index_v1_1.docx`
+  - generated `.docx` documents for human readers
+  - grouped from the source files in `doc/ai/`
+
+## Suggested Reading Paths
+
+### 1. Company / positioning path
+
+Use this path when you need to understand how `ArayaShiki Lab` should be presented:
+
+1. `doc/ai/ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md`
+2. `doc/ai/HB-05_Business_And_Launch_v1_0.md`
+3. `doc/ai/SB-00_Business_Roadmap_v1_1.md`
+
+### 2. Product / implementation path
+
+Use this path when you need to work inside the repository:
+
+1. `doc/ai/AI_START_HERE.md`
+2. `doc/ai/SB-00_Master_Assumptions_v1_1.md`
+3. `doc/ai/SB-00_Decision_Register_v1_1.md`
+4. `doc/ai/SB-00_Execution_Task_List_v1_1.md`
 
 ## Workflow
 
-1. แก้ไขเอกสารต้นฉบับใน `doc/ai/`
-2. รัน `python scripts/build_human_docs.py`
-3. เปิด `doc/human/SB-00_Document_Index_v1_1.docx` เพื่อเริ่มอ่านชุด grouped docs
-4. ถ้าต้องการ refresh สารบัญหรือเลขหน้า ให้เปิดไฟล์ใน Microsoft Word แล้วกด `Update Field`
+1. Edit source documents in `doc/ai/`
+2. Run `python scripts/build_human_docs.py`
+3. Open `doc/human/SB-00_Document_Index_v1_1.docx`
+4. If needed, refresh fields and page numbers in Microsoft Word
 
 ## Notes
 
-- ถ้ามีการปิด decision ใหม่ ให้ update `doc/ai/` ก่อนเสมอ
-- ถ้ามีการปรับ pricing/limits ให้ update `doc/ai/SB-00_Third_Party_Pricing_Baseline_v1_1.md` ก่อน
-- ตัว generator จะจัดหน้าปก สารบัญ และ footer เลขหน้าให้อัตโนมัติในชุด `doc/human/`
+- Update `doc/ai/ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md` first when company-level narrative changes
+- Update `doc/ai/SB-00_Third_Party_Pricing_Baseline_v1_1.md` first when pricing or limits change
+- Update `doc/ai/` before rebuilding `doc/human/`

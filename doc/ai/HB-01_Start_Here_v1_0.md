@@ -1,53 +1,91 @@
-# SB-00 — Start Here
+# ArayaShiki Lab — Start Here
 
-**Version 1.0 | April 2026 | Human-friendly entry point | Last synced: 2026-04-03**
+**Version 1.1 | April 2026 | Human-friendly entry point | Last synced: 2026-04-09**
 
 ---
 
-## What This Project Is
+## What This Repository Is
 
-SB-00 คือระบบ IoT สำหรับติดตั้งในบ่อ/ฟาร์ม เพื่อตรวจวัด `temperature + turbidity + GPS + battery` แล้วส่งข้อมูลผ่าน `4G / MQTT` ไปที่ backend และ dashboard
+This repository now sits inside the broader `ArayaShiki Lab` company story.
+
+At the company level, ArayaShiki Lab is building a `smart hatchery and aquaculture ecosystem` that connects:
+
+- records entered by people
+- data from boards and sensors
+- monitoring and alerts
+- future automation and process orchestration
+
+Within that broader direction, the current repository still contains the `SB-00` pilot path and related dashboard, backend, firmware, and operations work.
+
+## What You Should Understand First
+
+There are now two reading layers:
+
+1. `company layer`
+2. `product / implementation layer`
+
+If you need company framing first, read:
+
+1. `ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md`
+2. `HB-05_Business_And_Launch_v1_0.md`
+
+If you need implementation detail first, continue into the `SB-00_*` documents.
+
+## What SB-00 Still Means
+
+`SB-00` remains the active pilot-ready IoT monitoring path in this repository.
+
+It still covers:
+
+- field telemetry
+- backend and dashboard visibility
+- pilot onboarding through `QR + Web/PWA`
+- the current hardware and battery strategy
+
+What changed is the framing:
+
+- `SB-00` is no longer the whole company story
+- it is one important path inside the broader ecosystem
 
 ## What Is Already Locked
 
-| เรื่อง | Baseline ที่ใช้ |
+| Area | Locked baseline |
 | --- | --- |
-| Provisioning | ใช้ `QR + Web/PWA` flow เดียว |
-| GPS | ใช้ `L76K` เป็น default |
-| 4G production | ใช้ `A7670E` เป็น default |
-| Battery platform | ใช้ `core module เดียว + 2 battery variants` |
-| Variants | `Standard` และ `Long-Life` |
-| Standard target | `>= 12 วัน @ 5 นาที` |
-| Long-Life direction | `>= 30 วัน @ 5 นาที` หรือ `>= 60 วัน @ 10 นาที` |
+| Provisioning | `QR + Web/PWA` flow only |
+| GPS | `L76K` as default |
+| 4G production | `A7670E` as default |
+| Battery platform | one shared core module with `2 battery variants` |
+| Variants | `Standard` and `Long-Life` |
+| Standard target | `>= 12 days @ 5-minute interval` |
+| Long-Life direction | `>= 30 days @ 5-minute interval` or `>= 60 days @ 10-minute interval` |
 
 ## Team Split
 
-| คน | โฟกัส |
+| Person | Focus |
 | --- | --- |
-| `พล` | firmware, backend, dashboard, MQTT, OTA, battery profile |
-| `เอ` | enclosure, hardware, battery module, waterproofing, assembly |
+| `Pon` | firmware, backend, dashboard, MQTT, OTA, battery profile |
+| `A` | enclosure, hardware, battery module, waterproofing, assembly |
 
 ## What We Are Doing Next
 
-ตอนนี้ทีมไม่ได้อยู่ในช่วงเก็บเอกสารแล้ว แต่กำลังจะเริ่มงาน `EX-01`, `EX-08A`, `EX-08`, และ `EX-17A`
+Current priorities are still implementation-driven:
 
-สิ่งที่ต้องทำก่อนคือ:
-
-1. ตั้ง workspace ให้พร้อม
-2. ล็อก battery platform interface
-3. ออกแบบ enclosure และ battery bay สำหรับ `Standard` กับ `Long-Life`
+1. set up and stabilize the workspace
+2. lock the battery platform interface
+3. push the `SB-00` path forward as the current monitoring baseline
 
 ## The 5 Documents You Actually Need
 
-1. ไฟล์นี้ — ใช้เริ่มต้น
-2. `Action Plan` — ดูว่าใครทำอะไรต่อ
-3. `System Design` — ดูภาพระบบรวมและ battery platform
-4. `Cost and Procurement` — ดูต้นทุนและของที่ต้องซื้อ
-5. `Business and Launch` — ดู SKU, pilot, และแผนขาย
+1. this file
+2. `ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md`
+3. `HB-05_Business_And_Launch_v1_0.md`
+4. `SB-00_Master_Assumptions_v1_1.md`
+5. `SB-00_Execution_Task_List_v1_1.md`
 
 ## Non-Negotiables
 
-1. ฝั่งลูกค้าใช้ provisioning flow เดียว
-2. ห้ามแยก firmware เป็นคนละสายตาม battery variant
-3. `Long-Life` เป็น service-upgradeable ไม่ใช่ให้ลูกค้าเปิดเอง
-4. `Standard` ยังเป็นรุ่นหลักของ pilot
+1. do not collapse the company story back into a single-product-only story
+2. customer provisioning still uses one `QR + Web/PWA` flow
+3. do not split firmware by battery variant
+4. `Long-Life` remains service-upgradeable, not customer-openable
+5. `Standard` remains the main pilot baseline

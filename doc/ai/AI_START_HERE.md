@@ -42,6 +42,7 @@ It does not replace detailed specs or task-level documents.
 
 ## Dependencies
 
+- [ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md](./ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md)
 - [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
 - [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
 - [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
@@ -55,7 +56,16 @@ It does not replace detailed specs or task-level documents.
 
 ## Project Summary
 
-This repository plans a pilot-ready IoT buoy system that can:
+This repository now sits inside the broader `ArayaShiki Lab` ecosystem narrative.
+
+At the company level, ArayaShiki Lab is building a smart hatchery and aquaculture ecosystem that connects:
+
+- human operational records
+- board and sensor data
+- monitoring
+- future automation
+
+Within that broader direction, this repository currently plans and implements a pilot-ready IoT buoy system that can:
 
 - read temperature, turbidity, GPS, and battery data
 - send telemetry over `MQTT + 4G + TLS`
@@ -86,18 +96,20 @@ At the time of writing:
 
 ## Reading Order For AI Agents
 
-1. [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
-2. [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
-3. [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
-4. [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
-5. [IMPLEMENTATION_PLAYBOOK_v1_0.md](./IMPLEMENTATION_PLAYBOOK_v1_0.md)
-6. [EX-01_BOOTSTRAP_SPEC_v1_0.md](./EX-01_BOOTSTRAP_SPEC_v1_0.md)
-7. relevant specs such as backend, firmware, battery, procurement, or roadmap docs
+1. [ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md](./ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md)
+2. [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
+3. [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
+4. [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
+5. [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md)
+6. [IMPLEMENTATION_PLAYBOOK_v1_0.md](./IMPLEMENTATION_PLAYBOOK_v1_0.md)
+7. [EX-01_BOOTSTRAP_SPEC_v1_0.md](./EX-01_BOOTSTRAP_SPEC_v1_0.md)
+8. relevant specs such as backend, firmware, battery, procurement, or roadmap docs
 
 ## Source Map
 
 | Need | Primary file | Notes |
 | --- | --- | --- |
+| company positioning | [ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md](./ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md) | use when writing landing copy, company overview, or package framing |
 | shared baseline | [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md) | use when deciding what is in or out of scope |
 | locked decisions | [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md) | use before changing customer flow, battery strategy, or enclosure assumptions |
 | execution order | [SB-00_Execution_Task_List_v1_1.md](./SB-00_Execution_Task_List_v1_1.md) | use for owner, dependency, and done criteria |
@@ -121,6 +133,7 @@ At the time of writing:
 
 ## Rules For Implementation Agents
 
+- Do not collapse the repository story back into a single-product-only narrative when editing company-facing copy.
 - Do not invent an alternate provisioning path.
 - Do not assume BLE is part of customer flow.
 - Do not assume only one battery variant exists.
@@ -152,6 +165,7 @@ Code implementation can start when all of the following are true:
 ## Related Docs
 
 - [README.md](./README.md)
+- [ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md](./ARAYASHIKI_ECOSYSTEM_NARRATIVE_v1_0.md)
 - [AI_DOC_STANDARD.md](./AI_DOC_STANDARD.md)
 - [SB-00_Master_Assumptions_v1_1.md](./SB-00_Master_Assumptions_v1_1.md)
 - [SB-00_Decision_Register_v1_1.md](./SB-00_Decision_Register_v1_1.md)
