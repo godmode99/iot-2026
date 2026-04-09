@@ -1,5 +1,7 @@
 :root {
   color-scheme: light;
+  --font-body: "Noto Sans Thai", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-brand: "Sora", "Aptos", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --bg: #F5F8FB;
   --bg-strong: #E7ECF3;
   --panel: rgba(255, 255, 255, 0.88);
@@ -31,13 +33,7 @@ body {
     radial-gradient(circle at top right, rgba(16, 24, 40, 0.12), transparent 34rem),
     linear-gradient(135deg, var(--bg) 0%, #FFFFFF 58%, #E7ECF3 100%);
   color: var(--ink);
-  font-family:
-    "Noto Sans Thai",
-    "Noto Sans Myanmar",
-    "Segoe UI",
-    ui-sans-serif,
-    system-ui,
-    sans-serif;
+  font-family: var(--font-body);
 }
 
 body::before {
@@ -98,9 +94,13 @@ select {
 }
 
 .brand-wordmark-main {
+  font-family: var(--font-brand);
   font-size: clamp(1.26rem, 1.95vw, 1.6rem);
-  line-height: 0.94;
-  letter-spacing: -0.07em;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.09em;
+  text-transform: none;
+  font-feature-settings: "kern" 1;
 }
 
 .brand-wordmark-sep {
@@ -111,11 +111,12 @@ select {
 }
 
 .brand-wordmark-sub {
-  font-size: 0.76rem;
+  font-family: var(--font-brand);
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(16, 24, 40, 0.64);
+  color: rgba(16, 24, 40, 0.6);
 }
 
 .brand-mark {

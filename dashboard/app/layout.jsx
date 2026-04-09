@@ -1,4 +1,19 @@
+import { Noto_Sans_Thai, Sora } from "next/font/google";
 import "./globals.css";
+
+const bodyFont = Noto_Sans_Thai({
+  variable: "--font-body",
+  subsets: ["thai"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap"
+});
+
+const brandFont = Sora({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  display: "swap"
+});
 
 export const metadata = {
   metadataBase: new URL("https://iot-2026-dashboard.vercel.app"),
@@ -19,7 +34,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="th">
-      <body>{children}</body>
+      <body className={`${bodyFont.variable} ${brandFont.variable}`}>{children}</body>
     </html>
   );
 }
