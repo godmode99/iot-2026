@@ -5,7 +5,7 @@ import { SubmitButton } from "@/components/submit-button.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 import { requireUser } from "@/lib/auth/guards.js";
 import { loadFarmSettings } from "@/lib/data/farm-settings.js";
-import { assignReseller, createMemberInvite, updateOwnNotificationPreference } from "./actions.js";
+import { assignReseller, createMemberInvite, createMissingRecordAlertAction, updateOwnNotificationPreference } from "./actions.js";
 
 export const dynamic = "force-dynamic";
 
@@ -204,10 +204,23 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                   <h3>{t(messages, "farmSettings.templatesTitle", "Available templates")}</h3>
                   <p>{settings.summary.metrics.templateCount}</p>
                 </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.templatesHealthyTitle", "Templates current")}</h3>
+                  <p>{settings.summary.metrics.healthyTemplateCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.templatesAttentionTitle", "Templates needing attention")}</h3>
+                  <p>{settings.summary.metrics.attentionTemplateCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "farmSettings.templatesRecoveredTitle", "Recovered this week")}</h3>
+                  <p>{settings.summary.metrics.resolvedExpectationCount}</p>
+                </article>
               </div>
               <div className="record-meta-list">
                 <span>{t(messages, "farmSettings.alertSourceRecord", "Record-driven")}: {settings.summary.metrics.bySource.record}</span>
                 <span>{t(messages, "farmSettings.alertSourceTelemetry", "Telemetry-driven")}: {settings.summary.metrics.bySource.telemetry}</span>
+                <span>{t(messages, "farmSettings.alertSourceExpectation", "Expectation-driven")}: {settings.summary.metrics.bySource.expectation}</span>
                 <span>{t(messages, "farmSettings.alertSourceSystem", "System")}: {settings.summary.metrics.bySource.system}</span>
               </div>
             </Panel>
@@ -278,6 +291,61 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                   ))}
                 </ul>
               ) : <EmptyPanel>{t(messages, "farmSettings.noTemplates", "No active record templates are available to this farm yet.")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.expectationsEyebrow", "Record expectations")}
+              title={t(messages, "farmSettings.expectationsTitle", "Which templates have fresh records")}
+              body={t(messages, "farmSettings.expectationsBody", "Use this check to see whether each available template already has a recent record in the last 7 days.")}
+            >
+              {settings.summary.expectations.length ? (
+                <ul className="status-list">
+                  {settings.summary.expectations.map((item) => (
+                    <li className="mobile-list-row" key={item.template_id}>
+                      <span>
+                        <strong>{item.template_name}</strong>
+                        <span className="list-meta">{item.template_code}</span>
+                        <span className="list-meta">
+                          {item.latest_recorded_for
+                            ? `${t(messages, "farmSettings.expectationsLastRecord", "Last record")}: ${formatDate(item.latest_recorded_for)}`
+                            : t(messages, "farmSettings.expectationsMissing", "No recent record found yet.")}
+                        </span>
+                      </span>
+                      <span className="pill-row">
+                        <span className="pill">
+                          {item.status === "healthy"
+                            ? t(messages, "farmSettings.expectationsHealthy", "Current")
+                            : t(messages, "farmSettings.expectationsAttention", "Needs attention")}
+                        </span>
+                        {item.latest_record_id ? (
+                          <Link className="button-secondary" href={`/records/${item.latest_record_id}`}>
+                            {t(messages, "farmSettings.expectationsOpenRecord", "Open record")}
+                          </Link>
+                        ) : item.existing_alert_id ? (
+                          <Link className="button-secondary" href={`/alerts/${item.existing_alert_id}`}>
+                            {t(messages, "farmSettings.expectationsOpenAlert", "Open alert")}
+                          </Link>
+                        ) : (
+                          <>
+                            <Link className="button-secondary" href="/records/new">
+                              {t(messages, "farmSettings.expectationsCreateRecord", "Create record")}
+                            </Link>
+                            <form action={createMissingRecordAlertAction}>
+                              <input type="hidden" name="farm_id" value={farmId} />
+                              <input type="hidden" name="template_id" value={item.template_id} />
+                              <input type="hidden" name="template_code" value={item.template_code} />
+                              <input type="hidden" name="template_name" value={item.template_name} />
+                              <SubmitButton className="button-secondary" pendingLabel={t(messages, "farmSettings.expectationsCreateAlertPending", "Creating alert...")}>
+                                {t(messages, "farmSettings.expectationsCreateAlert", "Create alert")}
+                              </SubmitButton>
+                            </form>
+                          </>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <EmptyPanel>{t(messages, "farmSettings.noExpectations", "No template expectation checks are available yet.")}</EmptyPanel>}
             </Panel>
 
             <Panel

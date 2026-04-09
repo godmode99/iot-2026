@@ -2059,6 +2059,51 @@ h2 {
     var(--panel-solid);
 }
 
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.1);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.ops-report-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.ops-report-table th,
+.ops-report-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.08);
+  vertical-align: middle;
+}
+
+.ops-report-table th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(245, 248, 251, 0.84);
+}
+
+.ops-report-table td {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.ops-report-table tbody tr:hover {
+  background: rgba(232, 238, 246, 0.56);
+}
+
+.ops-report-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .history-dot {
   width: 100%;
   min-width: 5px;

@@ -10,6 +10,7 @@ const EMPTY_CUSTOMER_ALERTS = {
     bySource: {
       record: 0,
       telemetry: 0,
+      expectation: 0,
       system: 0
     },
     topTypes: []
@@ -156,7 +157,8 @@ export async function loadCustomerAlerts(filters = {}) {
       bySource: {
         record: normalizedAlerts.filter((alert) => alert.source === "record_detail").length,
         telemetry: normalizedAlerts.filter((alert) => alert.source === "device_telemetry").length,
-        system: normalizedAlerts.filter((alert) => !["record_detail", "device_telemetry"].includes(alert.source)).length
+        expectation: normalizedAlerts.filter((alert) => alert.source === "record_expectation").length,
+        system: normalizedAlerts.filter((alert) => !["record_detail", "device_telemetry", "record_expectation"].includes(alert.source)).length
       },
       topTypes: Object.entries(
         normalizedAlerts.reduce((accumulator, alert) => {
@@ -215,9 +217,13 @@ export async function loadCustomerAlertDetail({ alertId }) {
 
   let relatedRecords = [];
   let sourceRecord = null;
+  let sourceExpectation = null;
   let recordsError = null;
 
   const sourceRecordId = normalizedAlert.details_json?.source_record_id;
+  const sourceTemplateCode = normalizedAlert.details_json?.source_template_code ?? null;
+  const sourceTemplateName = normalizedAlert.details_json?.source_template_name ?? null;
+  const expectedWindowDays = normalizedAlert.details_json?.expected_window_days ?? null;
 
   if (sourceRecordId) {
     const sourceRecordResult = await supabase
@@ -259,6 +265,15 @@ export async function loadCustomerAlertDetail({ alertId }) {
     }
   }
 
+  if (!sourceRecord && normalizedAlert.source === "record_expectation") {
+    sourceExpectation = {
+      templateCode: sourceTemplateCode,
+      templateName: sourceTemplateName,
+      expectedWindowDays,
+      note: normalizedAlert.details_json?.note ?? null
+    };
+  }
+
   if (normalizedAlert.farm_id) {
     const recordsResult = await supabase
       .from("operational_records")
@@ -283,6 +298,7 @@ export async function loadCustomerAlertDetail({ alertId }) {
     device: normalizedAlert.devices ?? null,
     farm: normalizedAlert.farms ?? null,
     sourceRecord,
+    sourceExpectation,
     relatedRecords,
     permissions: {
       canManageAlerts: permissionResult.data === true

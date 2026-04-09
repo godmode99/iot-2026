@@ -45,6 +45,10 @@ function sourceLabel(value, messages) {
     return t(messages, "alertDetailPage.sources.telemetry", "Telemetry-driven");
   }
 
+  if (value === "record_expectation") {
+    return t(messages, "alertDetailPage.sources.expectation", "Expectation-driven");
+  }
+
   return t(messages, "alertDetailPage.sources.system", "System");
 }
 
@@ -72,6 +76,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
   const messages = await getMessages();
   const { alertId } = await params;
   const query = await searchParams;
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   await requireUser({ returnUrl: `/alerts/${alertId}` });
   const detail = await loadCustomerAlertDetail({ alertId });
@@ -95,7 +100,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
         </div>
         {detail.alert ? (
           <div className="inline-actions">
-            <Link className="button-secondary" href="/alerts">{t(messages, "alertDetailPage.backAction", "Back to alerts")}</Link>
+            <Link className="button-secondary" href={returnTo || "/alerts"}>{returnTo ? t(messages, "alertDetailPage.backToReportAction", "Back to report") : t(messages, "alertDetailPage.backAction", "Back to alerts")}</Link>
             {detail.device?.device_id ? <Link className="button" href={`/devices/${detail.device.device_id}`}>{t(messages, "alertDetailPage.deviceAction", "View device")}</Link> : null}
           </div>
         ) : null}
@@ -163,6 +168,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
                 actions={["acknowledge", "suppress", "resolve"]}
                 alertId={detail.alert.id}
                 deviceId={detail.device?.device_id ?? ""}
+                hiddenValues={returnTo ? { return_to: returnTo } : undefined}
                 labels={{
                   actionLabels: {
                     acknowledge: t(messages, "deviceDetail.acknowledgeAction"),
@@ -224,8 +230,38 @@ export default async function AlertDetailPage({ params, searchParams }) {
                   </div>
                 ) : null}
                 <div className="action-row">
-                  <Link className="button-secondary" href={`/records/${detail.sourceRecord.id}`}>
+                  <Link className="button-secondary" href={returnTo ? `/records/${detail.sourceRecord.id}?return_to=${encodeURIComponent(returnTo)}` : `/records/${detail.sourceRecord.id}`}>
                     {t(messages, "alertDetailPage.sourceAction", "Open source record")}
+                  </Link>
+                </div>
+              </>
+            ) : detail.sourceExpectation ? (
+              <>
+                <div className="records-field-group-grid">
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.expectationCards.template", "Expected template")}</h3>
+                    <p>{detail.sourceExpectation.templateName ?? detail.sourceExpectation.templateCode ?? "N/A"}</p>
+                  </article>
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.expectationCards.window", "Expected window")}</h3>
+                    <p>
+                      {detail.sourceExpectation.expectedWindowDays
+                        ? `${detail.sourceExpectation.expectedWindowDays} ${t(messages, "alertDetailPage.expectationCards.days", "days")}`
+                        : t(messages, "alertDetailPage.expectationCards.unspecified", "Not specified")}
+                    </p>
+                  </article>
+                  <article className="records-field-group-card">
+                    <h3>{t(messages, "alertDetailPage.expectationCards.type", "Expectation type")}</h3>
+                    <p>{t(messages, "alertDetailPage.sources.expectation", "Expectation-driven")}</p>
+                  </article>
+                </div>
+                <article className="record-summary-card">
+                  <span className="eyebrow">{t(messages, "alertDetailPage.expectationNoteEyebrow", "Expectation summary")}</span>
+                  <p>{detail.sourceExpectation.note ?? t(messages, "alertDetailPage.expectationNoteFallback", "A recent record is expected for this template, but no fresh record was found in the configured window.")}</p>
+                </article>
+                <div className="action-row">
+                  <Link className="button-secondary" href={returnTo ? `/records/new?return_to=${encodeURIComponent(returnTo)}` : `/records/new`}>
+                    {t(messages, "alertDetailPage.expectationAction", "Create record")}
                   </Link>
                 </div>
               </>
@@ -234,7 +270,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
                 <div>
                   <p className="eyebrow">{t(messages, "alertDetailPage.sourceEmptyEyebrow", "No source record")}</p>
                   <h2>{t(messages, "alertDetailPage.sourceEmptyTitle", "This alert was not created from an operational record")}</h2>
-                  <p className="muted">{t(messages, "alertDetailPage.sourceEmptyBody", "Telemetry, device logic, or other workflows can still create alerts without a record as the source.")}</p>
+                  <p className="muted">{t(messages, "alertDetailPage.sourceEmptyBody", "Telemetry, expectation checks, device logic, or other workflows can still create alerts without a record as the source.")}</p>
                 </div>
               </div>
             )}
@@ -252,7 +288,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
                 {detail.relatedRecords.map((record) => (
                   <li className="mobile-list-row" key={record.id}>
                     <span>
-                      <Link href={`/records/${record.id}`}>{record.record_templates?.name ?? "Operational record"}</Link>
+                      <Link href={returnTo ? `/records/${record.id}?return_to=${encodeURIComponent(returnTo)}` : `/records/${record.id}`}>{record.record_templates?.name ?? "Operational record"}</Link>
                       <span className="list-meta">
                         {formatDate(record.recorded_for_date ?? record.created_at)} · {record.user_profiles?.display_name ?? "Unknown"}
                       </span>
@@ -270,7 +306,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
                   <p className="muted">{t(messages, "alertDetailPage.recordsEmptyBody", "Create structured records to add more on-the-ground context when alerts open.")}</p>
                 </div>
                 <div className="action-row">
-                  <Link className="button" href="/records/new">{t(messages, "alertDetailPage.recordsAction", "Create record")}</Link>
+                  <Link className="button" href={returnTo ? `/records/new?return_to=${encodeURIComponent(returnTo)}` : `/records/new`}>{t(messages, "alertDetailPage.recordsAction", "Create record")}</Link>
                 </div>
               </div>
             )}
@@ -284,7 +320,7 @@ export default async function AlertDetailPage({ params, searchParams }) {
             <p className="muted">{t(messages, "alertDetailPage.missingBody", "This alert is not visible in the current workspace.")}</p>
           </div>
           <div className="action-row">
-            <Link className="button" href="/alerts">{t(messages, "alertDetailPage.backAction", "Back to alerts")}</Link>
+            <Link className="button" href={returnTo || "/alerts"}>{returnTo ? t(messages, "alertDetailPage.backToReportAction", "Back to report") : t(messages, "alertDetailPage.backAction", "Back to alerts")}</Link>
           </div>
         </section>
       )}

@@ -17,6 +17,7 @@ export function DeviceAlertActions({
   alertId,
   deviceId,
   actions,
+  hiddenValues,
   labels
 }) {
   const formRef = useRef(null);
@@ -53,6 +54,9 @@ export function DeviceAlertActions({
         <input type="hidden" name="device_id" value={deviceId} />
         <input type="hidden" name="alert_id" value={alertId} />
         <input name="action" ref={actionInputRef} type="hidden" />
+        {Object.entries(hiddenValues ?? {}).map(([key, value]) => (
+          <input key={key} name={key} type="hidden" value={String(value ?? "")} />
+        ))}
         {actions.map((nextAction) => (
           <button
             className="button-secondary"

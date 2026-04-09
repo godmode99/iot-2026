@@ -19,15 +19,20 @@ const EMPTY_FARM_SETTINGS = {
     openAlerts: [],
     recentRecords: [],
     templates: [],
+    expectations: [],
     metrics: {
       deviceCount: 0,
       openAlertCount: 0,
       criticalAlertCount: 0,
       recordCount: 0,
       templateCount: 0,
+      healthyTemplateCount: 0,
+      attentionTemplateCount: 0,
+      resolvedExpectationCount: 0,
       bySource: {
         record: 0,
         telemetry: 0,
+        expectation: 0,
         system: 0
       }
     }
@@ -47,6 +52,47 @@ function normalizeAdminResult(name, payload, resultKey) {
     data: payload.result?.[resultKey] ?? [],
     error: null
   };
+}
+
+function toDateValue(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function daysSince(value) {
+  const target = toDateValue(value);
+  if (!target) {
+    return null;
+  }
+
+  const now = new Date();
+  const diffMs = now.getTime() - target.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function buildTemplateExpectations(templates = [], recentRecords = []) {
+  return templates.map((template) => {
+    const matchingRecords = recentRecords.filter((record) => record.record_templates?.code === template.code);
+    const latestRecord = matchingRecords[0] ?? null;
+    const latestRecordedFor = latestRecord?.recorded_for_date ?? latestRecord?.created_at ?? null;
+    const latestAgeDays = daysSince(latestRecordedFor);
+    const status = latestRecord && latestAgeDays !== null && latestAgeDays <= 7 ? "healthy" : "attention";
+
+    return {
+      template_id: template.id,
+      template_name: template.name,
+      template_code: template.code,
+      field_count: template.field_count ?? 0,
+      latest_record_id: latestRecord?.id ?? null,
+      latest_recorded_for: latestRecordedFor,
+      latest_record_status: latestRecord?.record_status ?? null,
+      status
+    };
+  });
 }
 
 export async function loadFarmSettings({ farmId, actorUserId }) {
@@ -77,6 +123,8 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
   const [
     devicesResult,
     alertsResult,
+    expectationAlertsResult,
+    resolvedExpectationAlertsResult,
     recordsResult,
     templatesResult,
     membersResult,
@@ -97,6 +145,23 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
       .eq("status", "open")
       .order("opened_at", { ascending: false })
       .limit(12),
+    supabase
+      .from("alerts")
+      .select("id,alert_type,severity,status,opened_at,details_json")
+      .eq("farm_id", farmId)
+      .eq("status", "open")
+      .eq("alert_type", "missing_record")
+      .order("opened_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("alerts")
+      .select("id,alert_type,severity,status,opened_at,resolved_at,details_json")
+      .eq("farm_id", farmId)
+      .eq("status", "resolved")
+      .eq("alert_type", "missing_record")
+      .gte("resolved_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+      .order("resolved_at", { ascending: false })
+      .limit(20),
     supabase
       .from("operational_records")
       .select("id,record_status,recorded_for_date,notes_summary,created_at,record_templates(name,code),user_profiles(display_name)")
@@ -135,6 +200,17 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
     })),
     error: recordsResult.error ? `records: ${recordsResult.error.message}` : null
   };
+  const expectationAlerts = {
+    data: (expectationAlertsResult.data ?? []).map((alert) => ({
+      ...alert,
+      source_template_code: alert?.details_json?.source_template_code ?? null
+    })),
+    error: expectationAlertsResult.error ? `expectation_alerts: ${expectationAlertsResult.error.message}` : null
+  };
+  const resolvedExpectationAlerts = {
+    data: resolvedExpectationAlertsResult.data ?? [],
+    error: resolvedExpectationAlertsResult.error ? `resolved_expectation_alerts: ${resolvedExpectationAlertsResult.error.message}` : null
+  };
   const templates = {
     data: (templatesResult.data ?? [])
       .map((template) => {
@@ -156,6 +232,13 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
   const resellers = canManage ? normalizeAdminResult("resellers", resellersResult, "assignments") : { data: [], error: null };
   const preferences = canManage ? normalizeAdminResult("notification_preferences", preferencesResult, "preferences") : { data: [], error: null };
   const audit = canManage ? normalizeAdminResult("audit", auditResult, "audit") : { data: [], error: null };
+  const expectations = buildTemplateExpectations(templates.data, records.data).map((item) => {
+    const existingAlert = expectationAlerts.data.find((alert) => alert.source_template_code === item.template_code) ?? null;
+    return {
+      ...item,
+      existing_alert_id: existingAlert?.id ?? null
+    };
+  });
 
   return {
     farm: farmResult.data,
@@ -169,19 +252,24 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
       openAlerts: alerts.data,
       recentRecords: records.data,
       templates: templates.data,
+      expectations,
       metrics: {
         deviceCount: devices.data.length,
         openAlertCount: alerts.data.length,
         criticalAlertCount: alerts.data.filter((alert) => alert.severity === "critical").length,
         recordCount: records.data.length,
         templateCount: templates.data.length,
+        healthyTemplateCount: expectations.filter((item) => item.status === "healthy").length,
+        attentionTemplateCount: expectations.filter((item) => item.status === "attention").length,
+        resolvedExpectationCount: resolvedExpectationAlerts.data.length,
         bySource: {
           record: alerts.data.filter((alert) => alert.source === "record_detail").length,
           telemetry: alerts.data.filter((alert) => alert.source === "device_telemetry").length,
-          system: alerts.data.filter((alert) => !["record_detail", "device_telemetry"].includes(alert.source)).length
+          expectation: alerts.data.filter((alert) => alert.source === "record_expectation").length,
+          system: alerts.data.filter((alert) => !["record_detail", "device_telemetry", "record_expectation"].includes(alert.source)).length
         }
       }
     },
-    errors: [canManageResult.error?.message, devices.error, alerts.error, records.error, templates.error, members.error, resellers.error, preferences.error, audit.error].filter(Boolean)
+    errors: [canManageResult.error?.message, devices.error, alerts.error, expectationAlerts.error, resolvedExpectationAlerts.error, records.error, templates.error, members.error, resellers.error, preferences.error, audit.error].filter(Boolean)
   };
 }

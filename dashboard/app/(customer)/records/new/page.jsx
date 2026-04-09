@@ -26,9 +26,15 @@ export default async function NewRecordPage({ searchParams }) {
   const messages = await getMessages();
   await requireUser({ returnUrl: "/records/new" });
   const query = await searchParams;
-  const context = await loadOperationalRecordCreateContext();
+  const context = await loadOperationalRecordCreateContext({
+    farmId: typeof query?.farmId === "string" ? query.farmId : "",
+    templateId: typeof query?.templateId === "string" ? query.templateId : "",
+    recordedForDate: typeof query?.recorded_for_date === "string" ? query.recorded_for_date : "",
+    summary: typeof query?.summary === "string" ? query.summary : ""
+  });
   const feedback = typeof query?.error === "string" ? query.error : "";
   const feedbackMessage = resolveRecordFeedback(messages, feedback);
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   return (
     <AppShell currentPath="/records" ariaLabel="Record creation navigation">
@@ -82,6 +88,7 @@ export default async function NewRecordPage({ searchParams }) {
             context={context}
             draftLabel={t(messages, "recordCreatePage.saveDraftAction", "Save draft")}
             draftPendingLabel={t(messages, "recordCreatePage.saveDraftPendingAction", "Saving draft...")}
+            hiddenValues={returnTo ? { return_to: returnTo } : {}}
             messages={messages}
             note={t(messages, "recordCreatePage.nextStepNote")}
             submitLabel={t(messages, "recordCreatePage.submitAction")}

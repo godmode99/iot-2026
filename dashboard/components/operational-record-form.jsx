@@ -79,7 +79,7 @@ export function OperationalRecordForm({
 }) {
   const fieldValues = context.fieldValues ?? {};
   const [activeTemplateId, setActiveTemplateId] = useState(context.record?.template_id ?? context.defaultTemplateId ?? "");
-  const [selectedFarmId, setSelectedFarmId] = useState(context.record?.farm_id ?? "");
+  const [selectedFarmId, setSelectedFarmId] = useState(context.record?.farm_id ?? context.defaultFarmId ?? "");
   const availableTemplates = useMemo(
     () => (context.templates ?? []).filter((template) => isTemplateAvailableForFarm(template, selectedFarmId)),
     [context.templates, selectedFarmId]
@@ -100,9 +100,17 @@ export function OperationalRecordForm({
       <label>
         {message(messages, "recordCreatePage.fields.farm", "Farm")}
         <select
-          defaultValue={context.record?.farm_id ?? ""}
+          defaultValue={context.record?.farm_id ?? context.defaultFarmId ?? ""}
           name="farm_id"
-          onChange={(event) => setSelectedFarmId(event.target.value)}
+          onChange={(event) => {
+            const nextFarmId = event.target.value;
+            setSelectedFarmId(nextFarmId);
+
+            const nextTemplates = (context.templates ?? []).filter((template) => isTemplateAvailableForFarm(template, nextFarmId));
+            if (!nextTemplates.some((template) => template.id === activeTemplateId)) {
+              setActiveTemplateId(nextTemplates[0]?.id ?? "");
+            }
+          }}
           required
         >
           <option disabled value="">{message(messages, "recordCreatePage.fields.farmPlaceholder", "Choose a farm")}</option>
@@ -115,7 +123,7 @@ export function OperationalRecordForm({
       <label>
         {message(messages, "recordCreatePage.fields.template", "Record template")}
         <select
-          defaultValue={context.record?.template_id ?? context.defaultTemplateId ?? ""}
+          value={activeTemplateId}
           name="template_id"
           onChange={(event) => setActiveTemplateId(event.target.value)}
           required
@@ -127,19 +135,19 @@ export function OperationalRecordForm({
         </select>
       </label>
 
-      {selectedFarmId && !availableTemplates.length ? (
-        <p className="muted">{message(messages, "recordCreatePage.noFarmTemplates", "No active templates are assigned to this farm yet.")}</p>
-      ) : null}
+        {selectedFarmId && !availableTemplates.length ? (
+          <p className="muted">{message(messages, "recordCreatePage.noFarmTemplates", "No active templates are assigned to this farm yet.")}</p>
+        ) : null}
 
       <label>
         {message(messages, "recordCreatePage.fields.recordedDate", "Recorded for date")}
-        <input defaultValue={context.record?.recorded_for_date ?? ""} name="recorded_for_date" required type="date" />
+        <input defaultValue={context.record?.recorded_for_date ?? context.defaultRecordedForDate ?? ""} name="recorded_for_date" required type="date" />
       </label>
 
       <label>
         {message(messages, "recordCreatePage.fields.summary", "Summary notes")}
         <textarea
-          defaultValue={context.record?.notes_summary ?? ""}
+          defaultValue={context.record?.notes_summary ?? context.defaultSummary ?? ""}
           name="notes_summary"
           rows={4}
           placeholder={message(

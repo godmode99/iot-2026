@@ -243,6 +243,7 @@ export default async function RecordDetailPage({ params, searchParams }) {
   const messages = await getMessages();
   const { recordId } = await params;
   const query = await searchParams;
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   await requireUser({ returnUrl: `/records/${recordId}` });
   const detail = await loadOperationalRecordDetail({ recordId });
@@ -273,8 +274,8 @@ export default async function RecordDetailPage({ params, searchParams }) {
         </div>
         {detail.record ? (
           <div className="inline-actions">
-            <Link className="button-secondary" href="/records">{t(messages, "recordDetailPage.backAction", "Back to records")}</Link>
-            <Link className="button" href={`/records/${recordId}/edit`}>{t(messages, "recordDetailPage.editAction", "Edit record")}</Link>
+            <Link className="button-secondary" href={returnTo || "/records"}>{returnTo ? t(messages, "recordDetailPage.backToReportAction", "Back to report") : t(messages, "recordDetailPage.backAction", "Back to records")}</Link>
+            <Link className="button" href={returnTo ? `/records/${recordId}/edit?return_to=${encodeURIComponent(returnTo)}` : `/records/${recordId}/edit`}>{t(messages, "recordDetailPage.editAction", "Edit record")}</Link>
           </div>
         ) : null}
       </section>
@@ -399,7 +400,7 @@ export default async function RecordDetailPage({ params, searchParams }) {
                   <p className="muted">{t(messages, "recordDetailPage.entriesEmptyBody", "Open the edit flow and add measurements, checklist status, or field notes.")}</p>
                 </div>
                 <div className="action-row">
-                  <Link className="button" href={`/records/${recordId}/edit`}>{t(messages, "recordDetailPage.editAction", "Edit record")}</Link>
+                  <Link className="button" href={returnTo ? `/records/${recordId}/edit?return_to=${encodeURIComponent(returnTo)}` : `/records/${recordId}/edit`}>{t(messages, "recordDetailPage.editAction", "Edit record")}</Link>
                 </div>
               </div>
             )}

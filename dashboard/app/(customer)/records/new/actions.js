@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/guards.js";
 import { withParams } from "@/lib/auth/urls.js";
+import { resolveMissingRecordAlertsForTemplate } from "@/lib/backend/device-ops.js";
 import { createSupabaseServerClient } from "@/lib/supabase/server.js";
 
 function text(value, max = 2000) {
@@ -29,6 +30,15 @@ function optionalBoolean(value) {
 
 function normalizeRecordStatus(value) {
   return value === "draft" ? "draft" : "submitted";
+}
+
+function safeReturnTo(value) {
+  const normalized = String(value ?? "").trim();
+  if (!normalized.startsWith("/ops")) {
+    return "";
+  }
+
+  return normalized;
 }
 
 function parseTemplateFieldValue(formData, field) {
@@ -91,6 +101,7 @@ export async function createOperationalRecord(formData) {
   const recordedForDate = text(formData.get("recorded_for_date"), 40);
   const notesSummary = text(formData.get("notes_summary"), 500);
   const recordStatus = normalizeRecordStatus(text(formData.get("record_status"), 20));
+  const returnTo = safeReturnTo(formData.get("return_to"));
 
   if (!farmId || !templateId || !recordedForDate) {
     redirect(withParams("/records/new", { error: "missing_required_fields" }));
@@ -103,7 +114,7 @@ export async function createOperationalRecord(formData) {
 
   const templateResult = await supabase
     .from("record_templates")
-    .select("id,scope_type,is_active,record_template_farm_assignments(farm_id),record_template_fields(field_key,field_type,label,unit,sort_order,is_required,is_active)")
+    .select("id,code,scope_type,is_active,record_template_farm_assignments(farm_id),record_template_fields(field_key,field_type,label,unit,sort_order,is_required,is_active)")
     .eq("id", templateId)
     .maybeSingle();
 
@@ -185,6 +196,22 @@ export async function createOperationalRecord(formData) {
     if (entriesError) {
       redirect(withParams("/records/new", { error: entriesError.code ?? "record_entries_create_failed" }));
     }
+  }
+
+  await resolveMissingRecordAlertsForTemplate({
+    farmId,
+    actorUserId: user.id,
+    templateCode: templateResult.data.code,
+    note: `record_created:${insertedRecordId}`
+  });
+
+  if (returnTo) {
+    redirect(withParams(returnTo, {
+      record_created: insertedRecordId,
+      record_status: recordStatus,
+      focus_farm: farmId,
+      focus_action: "record_follow_up"
+    }));
   }
 
   redirect(withParams(`/records/${insertedRecordId}`, { record: recordStatus === "draft" ? "draft_saved" : "submitted" }));

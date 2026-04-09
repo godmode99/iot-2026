@@ -291,3 +291,135 @@ export async function createTelemetryDrivenAlert({
     alert: insertedRows[0] ?? null
   }, 201);
 }
+
+export async function createMissingRecordAlert({
+  farmId,
+  actorUserId,
+  templateId,
+  templateCode,
+  templateName,
+  note,
+  details = {}
+}) {
+  if (!farmId || !templateId || !templateCode) {
+    return fail("alert_create_invalid", [farmId, templateId, templateCode]);
+  }
+
+  const sql = getDashboardDb();
+  const allowed = await userCanManageFarmAlerts(sql, actorUserId, farmId);
+  if (!allowed) {
+    return fail("alert_permission_denied", [farmId, templateCode], 403);
+  }
+
+  const existingRows = await sql`
+    select id, alert_type, severity, status, opened_at
+    from public.alerts
+    where farm_id = ${farmId}::uuid
+      and alert_type = 'missing_record'
+      and status = 'open'
+      and details_json->>'source_template_code' = ${templateCode}
+    order by opened_at desc
+    limit 1
+  `;
+  const existing = existingRows[0] ?? null;
+
+  if (existing) {
+    return ok("alert_already_open", { alert: existing }, 200);
+  }
+
+  const actorType = await actorTypeForUser(sql, actorUserId);
+  const insertedRows = await sql`
+    insert into public.alerts (
+      farm_id,
+      device_id,
+      alert_type,
+      severity,
+      status,
+      opened_at,
+      details_json
+    ) values (
+      ${farmId}::uuid,
+      null,
+      'missing_record',
+      'warning',
+      'open',
+      timezone('utc', now()),
+      ${sql.json({
+        source: "record_expectation",
+        source_template_id: templateId,
+        source_template_code: templateCode,
+        source_template_name: templateName ?? templateCode,
+        note: note ?? "",
+        created_by: actorUserId ?? null,
+        created_by_type: actorType,
+        ...details
+      })}::jsonb
+    )
+    returning id, alert_type, severity, status, opened_at, details_json
+  `;
+
+  return ok("alert_created", {
+    alert: insertedRows[0] ?? null
+  }, 201);
+}
+
+export async function resolveMissingRecordAlertsForTemplate({
+  farmId,
+  actorUserId,
+  templateCode,
+  note
+}) {
+  if (!farmId || !templateCode) {
+    return fail("alert_resolve_invalid", [farmId, templateCode]);
+  }
+
+  const sql = getDashboardDb();
+  const allowed = await userCanManageFarmAlerts(sql, actorUserId, farmId);
+  if (!allowed) {
+    return ok("alert_resolve_skipped_permission", {
+      resolvedCount: 0
+    });
+  }
+
+  const matchingAlerts = await sql`
+    select id, details_json
+    from public.alerts
+    where farm_id = ${farmId}::uuid
+      and alert_type = 'missing_record'
+      and status = 'open'
+      and details_json->>'source_template_code' = ${templateCode}
+    order by opened_at desc
+  `;
+
+  if (!matchingAlerts.length) {
+    return ok("alert_resolve_not_needed", {
+      resolvedCount: 0
+    });
+  }
+
+  const adminAction = {
+    action: "resolve",
+    requestedBy: actorUserId ?? null,
+    note: note ?? `record_submitted_for_${templateCode}`,
+    at: new Date().toISOString()
+  };
+
+  const alertIds = matchingAlerts.map((alert) => alert.id);
+  await sql`
+    update public.alerts
+    set
+      status = 'resolved',
+      resolved_at = timezone('utc', now()),
+      details_json = jsonb_set(
+        coalesce(details_json, '{}'::jsonb),
+        '{admin_actions}',
+        coalesce(details_json->'admin_actions', '[]'::jsonb) || ${sql.json([adminAction])}::jsonb,
+        true
+      )
+    where id in ${sql(alertIds)}
+  `;
+
+  return ok("alert_resolved", {
+    resolvedCount: alertIds.length
+  });
+}

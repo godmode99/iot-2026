@@ -575,9 +575,18 @@ export async function loadOperationalRecordsOverview(filters = {}) {
   };
 }
 
-export async function loadOperationalRecordCreateContext() {
+export async function loadOperationalRecordCreateContext(prefill = {}) {
   const overview = await loadOperationalRecordsOverview();
-  const defaultTemplate = overview.templates[0] ?? null;
+  const requestedFarmId = String(prefill.farmId ?? "").trim();
+  const requestedTemplateId = String(prefill.templateId ?? "").trim();
+  const availableTemplatesForFarm = requestedFarmId
+    ? overview.templates.filter((template) => isTemplateAvailableForFarm(template, requestedFarmId))
+    : overview.templates;
+  const defaultTemplate = availableTemplatesForFarm.find((template) => template.id === requestedTemplateId)
+    ?? overview.templates.find((template) => template.id === requestedTemplateId)
+    ?? availableTemplatesForFarm[0]
+    ?? overview.templates[0]
+    ?? null;
 
   return {
     templates: overview.templates,
@@ -587,6 +596,9 @@ export async function loadOperationalRecordCreateContext() {
     templateFieldMap: overview.templateFieldMap ?? TEMPLATE_FIELD_KEY_MAP,
     templateFieldGroups: overview.templateFieldGroups ?? {},
     defaultTemplateId: defaultTemplate?.id ?? "",
+    defaultFarmId: overview.farms.some((farm) => farm.id === requestedFarmId) ? requestedFarmId : "",
+    defaultRecordedForDate: String(prefill.recordedForDate ?? "").trim(),
+    defaultSummary: String(prefill.summary ?? "").trim(),
     errors: overview.errors
   };
 }

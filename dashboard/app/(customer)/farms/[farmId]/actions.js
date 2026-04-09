@@ -10,6 +10,7 @@ import {
   createFarmMemberInvite,
   saveNotificationPreference
 } from "@/lib/backend/farm-settings.js";
+import { createMissingRecordAlert } from "@/lib/backend/device-ops.js";
 
 async function requireFarmManager(farmId) {
   const { authConfigured, user } = await getCurrentUser();
@@ -110,4 +111,32 @@ export async function updateOwnNotificationPreference(formData) {
   }
 
   redirect(withParams(`/farms/${farmId}`, { notification: "updated" }));
+}
+
+export async function createMissingRecordAlertAction(formData) {
+  const farmId = String(formData.get("farm_id") ?? "");
+  const user = await requireFarmManager(farmId);
+  const templateId = String(formData.get("template_id") ?? "").trim();
+  const templateCode = String(formData.get("template_code") ?? "").trim();
+  const templateName = String(formData.get("template_name") ?? "").trim();
+
+  const result = await createMissingRecordAlert({
+    farmId,
+    actorUserId: user.id,
+    templateId,
+    templateCode,
+    templateName,
+    note: `Missing recent record for ${templateName || templateCode}`,
+    details: {
+      expected_window_days: 7
+    }
+  });
+
+  if (!result.ok) {
+    redirect(withParams(`/farms/${farmId}`, { error: result.code ?? "missing_record_alert_failed" }));
+  }
+
+  redirect(withParams(`/farms/${farmId}`, {
+    notification: result.code === "alert_already_open" ? "missing_record_alert_exists" : "missing_record_alert_created"
+  }));
 }

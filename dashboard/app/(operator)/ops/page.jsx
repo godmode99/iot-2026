@@ -19,10 +19,10 @@ function formatDate(value) {
 }
 
 function statusClass(value) {
-  if (value === "online" || value === "succeeded" || value === "resolved") {
+  if (value === "online" || value === "succeeded" || value === "resolved" || value === "current") {
     return "is-online";
   }
-  if (value === "offline" || value === "failed" || value === "critical") {
+  if (value === "offline" || value === "failed" || value === "critical" || value === "attention") {
     return "is-offline";
   }
   return "is-stale";
@@ -30,6 +30,34 @@ function statusClass(value) {
 
 function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
+}
+
+function followUpStatusClass(value) {
+  if (value === "critical") {
+    return "is-offline";
+  }
+
+  if (value === "warning") {
+    return "is-stale";
+  }
+
+  return "is-online";
+}
+
+function alertSourceLabel(value, messages) {
+  if (value === "record") {
+    return t(messages, "dashboard.alertSources.record", "Record-driven");
+  }
+
+  if (value === "telemetry") {
+    return t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven");
+  }
+
+  if (value === "expectation") {
+    return t(messages, "dashboard.alertSources.expectation", "Expectation-driven");
+  }
+
+  return t(messages, "dashboard.alertSources.system", "System");
 }
 
 function countDevicesByState(devices, state) {
@@ -67,7 +95,6 @@ export default async function OpsPage() {
   const offlineCount = countDevicesByState(ops?.devices ?? [], "offline");
   const staleCount = countDevicesByState(ops?.devices ?? [], "stale");
   const latestHeartbeatAt = latestSeenAt(ops?.devices ?? []);
-  const missingContactCount = (ops?.farms ?? []).filter((farm) => !farm.alert_email_to && !farm.alert_line_user_id).length;
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
@@ -85,16 +112,29 @@ export default async function OpsPage() {
             <div className="metric-grid compact-grid">
               <Metric labelText={t(messages, "ops.farms")} value={ops.metrics.farmCount} />
               <Metric labelText={t(messages, "ops.devices")} value={ops.metrics.deviceCount} />
-              <Metric labelText={t(messages, "ops.attention")} value={ops.metrics.attentionCount} meta={`${ops.metrics.criticalAlertCount} ${t(messages, "ops.critical")}`} />
+              <Metric
+                labelText={t(messages, "ops.attention")}
+                value={ops.metrics.attentionCount}
+                meta={`${ops.metrics.criticalAlertCount} ${t(messages, "ops.critical")}`}
+              />
             </div>
             <div className="ops-health-strip">
               <span className="health-chip is-online">{ops.metrics.onlineCount} {t(messages, "ops.online")}</span>
               <span className="health-chip is-stale">{staleCount} {t(messages, "ops.stale")}</span>
               <span className="health-chip is-offline">{offlineCount} {t(messages, "ops.offline")}</span>
-              <span className={`health-chip ${missingContactCount ? "is-stale" : "is-online"}`}>
-                {missingContactCount ? `${missingContactCount} ${t(messages, "ops.missingContacts")}` : t(messages, "ops.contactsReady")}
+              <span className={`health-chip ${ops.metrics.missingContactCount ? "is-stale" : "is-online"}`}>
+                {ops.metrics.missingContactCount
+                  ? `${ops.metrics.missingContactCount} ${t(messages, "ops.missingContacts")}`
+                  : t(messages, "ops.contactsReady")}
+              </span>
+              <span className="health-chip">
+                {ops.metrics.expectationRecoveredCount} {t(messages, "ops.expectationsRecovered", "expectation recoveries")}
               </span>
               <span className="health-chip">{t(messages, "ops.latestHeartbeat")}: {formatDate(latestHeartbeatAt)}</span>
+            </div>
+            <div className="action-row">
+              <Link className="button-secondary" href="/ops/follow-ups">{t(messages, "ops.openFollowUpsAction", "Open follow-up workspace")}</Link>
+              <Link className="button-secondary" href="/ops/reports">{t(messages, "ops.openReportsAction", "Open reports")}</Link>
             </div>
           </div>
         ) : null}
@@ -111,6 +151,138 @@ export default async function OpsPage() {
 
       {ops?.authorized ? (
         <>
+          <section className="dashboard-grid">
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.followUpQueueTitle", "Follow-up queue")}</h2>
+                <div className="pill-row">
+                  <span className="pill">{ops.followUpQueue.length}</span>
+                  <Link className="button-secondary" href="/ops/follow-ups">{t(messages, "ops.openFollowUpsAction", "Open follow-up workspace")}</Link>
+                </div>
+              </div>
+              {ops.followUpQueue.length ? (
+                <ul className="status-list">
+                  {ops.followUpQueue.map((item) => (
+                    <li className="mobile-list-row" key={item.key}>
+                      <span>
+                        <strong>{item.title}</strong>
+                        <span className="list-meta">{item.body}</span>
+                      </span>
+                      <span className="pill-row">
+                        <span className={`pill ${followUpStatusClass(item.priority)}`}>{item.priority}</span>
+                        <Link className="button-secondary" href={item.primaryHref}>{item.primaryLabel}</Link>
+                        <Link className="button-secondary" href={item.secondaryHref}>{item.secondaryLabel}</Link>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="muted">{t(messages, "ops.followUpQueueEmpty", "No follow-up queue items are ready right now.")}</p>}
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.alertBreakdownTitle", "Alert breakdown")}</h2>
+                <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.viewAllAction", "View all alerts")}</Link>
+              </div>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "dashboard.alertSources.record", "Record-driven")}</h3>
+                  <p>{ops.alertMetrics.bySource.record}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven")}</h3>
+                  <p>{ops.alertMetrics.bySource.telemetry}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "dashboard.alertSources.expectation", "Expectation-driven")}</h3>
+                  <p>{ops.alertMetrics.bySource.expectation}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "dashboard.alertSources.system", "System")}</h3>
+                  <p>{ops.alertMetrics.bySource.system}</p>
+                </article>
+              </div>
+              <div className="record-meta-list">
+                {ops.alertMetrics.topTypes.length ? (
+                  ops.alertMetrics.topTypes.map((item) => (
+                    <span key={item.alertType}>
+                      {label(item.alertType)}: {item.count}
+                    </span>
+                  ))
+                ) : (
+                  <span>{t(messages, "ops.alertBreakdownEmpty", "No active alert types to summarize yet.")}</span>
+                )}
+              </div>
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.expectationSummaryTitle", "Record discipline")}</h2>
+                <Link className="button-secondary" href="/records">{t(messages, "dashboard.viewAllRecords", "View all records")}</Link>
+              </div>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.expectationCurrent", "Current")}</h3>
+                  <p>{ops.expectationMetrics.currentCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.expectationAttention", "Needs attention")}</h3>
+                  <p>{ops.expectationMetrics.attentionCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.expectationRecovered", "Recovered this week")}</h3>
+                  <p>{ops.expectationMetrics.recoveredCount}</p>
+                </article>
+              </div>
+              <p className="muted">{t(messages, "ops.expectationSummaryBody", "Use this section to track whether assigned record templates are being completed on time across all farms.")}</p>
+            </article>
+          </section>
+
+          <section className="dashboard-grid">
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.expectationTrendsByFarm", "Most affected farms")}</h2>
+                <span className="pill">{t(messages, "ops.expectationTrendsWindow", "Last 30 days")}</span>
+              </div>
+              {ops.expectationTrends.byFarm.length ? (
+                <ul className="status-list">
+                  {ops.expectationTrends.byFarm.map((item) => (
+                    <li className="mobile-list-row" key={item.farmId}>
+                      <span>
+                        <Link href={`/farms/${item.farmId}`}>{item.farmName}</Link>
+                      </span>
+                      <span className="pill">{item.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">{t(messages, "ops.expectationTrendsEmpty", "No missing-record trend data yet.")}</p>
+              )}
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.expectationTrendsByTemplate", "Most missed templates")}</h2>
+                <span className="pill">{t(messages, "ops.expectationTrendsWindow", "Last 30 days")}</span>
+              </div>
+              {ops.expectationTrends.byTemplate.length ? (
+                <ul className="status-list">
+                  {ops.expectationTrends.byTemplate.map((item) => (
+                    <li className="mobile-list-row" key={item.templateCode}>
+                      <span>
+                        <strong>{item.templateName}</strong>
+                        <span className="list-meta">{item.templateCode}</span>
+                      </span>
+                      <span className="pill">{item.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">{t(messages, "ops.expectationTrendsEmpty", "No missing-record trend data yet.")}</p>
+              )}
+            </article>
+          </section>
+
           <section className="dashboard-grid">
             <article className="card">
               <h2>{t(messages, "ops.fleetSnapshot")}</h2>
@@ -134,10 +306,11 @@ export default async function OpsPage() {
               {ops.openAlerts.length ? (
                 <ul className="status-list">
                   {ops.openAlerts.map((alert) => (
-                    <li key={alert.id}>
+                    <li className="mobile-list-row" key={alert.id}>
                       <span>
-                        {label(alert.alert_type)}
-                        <span className="muted"> {alert.devices?.serial_number ?? alert.devices?.device_id ?? ""}</span>
+                        <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
+                        <span className="list-meta">{alert.devices?.serial_number ?? alert.devices?.device_id ?? ""}</span>
+                        <span className="list-meta">{alertSourceLabel(alert.sourceLabel, messages)}</span>
                       </span>
                       <span className={`pill ${statusClass(alert.severity)}`}>{alert.severity}</span>
                     </li>

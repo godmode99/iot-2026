@@ -19,6 +19,10 @@ function alertSourceLabel(value, messages) {
     return t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven");
   }
 
+  if (value === "expectation") {
+    return t(messages, "dashboard.alertSources.expectation", "Expectation-driven");
+  }
+
   return t(messages, "dashboard.alertSources.system", "System");
 }
 
@@ -99,6 +103,16 @@ export default async function DashboardPage() {
   const criticalAlertCount = (dashboard?.openAlerts ?? []).filter((alert) => alert.severity === "critical").length;
   const lastHeartbeatAt = latestSeenAt(dashboard?.devices ?? []);
   const hasWorkspace = farmCount > 0 || deviceCount > 0;
+  const expectationSummary = dashboard?.expectationSummary ?? {
+    farmsNeedingAttention: [],
+    healthyCount: 0,
+    attentionCount: 0,
+    recoveredCount: 0
+  };
+  const expectationTrends = dashboard?.expectationTrends ?? {
+    byFarm: [],
+    byTemplate: []
+  };
 
   return (
     <AppShell currentPath="/dashboard" ariaLabel="Dashboard navigation">
@@ -193,18 +207,22 @@ export default async function DashboardPage() {
             <h2>{t(messages, "dashboard.alertBreakdownTitle", "Alert breakdown")}</h2>
             <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.viewAllAction", "View all alerts")}</Link>
           </div>
-          <div className="records-field-group-grid">
-            <article className="records-field-group-card">
-              <h3>{t(messages, "dashboard.alertSources.record", "Record-driven")}</h3>
+        <div className="records-field-group-grid">
+          <article className="records-field-group-card">
+            <h3>{t(messages, "dashboard.alertSources.record", "Record-driven")}</h3>
               <p>{dashboard?.alertMetrics.bySource.record ?? 0}</p>
             </article>
-            <article className="records-field-group-card">
-              <h3>{t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven")}</h3>
-              <p>{dashboard?.alertMetrics.bySource.telemetry ?? 0}</p>
-            </article>
-            <article className="records-field-group-card">
-              <h3>{t(messages, "dashboard.alertSources.system", "System")}</h3>
-              <p>{dashboard?.alertMetrics.bySource.system ?? 0}</p>
+          <article className="records-field-group-card">
+            <h3>{t(messages, "dashboard.alertSources.telemetry", "Telemetry-driven")}</h3>
+            <p>{dashboard?.alertMetrics.bySource.telemetry ?? 0}</p>
+          </article>
+          <article className="records-field-group-card">
+            <h3>{t(messages, "dashboard.alertSources.expectation", "Expectation-driven")}</h3>
+            <p>{dashboard?.alertMetrics.bySource.expectation ?? 0}</p>
+          </article>
+          <article className="records-field-group-card">
+            <h3>{t(messages, "dashboard.alertSources.system", "System")}</h3>
+            <p>{dashboard?.alertMetrics.bySource.system ?? 0}</p>
             </article>
           </div>
           <div className="record-meta-list">
@@ -217,6 +235,94 @@ export default async function DashboardPage() {
             ) : (
               <span>{t(messages, "dashboard.alertBreakdownEmpty", "No active alert types to summarize yet.")}</span>
             )}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.expectationsTitle", "Record expectations")}</h2>
+            <Link className="button-secondary" href="/records">{t(messages, "dashboard.viewAllRecords", "View all records")}</Link>
+          </div>
+          <div className="records-field-group-grid">
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.expectationsHealthy", "Current")}</h3>
+              <p>{expectationSummary.healthyCount}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.expectationsAttention", "Needs attention")}</h3>
+              <p>{expectationSummary.attentionCount}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.expectationsRecovered", "Recovered this week")}</h3>
+              <p>{expectationSummary.recoveredCount}</p>
+            </article>
+          </div>
+          {expectationSummary.farmsNeedingAttention.length ? (
+            <ul className="status-list">
+              {expectationSummary.farmsNeedingAttention.map((farm) => (
+                <li className="mobile-list-row" key={farm.farmId}>
+                  <span>
+                    <Link href={`/farms/${farm.farmId}`}>{farm.farmName}</Link>
+                    <span className="list-meta">
+                      {farm.attentionCount} {t(messages, "dashboard.expectationsAttentionTemplates", "templates need attention")}
+                    </span>
+                    <span className="list-meta">
+                      {farm.expectations
+                        .filter((item) => item.status === "attention")
+                        .map((item) => item.templateName)
+                        .join(", ")}
+                    </span>
+                  </span>
+                  <span className="pill">{t(messages, "dashboard.expectationsAttention", "Needs attention")}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">{t(messages, "dashboard.expectationsEmpty", "All visible farm templates have a recent record in the last 7 days.")}</p>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.expectationTrendsTitle", "Expectation trends")}</h2>
+            <span className="pill">{t(messages, "dashboard.expectationTrendsWindow", "Last 30 days")}</span>
+          </div>
+          <div className="records-field-group-grid">
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.expectationTrendsByFarm", "Most affected farms")}</h3>
+              {expectationTrends.byFarm.length ? (
+                <ul className="status-list">
+                  {expectationTrends.byFarm.map((item) => (
+                    <li className="mobile-list-row" key={item.farmId}>
+                      <span>
+                        <Link href={`/farms/${item.farmId}`}>{item.farmName}</Link>
+                      </span>
+                      <span className="pill">{item.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">{t(messages, "dashboard.expectationTrendsEmpty", "No missing-record trend data yet.")}</p>
+              )}
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.expectationTrendsByTemplate", "Most missed templates")}</h3>
+              {expectationTrends.byTemplate.length ? (
+                <ul className="status-list">
+                  {expectationTrends.byTemplate.map((item) => (
+                    <li className="mobile-list-row" key={item.templateCode}>
+                      <span>
+                        <strong>{item.templateName}</strong>
+                        <span className="list-meta">{item.templateCode}</span>
+                      </span>
+                      <span className="pill">{item.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">{t(messages, "dashboard.expectationTrendsEmpty", "No missing-record trend data yet.")}</p>
+              )}
+            </article>
           </div>
         </div>
 
@@ -310,7 +416,18 @@ export default async function DashboardPage() {
                   <span>
                     <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
                     <span className="list-meta">{deviceLabel}</span>
-                    <span className="list-meta">{alertSourceLabel(alert.source === "record_detail" ? "record" : alert.source === "device_telemetry" ? "telemetry" : "system", messages)}</span>
+                    <span className="list-meta">
+                      {alertSourceLabel(
+                        alert.source === "record_detail"
+                          ? "record"
+                          : alert.source === "device_telemetry"
+                            ? "telemetry"
+                            : alert.source === "record_expectation"
+                              ? "expectation"
+                              : "system",
+                        messages
+                      )}
+                    </span>
                   </span>
                   <span className={`pill ${statusClass(alert.severity)}`}>{alert.severity}</span>
                 </li>

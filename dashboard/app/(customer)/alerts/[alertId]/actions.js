@@ -8,9 +8,19 @@ import { updateAlertStatus } from "@/lib/backend/device-ops.js";
 
 const ALERT_ACTIONS = new Set(["acknowledge", "suppress", "resolve"]);
 
+function safeReturnTo(value) {
+  const normalized = String(value ?? "").trim();
+  if (!normalized.startsWith("/ops")) {
+    return "";
+  }
+
+  return normalized;
+}
+
 export async function submitCustomerAlertAction(formData) {
   const alertId = String(formData.get("alert_id") ?? "");
   const action = String(formData.get("action") ?? "");
+  const returnTo = safeReturnTo(formData.get("return_to"));
 
   if (!ALERT_ACTIONS.has(action)) {
     redirect(withParams(`/alerts/${alertId}`, { error: "alert_action_invalid" }));
@@ -50,6 +60,15 @@ export async function submitCustomerAlertAction(formData) {
 
   if (!result.ok) {
     redirect(withParams(`/alerts/${alertId}`, { error: result.code ?? "alert_action_failed" }));
+  }
+
+  if (returnTo) {
+    redirect(withParams(returnTo, {
+      alert_updated: alertId,
+      alert_action: action,
+      focus_farm: alertResult.data.farm_id,
+      focus_action: "alert_follow_up"
+    }));
   }
 
   redirect(withParams(`/alerts/${alertId}`, { alert: action }));

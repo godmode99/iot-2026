@@ -25,6 +25,7 @@ export default async function RecordsPage({ searchParams }) {
   const status = typeof query?.status === "string" ? query.status : "";
   const search = typeof query?.q === "string" ? query.q : "";
   const dateRange = typeof query?.dateRange === "string" ? query.dateRange : "";
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   await requireUser({ returnUrl: "/records" });
   const overview = await loadOperationalRecordsOverview({
@@ -45,6 +46,11 @@ export default async function RecordsPage({ searchParams }) {
           <h1 className="page-title">{t(messages, "recordsPage.title")}</h1>
           <p className="lede">{t(messages, "recordsPage.body")}</p>
         </div>
+        {returnTo ? (
+          <div className="inline-actions">
+            <Link className="button-secondary" href={returnTo}>{t(messages, "recordsPage.backToReportAction", "Back to report")}</Link>
+          </div>
+        ) : null}
         <div className="metric-grid dashboard-metrics">
           <div className="metric metric-emphasis">
             <span className="metric-value">{overview.stats.submitted}</span>
@@ -78,7 +84,7 @@ export default async function RecordsPage({ searchParams }) {
       ) : null}
 
       <section className="dashboard-actions-grid dashboard-card" aria-label="Records actions">
-        <Link className="action-card" href="/records/new">
+        <Link className="action-card" href={returnTo ? `/records/new?return_to=${encodeURIComponent(returnTo)}` : "/records/new"}>
           <span className="eyebrow">{t(messages, "recordsPage.newRecordEyebrow")}</span>
           <strong>{t(messages, "recordsPage.newRecordTitle")}</strong>
           <span className="muted">{t(messages, "recordsPage.newRecordBody")}</span>
@@ -91,9 +97,10 @@ export default async function RecordsPage({ searchParams }) {
             <p className="eyebrow">{t(messages, "recordsPage.filterEyebrow", "Filter records")}</p>
             <h2>{t(messages, "recordsPage.filterTitle", "Find the right records faster")}</h2>
           </div>
-          {hasFilters ? <Link className="button-secondary" href="/records">{t(messages, "recordsPage.clearFiltersAction", "Clear filters")}</Link> : null}
+          {hasFilters ? <Link className="button-secondary" href={returnTo ? `/records?return_to=${encodeURIComponent(returnTo)}` : "/records"}>{t(messages, "recordsPage.clearFiltersAction", "Clear filters")}</Link> : null}
         </div>
         <form className="records-filter-form" method="get">
+          {returnTo ? <input name="return_to" type="hidden" value={returnTo} /> : null}
           <label>
             {t(messages, "recordsPage.filters.search", "Search")}
             <input
@@ -144,7 +151,7 @@ export default async function RecordsPage({ searchParams }) {
           </div>
           <div className="inline-actions">
             <Link className="button-secondary" href="/records/templates">{t(messages, "recordsPage.viewTemplatesAction", "View templates")}</Link>
-            <Link className="button-secondary" href="/records/new">{t(messages, "recordsPage.newRecordAction")}</Link>
+            <Link className="button-secondary" href={returnTo ? `/records/new?return_to=${encodeURIComponent(returnTo)}` : "/records/new"}>{t(messages, "recordsPage.newRecordAction")}</Link>
           </div>
         </div>
           <div className="records-template-grid">
@@ -177,8 +184,8 @@ export default async function RecordsPage({ searchParams }) {
                   </p>
                   <p className="muted">{record.notes_summary ?? t(messages, "recordsPage.draftFallback", "No summary note yet.")}</p>
                   <div className="action-row">
-                    <Link className="button" href={`/records/${record.id}/edit`}>{t(messages, "recordsPage.resumeDraftAction", "Resume draft")}</Link>
-                    <Link className="button-secondary" href={`/records/${record.id}`}>{t(messages, "recordsPage.reviewDraftAction", "Review")}</Link>
+                    <Link className="button" href={returnTo ? `/records/${record.id}/edit?return_to=${encodeURIComponent(returnTo)}` : `/records/${record.id}/edit`}>{t(messages, "recordsPage.resumeDraftAction", "Resume draft")}</Link>
+                    <Link className="button-secondary" href={returnTo ? `/records/${record.id}?return_to=${encodeURIComponent(returnTo)}` : `/records/${record.id}`}>{t(messages, "recordsPage.reviewDraftAction", "Review")}</Link>
                   </div>
                 </article>
               ))}
@@ -206,7 +213,7 @@ export default async function RecordsPage({ searchParams }) {
             <ul className="status-list">
               {overview.records.map((record) => (
                 <li className="mobile-list-row" key={record.id}>
-                  <Link className="records-history-link" href={`/records/${record.id}`}>
+                  <Link className="records-history-link" href={returnTo ? `/records/${record.id}?return_to=${encodeURIComponent(returnTo)}` : `/records/${record.id}`}>
                     <span>
                       <strong>{record.record_templates?.name ?? "Operational Record"}</strong>
                       <span className="list-meta">
@@ -228,7 +235,7 @@ export default async function RecordsPage({ searchParams }) {
                 <p className="muted">{t(messages, "recordsPage.emptyBody")}</p>
               </div>
               <div className="action-row">
-                <Link className="button" href="/records/new">{t(messages, "recordsPage.emptyAction")}</Link>
+                <Link className="button" href={returnTo ? `/records/new?return_to=${encodeURIComponent(returnTo)}` : "/records/new"}>{t(messages, "recordsPage.emptyAction")}</Link>
               </div>
             </div>
           )}

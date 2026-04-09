@@ -26,6 +26,7 @@ export default async function EditRecordPage({ params, searchParams }) {
   const messages = await getMessages();
   const { recordId } = await params;
   const query = await searchParams;
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   await requireUser({ returnUrl: `/records/${recordId}/edit` });
   const context = await loadOperationalRecordEditContext({ recordId });
@@ -49,7 +50,7 @@ export default async function EditRecordPage({ params, searchParams }) {
           </p>
         </div>
         <div className="inline-actions">
-          <Link className="button-secondary" href={`/records/${recordId}`}>{t(messages, "recordEditPage.backAction", "Back to record")}</Link>
+          <Link className="button-secondary" href={returnTo || `/records/${recordId}`}>{returnTo ? t(messages, "recordEditPage.backToReportAction", "Back to report") : t(messages, "recordEditPage.backAction", "Back to record")}</Link>
         </div>
       </section>
 
@@ -103,12 +104,12 @@ export default async function EditRecordPage({ params, searchParams }) {
             </div>
             <OperationalRecordForm
               action={updateOperationalRecord}
-              cancelHref={`/records/${recordId}`}
+              cancelHref={returnTo || `/records/${recordId}`}
               cancelLabel={t(messages, "recordEditPage.cancelAction", "Cancel")}
               context={context}
               draftLabel={t(messages, "recordEditPage.saveDraftAction", "Save as draft")}
               draftPendingLabel={t(messages, "recordEditPage.saveDraftPendingAction", "Saving draft...")}
-              hiddenValues={{ record_id: recordId }}
+              hiddenValues={returnTo ? { record_id: recordId, return_to: returnTo } : { record_id: recordId }}
               messages={messages}
               note={t(messages, "recordEditPage.nextStepNote", "Editing overwrites the stored structured entries for this record.")}
               submitLabel={t(messages, "recordEditPage.submitAction", "Save changes")}

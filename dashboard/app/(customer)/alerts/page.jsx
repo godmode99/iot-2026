@@ -43,6 +43,10 @@ function sourceLabel(value, messages) {
     return t(messages, "alertsPage.sources.telemetry", "Telemetry-driven");
   }
 
+  if (value === "record_expectation") {
+    return t(messages, "alertsPage.sources.expectation", "Expectation-driven");
+  }
+
   return t(messages, "alertsPage.sources.system", "System");
 }
 
@@ -53,6 +57,7 @@ export default async function AlertsPage({ searchParams }) {
   const severity = typeof query?.severity === "string" ? query.severity : "";
   const search = typeof query?.q === "string" ? query.q : "";
   const dateRange = typeof query?.dateRange === "string" ? query.dateRange : "";
+  const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
   await requireUser({ returnUrl: "/alerts" });
   const overview = await loadCustomerAlerts({
@@ -71,6 +76,11 @@ export default async function AlertsPage({ searchParams }) {
           <h1 className="page-title">{t(messages, "alertsPage.title", "Monitor active alerts across customer farms")}</h1>
           <p className="lede">{t(messages, "alertsPage.body", "Use this list to review open alert load, severity, and which farms or devices need attention first.")}</p>
         </div>
+        {returnTo ? (
+          <div className="inline-actions">
+            <Link className="button-secondary" href={returnTo}>{t(messages, "alertsPage.backToReportAction", "Back to report")}</Link>
+          </div>
+        ) : null}
         <div className="metric-grid dashboard-metrics">
           <div className="metric metric-emphasis">
             <span className="metric-value">{overview.metrics.total}</span>
@@ -113,6 +123,10 @@ export default async function AlertsPage({ searchParams }) {
             <p>{overview.metrics.bySource.telemetry}</p>
           </article>
           <article className="records-field-group-card">
+            <h3>{t(messages, "alertsPage.breakdownCards.expectation", "Expectation-driven")}</h3>
+            <p>{overview.metrics.bySource.expectation}</p>
+          </article>
+          <article className="records-field-group-card">
             <h3>{t(messages, "alertsPage.breakdownCards.system", "System")}</h3>
             <p>{overview.metrics.bySource.system}</p>
           </article>
@@ -136,9 +150,10 @@ export default async function AlertsPage({ searchParams }) {
             <p className="eyebrow">{t(messages, "alertsPage.filterEyebrow", "Filter alerts")}</p>
             <h2>{t(messages, "alertsPage.filterTitle", "Find the alert that needs action")}</h2>
           </div>
-          {hasFilters ? <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.clearFiltersAction", "Clear filters")}</Link> : null}
+          {hasFilters ? <Link className="button-secondary" href={returnTo ? `/alerts?return_to=${encodeURIComponent(returnTo)}` : "/alerts"}>{t(messages, "alertsPage.clearFiltersAction", "Clear filters")}</Link> : null}
         </div>
         <form className="records-filter-form" method="get">
+          {returnTo ? <input name="return_to" type="hidden" value={returnTo} /> : null}
           <label>
             {t(messages, "alertsPage.filters.search", "Search")}
             <input
@@ -194,7 +209,7 @@ export default async function AlertsPage({ searchParams }) {
             {overview.alerts.map((alert) => (
               <li className="mobile-list-row" key={alert.id}>
                 <span>
-                  <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
+                  <Link href={returnTo ? `/alerts/${alert.id}?return_to=${encodeURIComponent(returnTo)}` : `/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
                   <span className="list-meta">
                     {alert.farms?.name ?? "Farm"} · {alert.devices?.serial_number ?? alert.devices?.device_id ?? alert.device_id ?? "Unknown device"}
                   </span>
@@ -216,7 +231,7 @@ export default async function AlertsPage({ searchParams }) {
               <p className="muted">{t(messages, "alertsPage.emptyBody", "Keep this page as the central place for active alert review once more monitoring and automation layers come online.")}</p>
             </div>
             <div className="action-row">
-              <Link className="button-secondary" href="/dashboard">{t(messages, "alertsPage.backDashboardAction", "Back to dashboard")}</Link>
+              <Link className="button-secondary" href={returnTo || "/dashboard"}>{returnTo ? t(messages, "alertsPage.backToReportAction", "Back to report") : t(messages, "alertsPage.backDashboardAction", "Back to dashboard")}</Link>
             </div>
           </div>
         )}
