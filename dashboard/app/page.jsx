@@ -50,6 +50,8 @@ export default async function HomePage() {
             <p className="muted">{t(messages, "home.panelBody")}</p>
           </div>
           <div className="home-logo-stage" aria-hidden="true">
+            <span className="home-logo-aura" />
+            <span className="home-logo-sheen" />
             <span className="home-gold-orbit" />
             <span className="home-scan-line home-scan-line-a" />
             <span className="home-scan-line home-scan-line-b" />

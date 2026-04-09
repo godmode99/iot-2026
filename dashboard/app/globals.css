@@ -2397,6 +2397,25 @@ body::before {
   display: none;
 }
 
+@keyframes logo-float {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-7px) scale(1.012); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes logo-breathe {
+  0% { opacity: 0.46; transform: scale(0.94); }
+  50% { opacity: 0.82; transform: scale(1.04); }
+  100% { opacity: 0.52; transform: scale(0.98); }
+}
+
+@keyframes logo-sheen {
+  0% { transform: translateX(-145%) rotate(-14deg); opacity: 0; }
+  14% { opacity: 0.34; }
+  44% { opacity: 0.1; }
+  100% { transform: translateX(170%) rotate(-14deg); opacity: 0; }
+}
+
 .landing-shell .topbar .brand,
 .solutions-shell .topbar .brand {
   min-width: 0;
@@ -2599,6 +2618,7 @@ body::before {
 }
 
 .home-logo-stage {
+  position: relative;
   min-height: clamp(220px, 28vw, 360px);
 }
 
@@ -2610,7 +2630,41 @@ body::before {
   opacity: 0.6;
 }
 
+.home-logo-aura {
+  position: absolute;
+  inset: 18% 18%;
+  z-index: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(245, 248, 251, 0.12), transparent 52%),
+    radial-gradient(circle at 50% 50%, rgba(214, 168, 79, 0.14), transparent 68%);
+  filter: blur(20px);
+  animation: logo-breathe 6.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.home-logo-sheen {
+  position: absolute;
+  inset: 14% 24%;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.home-logo-sheen::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.46), transparent);
+  filter: blur(5px);
+  animation: logo-sheen 5.8s ease-in-out infinite;
+}
+
 .home-logo-art {
+  position: relative;
+  z-index: 2;
   width: min(72%, 320px);
   opacity: 0.92;
   filter:
@@ -2619,6 +2673,7 @@ body::before {
     contrast(1.02)
     brightness(1.26)
     drop-shadow(0 24px 50px rgba(0, 0, 0, 0.42));
+  animation: logo-float 6.8s ease-in-out infinite;
 }
 
 .home-gold-orbit,
