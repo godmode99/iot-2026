@@ -24,7 +24,7 @@ function buildBrief(form) {
   ].join("\n");
 }
 
-export function RequestDemoForm({ contactEmail, facebookPageUrl, labels }) {
+export function RequestDemoForm({ contactEmail, contactPhone, facebookPageUrl, lineContactUrl, labels }) {
   const [form, setForm] = useState(INITIAL_FORM);
   const [copied, setCopied] = useState(false);
   const briefId = useId();
@@ -147,12 +147,21 @@ export function RequestDemoForm({ contactEmail, facebookPageUrl, labels }) {
                 {labels.facebookAction}
               </a>
             ) : null}
+            {lineContactUrl ? (
+              <a className="button-secondary" href={lineContactUrl} rel="noreferrer" target="_blank">
+                {labels.lineAction}
+              </a>
+            ) : null}
             {contactEmail ? (
-              <a className={facebookPageUrl ? "button-secondary" : "button"} href={mailtoHref}>
+              <a className={facebookPageUrl || lineContactUrl ? "button-secondary" : "button"} href={mailtoHref}>
                 {labels.emailAction}
               </a>
             ) : (
-              <button className={facebookPageUrl ? "button-secondary" : "button"} onClick={copyBrief} type="button">
+              <button
+                className={facebookPageUrl || lineContactUrl ? "button-secondary" : "button"}
+                onClick={copyBrief}
+                type="button"
+              >
                 {copied ? labels.copiedAction : labels.copyAction}
               </button>
             )}
@@ -161,12 +170,22 @@ export function RequestDemoForm({ contactEmail, facebookPageUrl, labels }) {
             </button>
           </div>
 
+          {contactPhone ? (
+            <p className="request-demo-phone">
+              <strong>{labels.phoneLabel}</strong> <a href={`tel:${contactPhone}`}>{contactPhone}</a>
+            </p>
+          ) : null}
+
           <p className="muted request-demo-note">
-            {facebookPageUrl && contactEmail
+            {facebookPageUrl && lineContactUrl && contactEmail
+              ? labels.allReady
+              : facebookPageUrl && lineContactUrl
+                ? labels.socialReady
+                : facebookPageUrl && contactEmail
               ? labels.contactReady
               : contactEmail
                 ? labels.emailReady
-                : facebookPageUrl
+                : facebookPageUrl || lineContactUrl
                   ? labels.facebookReady
                   : labels.emailMissing}
           </p>

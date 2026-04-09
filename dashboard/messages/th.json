@@ -419,12 +419,16 @@
       "copyAction": "คัดลอก brief",
       "copiedAction": "คัดลอกแล้ว",
       "facebookAction": "ทักผ่าน Facebook",
+      "lineAction": "คุยผ่าน LINE",
       "emailAction": "เปิดอีเมล draft",
       "facebookReady": "คุณสามารถนำ brief นี้ไปคุยต่อใน Facebook Messenger ได้ทันที",
+      "socialReady": "คุณสามารถใช้ Facebook หรือ LINE เพื่อติดต่ออย่างรวดเร็วพร้อม brief นี้ได้ทันที",
+      "allReady": "เลือกช่องทางที่สะดวกได้เลย: Facebook หรือ LINE สำหรับการคุยเร็ว หรืออีเมลสำหรับการแนะนำตัวแบบทางการมากขึ้น",
       "contactReady": "เลือกช่องทางที่สะดวกได้เลย: Facebook สำหรับการคุยเร็ว หรืออีเมลสำหรับการแนะนำตัวแบบทางการมากขึ้น",
       "emailReady": "ระบบจะเปิดโปรแกรมอีเมลพร้อมข้อความ brief ที่เตรียมไว้",
       "emailMissing": "ตั้งค่า NEXT_PUBLIC_CONTACT_EMAIL เพื่อเปิดอีเมลได้โดยตรง ระหว่างนี้สามารถคัดลอก brief นี้ไปส่งผ่านช่องทางที่คุณใช้ได้",
-      "emailSubject": "Request demo | ArayaShiki Lab"
+      "emailSubject": "Request demo | ArayaShiki Lab",
+      "phoneLabel": "โทร:"
     },
     "templateEyebrow": "Brief template",
     "templateTitle": "ใช้โครงนี้เมื่อเตรียมคำขอเดโม",

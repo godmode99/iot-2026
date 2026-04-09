@@ -1153,6 +1153,19 @@ h2 {
   line-height: 1.58;
 }
 
+.request-demo-phone {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.request-demo-phone a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(16, 24, 40, 0.28);
+  text-underline-offset: 3px;
+}
+
 .request-demo-template {
   display: grid;
   gap: 14px;

@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { RequestDemoForm } from "@/components/request-demo-form.jsx";
-import { getContactEmail, getFacebookPageUrl } from "@/lib/env.js";
+import {
+  getContactEmail,
+  getContactPhone,
+  getFacebookPageUrl,
+  getLineContactUrl
+} from "@/lib/env.js";
 import { getMessages, t } from "@/lib/i18n.js";
 
 export const metadata = {
@@ -10,7 +15,9 @@ export const metadata = {
 export default async function RequestDemoPage() {
   const messages = await getMessages();
   const contactEmail = getContactEmail();
+  const contactPhone = getContactPhone();
   const facebookPageUrl = getFacebookPageUrl();
+  const lineContactUrl = getLineContactUrl();
   const paths = ["research", "operations", "enterprise"].map((item) => ({
     title: t(messages, `requestDemoPage.paths.${item}.title`),
     body: t(messages, `requestDemoPage.paths.${item}.body`)
@@ -42,12 +49,16 @@ export default async function RequestDemoPage() {
     copyAction: t(messages, "requestDemoPage.form.copyAction"),
     copiedAction: t(messages, "requestDemoPage.form.copiedAction"),
     facebookAction: t(messages, "requestDemoPage.form.facebookAction"),
+    lineAction: t(messages, "requestDemoPage.form.lineAction"),
     emailAction: t(messages, "requestDemoPage.form.emailAction"),
     facebookReady: t(messages, "requestDemoPage.form.facebookReady"),
+    socialReady: t(messages, "requestDemoPage.form.socialReady"),
+    allReady: t(messages, "requestDemoPage.form.allReady"),
     contactReady: t(messages, "requestDemoPage.form.contactReady"),
     emailReady: t(messages, "requestDemoPage.form.emailReady"),
     emailMissing: t(messages, "requestDemoPage.form.emailMissing"),
-    emailSubject: t(messages, "requestDemoPage.form.emailSubject")
+    emailSubject: t(messages, "requestDemoPage.form.emailSubject"),
+    phoneLabel: t(messages, "requestDemoPage.form.phoneLabel")
   };
 
   return (
@@ -115,7 +126,13 @@ export default async function RequestDemoPage() {
         </div>
       </section>
 
-      <RequestDemoForm contactEmail={contactEmail} facebookPageUrl={facebookPageUrl} labels={formLabels} />
+      <RequestDemoForm
+        contactEmail={contactEmail}
+        contactPhone={contactPhone}
+        facebookPageUrl={facebookPageUrl}
+        labels={formLabels}
+        lineContactUrl={lineContactUrl}
+      />
 
       <section className="request-demo-panel" aria-labelledby="demo-template-title">
         <div className="home-section-heading">

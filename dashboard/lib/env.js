@@ -21,11 +21,25 @@ export function getAppUrl() {
 }
 
 export function getContactEmail() {
-  return process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? process.env.CONTACT_EMAIL ?? "";
+  return process.env.NEXT_PUBLIC_CONTACT_EMAIL
+    ?? process.env.CONTACT_EMAIL
+    ?? "bestpratice168@gmail.com";
 }
 
 export function getFacebookPageUrl() {
   return process.env.NEXT_PUBLIC_FACEBOOK_PAGE_URL
     ?? process.env.FACEBOOK_PAGE_URL
     ?? "https://www.facebook.com/profile.php?id=61574298551231";
+}
+
+export function getLineContactUrl() {
+  return process.env.NEXT_PUBLIC_LINE_CONTACT_URL
+    ?? process.env.LINE_CONTACT_URL
+    ?? "https://line.me/ti/p/L3kt2FRvJt";
+}
+
+export function getContactPhone() {
+  return process.env.NEXT_PUBLIC_CONTACT_PHONE
+    ?? process.env.CONTACT_PHONE
+    ?? "0642879241";
 }

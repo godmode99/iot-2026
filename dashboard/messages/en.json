@@ -427,12 +427,16 @@
       "copyAction": "Copy brief",
       "copiedAction": "Copied",
       "facebookAction": "Message on Facebook",
+      "lineAction": "Chat on LINE",
       "emailAction": "Open email draft",
       "facebookReady": "You can take this brief to Facebook Messenger right away.",
+      "socialReady": "You can use Facebook or LINE for quick contact with this prepared brief.",
+      "allReady": "Choose the contact path that fits best: Facebook or LINE for quick conversation, or email for a more formal introduction.",
       "contactReady": "Choose the contact path that fits best: Facebook for quick conversation, or email for a more formal introduction.",
       "emailReady": "Your email client will open with the prepared brief.",
       "emailMissing": "Set NEXT_PUBLIC_CONTACT_EMAIL to enable direct email drafting. Until then, copy this brief and send it through your preferred channel.",
-      "emailSubject": "Request demo | ArayaShiki Lab"
+      "emailSubject": "Request demo | ArayaShiki Lab",
+      "phoneLabel": "Phone:"
     },
     "templateEyebrow": "Brief template",
     "templateTitle": "Use this structure when preparing a demo request.",
