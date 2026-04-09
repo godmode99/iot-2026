@@ -239,6 +239,14 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
       existing_alert_id: existingAlert?.id ?? null
     };
   });
+  const handoffHistory = audit.data
+    .filter((entry) => entry.action === "ops.handoff_noted" && entry.details_json?.note)
+    .slice(0, 5)
+    .map((entry) => ({
+      id: entry.id,
+      note: entry.details_json?.note ?? "",
+      created_at: entry.created_at ?? null
+    }));
 
   return {
     farm: farmResult.data,
@@ -253,6 +261,8 @@ export async function loadFarmSettings({ farmId, actorUserId }) {
       recentRecords: records.data,
       templates: templates.data,
       expectations,
+      latestHandoff: handoffHistory[0] ?? null,
+      handoffHistory,
       metrics: {
         deviceCount: devices.data.length,
         openAlertCount: alerts.data.length,

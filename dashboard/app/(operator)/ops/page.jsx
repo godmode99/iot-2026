@@ -127,6 +127,11 @@ export default async function OpsPage() {
                   ? `${ops.metrics.missingContactCount} ${t(messages, "ops.missingContacts")}`
                   : t(messages, "ops.contactsReady")}
               </span>
+              <span className={`health-chip ${ops.metrics.missingHandoffCount ? "is-stale" : "is-online"}`}>
+                {ops.metrics.missingHandoffCount
+                  ? `${ops.metrics.missingHandoffCount} ${t(messages, "ops.missingHandoffs", "farms missing handoff")}`
+                  : t(messages, "ops.handoffsReady", "Recent handoffs ready")}
+              </span>
               <span className="health-chip">
                 {ops.metrics.expectationRecoveredCount} {t(messages, "ops.expectationsRecovered", "expectation recoveries")}
               </span>

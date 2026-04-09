@@ -24,6 +24,37 @@ function formatDateTime(value) {
   }).format(new Date(value));
 }
 
+function handoffFreshness(value, messages) {
+  if (!value) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.noHandoffYet", "No handoff yet")
+    };
+  }
+
+  const ageMs = Date.now() - new Date(value).getTime();
+  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+
+  if (ageDays <= 1) {
+    return {
+      className: "is-online",
+      label: t(messages, "ops.handoffFresh", "Fresh")
+    };
+  }
+
+  if (ageDays <= 3) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.handoffRecent", "Recent")
+    };
+  }
+
+  return {
+    className: "is-offline",
+    label: t(messages, "ops.handoffStale", "Stale")
+  };
+}
+
 function groupQueue(items = []) {
   return {
     critical: items.filter((item) => item.priority === "critical"),
@@ -253,6 +284,7 @@ export default async function OpsFollowUpsPage({ searchParams }) {
       ?? (ops?.followUpQueue ?? []).find((item) => item.farmId === handoffFarmId)
       ?? null
     : null;
+  const handoffFreshnessState = handoffFreshness(handoffContextItem?.latestHandoff?.created_at, messages);
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
@@ -329,6 +361,7 @@ export default async function OpsFollowUpsPage({ searchParams }) {
             <div className="notice">
               <strong>{t(messages, "ops.followUpLatestHandoffTitle", "Latest note")}</strong>
               <span> {handoffContextItem.latestHandoff.note}</span>
+              <span className={`pill ${handoffFreshnessState.className}`}>{handoffFreshnessState.label}</span>
               {handoffContextItem.latestHandoff.created_at ? (
                 <span className="pill">{formatDateTime(handoffContextItem.latestHandoff.created_at)}</span>
               ) : null}
@@ -500,6 +533,7 @@ export default async function OpsFollowUpsPage({ searchParams }) {
                         ) : null}
                       </span>
                       <span className="pill-row">
+                        <span className={`pill ${handoffFreshness(item.latestHandoff?.created_at, messages).className}`}>{handoffFreshness(item.latestHandoff?.created_at, messages).label}</span>
                         {item.farmId === focusFarmId ? <span className="pill is-online">{t(messages, "ops.followUpJustUpdated", "Just updated")}</span> : null}
                         {item.farmId === pinnedFarmId ? <span className="pill">{t(messages, "ops.followUpPinnedChip", "Pinned farm")}</span> : null}
                         <Link className="button-secondary" href={withReturnTo(item.primaryHref, workspaceReturnTo)}>{item.primaryLabel}</Link>

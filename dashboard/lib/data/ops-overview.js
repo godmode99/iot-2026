@@ -14,6 +14,7 @@ const EMPTY_OPS_OVERVIEW = {
     attentionCount: 0,
     criticalAlertCount: 0,
     missingContactCount: 0,
+    missingHandoffCount: 0,
     expectationRecoveredCount: 0
   },
   alertMetrics: {
@@ -244,6 +245,7 @@ function buildReportRows({
   records = [],
   expectationHistory = [],
   resolvedExpectationAlerts = [],
+  latestHandoffByFarmId = new Map(),
   reportWindowDays = 30
 }) {
   const rows = farms.map((farm) => {
@@ -285,13 +287,19 @@ function buildReportRows({
       recordAlerts: farmAlerts.filter((alert) => alert.sourceLabel === "record").length,
       telemetryAlerts: farmAlerts.filter((alert) => alert.sourceLabel === "telemetry").length,
       expectationAlertsOpen: farmAlerts.filter((alert) => alert.sourceLabel === "expectation").length,
-      systemAlerts: farmAlerts.filter((alert) => alert.sourceLabel === "system").length
+      systemAlerts: farmAlerts.filter((alert) => alert.sourceLabel === "system").length,
+      hasHandoff: Boolean(latestHandoffByFarmId.get(farm.id)?.note),
+      latestHandoff: latestHandoffByFarmId.get(farm.id)?.note ?? "",
+      latestHandoffAt: latestHandoffByFarmId.get(farm.id)?.created_at ?? ""
     };
   });
 
   return {
     disciplineByFarm: [...rows]
       .sort((left, right) => {
+        if (Number(left.hasHandoff) !== Number(right.hasHandoff)) {
+          return Number(left.hasHandoff) - Number(right.hasHandoff);
+        }
         if (right.attentionTemplates !== left.attentionTemplates) {
           return right.attentionTemplates - left.attentionTemplates;
         }
@@ -299,6 +307,9 @@ function buildReportRows({
       }),
     alertPressureByFarm: [...rows]
       .sort((left, right) => {
+        if (Number(left.hasHandoff) !== Number(right.hasHandoff)) {
+          return Number(left.hasHandoff) - Number(right.hasHandoff);
+        }
         if (right.openAlerts !== left.openAlerts) {
           return right.openAlerts - left.openAlerts;
         }
@@ -783,6 +794,18 @@ export async function loadOpsOverview(options = {}) {
     alerts: expectationHistory.data,
     farms: farms.data
   });
+  const latestHandoffByFarmId = new Map();
+  for (const note of handoffNotes.data) {
+    if (!note?.farm_id || latestHandoffByFarmId.has(note.farm_id)) {
+      continue;
+    }
+
+    latestHandoffByFarmId.set(note.farm_id, {
+      id: note.id,
+      note: note.details_json?.note ?? "",
+      created_at: note.created_at ?? null
+    });
+  }
   const reports = buildReportRows({
     farms: farms.data,
     devices: mergedDevices,
@@ -791,9 +814,9 @@ export async function loadOpsOverview(options = {}) {
     records: records.data,
     expectationHistory: expectationHistory.data,
     resolvedExpectationAlerts: resolvedExpectationAlerts.data,
+    latestHandoffByFarmId,
     reportWindowDays
   });
-  const latestHandoffByFarmId = new Map();
   const handoffHistoryByFarmId = new Map();
   for (const note of handoffNotes.data) {
     if (!note?.farm_id) {
@@ -842,6 +865,7 @@ export async function loadOpsOverview(options = {}) {
       attentionCount,
       criticalAlertCount,
       missingContactCount,
+      missingHandoffCount: Math.max(farms.data.length - latestHandoffByFarmId.size, 0),
       expectationRecoveredCount: resolvedExpectationAlerts.data.length
     },
     alertMetrics: {

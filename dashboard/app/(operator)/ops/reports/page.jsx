@@ -6,6 +6,37 @@ import { loadOpsOverview } from "@/lib/data/ops-overview.js";
 
 export const dynamic = "force-dynamic";
 
+function handoffFreshness(value, messages) {
+  if (!value) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.noHandoffYet", "No handoff yet")
+    };
+  }
+
+  const ageMs = Date.now() - new Date(value).getTime();
+  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+
+  if (ageDays <= 1) {
+    return {
+      className: "is-online",
+      label: t(messages, "ops.handoffFresh", "Fresh")
+    };
+  }
+
+  if (ageDays <= 3) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.handoffRecent", "Recent")
+    };
+  }
+
+  return {
+    className: "is-offline",
+    label: t(messages, "ops.handoffStale", "Stale")
+  };
+}
+
 function buildReportUrl({ windowValue, severity, source }) {
   const params = new URLSearchParams();
   params.set("window", windowValue);
@@ -104,6 +135,13 @@ export default async function OpsReportsPage({ searchParams }) {
           <Link href={`/alerts/${updatedAlertId}?return_to=${encodeURIComponent(currentReportUrl)}`}>{t(messages, "ops.openUpdatedAlertAction", "Open alert")}</Link>
         </section>
       ) : null}
+      {ops?.authorized && ops.metrics.missingHandoffCount > 0 ? (
+        <section className="notice dashboard-card">
+          <strong>{t(messages, "ops.missingHandoffNoticeTitle", "Handoff coverage needs attention")}</strong>
+          <span> {t(messages, "ops.missingHandoffNoticeBody", "Some farms still do not have a recent operator handoff note in the reporting layer.")}</span>
+          <span className="pill">{ops.metrics.missingHandoffCount} {t(messages, "ops.missingHandoffs", "farms missing handoff")}</span>
+        </section>
+      ) : null}
 
       <section className="ops-hero dashboard-card">
         <div>
@@ -158,6 +196,7 @@ export default async function OpsReportsPage({ searchParams }) {
                       <th>{t(messages, "ops.reportColumns.recordsInWindow", "Records")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationAlertsInWindow", "Missing")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationRecoveredLast7Days", "Recovered 7d")}</th>
+                      <th>{t(messages, "ops.reportColumns.latestHandoff", "Latest handoff")}</th>
                       <th>{t(messages, "ops.reportColumns.actions", "Actions")}</th>
                     </tr>
                   </thead>
@@ -171,6 +210,12 @@ export default async function OpsReportsPage({ searchParams }) {
                         <td>{row.recordsInWindow}</td>
                         <td>{row.expectationAlertsInWindow}</td>
                         <td>{row.expectationRecoveredLast7Days}</td>
+                        <td>
+                          <span className="pill-row">
+                            <span className={`pill ${handoffFreshness(row.latestHandoffAt, messages).className}`}>{handoffFreshness(row.latestHandoffAt, messages).label}</span>
+                            {row.latestHandoff || "—"}
+                          </span>
+                        </td>
                         <td>
                           <div className="inline-actions">
                             <Link className="button-secondary" href={`/ops/reports/farms/${row.farmId}?window=${reportWindow}&severity=${severityFilter}&source=${sourceFilter}`}>{t(messages, "ops.viewReportAction", "View report")}</Link>
@@ -206,6 +251,7 @@ export default async function OpsReportsPage({ searchParams }) {
                       <th>{t(messages, "ops.reportColumns.recordAlerts", "Record")}</th>
                       <th>{t(messages, "ops.reportColumns.telemetryAlerts", "Telemetry")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationAlertsOpen", "Expectation")}</th>
+                      <th>{t(messages, "ops.reportColumns.latestHandoff", "Latest handoff")}</th>
                       <th>{t(messages, "ops.reportColumns.actions", "Actions")}</th>
                     </tr>
                   </thead>
@@ -220,6 +266,12 @@ export default async function OpsReportsPage({ searchParams }) {
                         <td>{row.recordAlerts}</td>
                         <td>{row.telemetryAlerts}</td>
                         <td>{row.expectationAlertsOpen}</td>
+                        <td>
+                          <span className="pill-row">
+                            <span className={`pill ${handoffFreshness(row.latestHandoffAt, messages).className}`}>{handoffFreshness(row.latestHandoffAt, messages).label}</span>
+                            {row.latestHandoff || "—"}
+                          </span>
+                        </td>
                         <td>
                           <div className="inline-actions">
                             <Link className="button-secondary" href={`/ops/reports/farms/${row.farmId}?window=${reportWindow}&severity=${severityFilter}&source=${sourceFilter}`}>{t(messages, "ops.viewReportAction", "View report")}</Link>

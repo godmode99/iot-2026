@@ -88,6 +88,37 @@ function formatDateTime(value) {
   }).format(new Date(value));
 }
 
+function handoffFreshness(value, messages) {
+  if (!value) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.noHandoffYet", "No handoff yet")
+    };
+  }
+
+  const ageMs = Date.now() - new Date(value).getTime();
+  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+
+  if (ageDays <= 1) {
+    return {
+      className: "is-online",
+      label: t(messages, "ops.handoffFresh", "Fresh")
+    };
+  }
+
+  if (ageDays <= 3) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.handoffRecent", "Recent")
+    };
+  }
+
+  return {
+    className: "is-offline",
+    label: t(messages, "ops.handoffStale", "Stale")
+  };
+}
+
 function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
@@ -121,6 +152,7 @@ export default async function OpsFarmReportPage({ params, searchParams }) {
   const returnTo = buildFarmReportUrl({ farmId, windowValue: reportWindow, severity: severityFilter, source: sourceFilter });
   const { authConfigured, user } = await requireUser({ returnUrl: `/ops/reports/farms/${farmId}` });
   const report = user ? await loadOpsFarmReport({ farmId, reportWindow, severityFilter, sourceFilter }) : null;
+  const handoffFreshnessState = handoffFreshness(report?.latestHandoff?.created_at, messages);
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
@@ -236,6 +268,7 @@ export default async function OpsFarmReportPage({ params, searchParams }) {
             <div className="notice">
               <strong>{t(messages, "ops.followUpLatestHandoffTitle", "Latest note")}</strong>
               <span> {report.latestHandoff.note}</span>
+              <span className={`pill ${handoffFreshnessState.className}`}>{handoffFreshnessState.label}</span>
               <span className="pill">{formatDateTime(report.latestHandoff.created_at)}</span>
             </div>
           ) : null}

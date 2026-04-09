@@ -50,6 +50,49 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function formatDateTime(value) {
+  if (!value) {
+    return "N/A";
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Bangkok"
+  }).format(new Date(value));
+}
+
+function handoffFreshness(value, messages) {
+  if (!value) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.noHandoffYet", "No handoff yet")
+    };
+  }
+
+  const ageMs = Date.now() - new Date(value).getTime();
+  const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+
+  if (ageDays <= 1) {
+    return {
+      className: "is-online",
+      label: t(messages, "ops.handoffFresh", "Fresh")
+    };
+  }
+
+  if (ageDays <= 3) {
+    return {
+      className: "is-stale",
+      label: t(messages, "ops.handoffRecent", "Recent")
+    };
+  }
+
+  return {
+    className: "is-offline",
+    label: t(messages, "ops.handoffStale", "Stale")
+  };
+}
+
 function label(value) {
   return String(value ?? "unknown").replaceAll("_", " ");
 }
@@ -115,6 +158,7 @@ export default async function FarmSettingsPage({ params, searchParams }) {
     .filter(Boolean);
   const hasFarmContacts = Boolean(settings?.farm?.alert_email_to || settings?.farm?.alert_line_user_id);
   const latestAuditAt = settings?.audit[0]?.created_at ?? null;
+  const handoffFreshnessState = handoffFreshness(settings?.summary?.latestHandoff?.created_at, messages);
 
   return (
     <AppShell currentPath={`/farms/${farmId}`} ariaLabel="Farm settings navigation" className="page-shell placeholder-layout">
@@ -267,6 +311,37 @@ export default async function FarmSettingsPage({ params, searchParams }) {
                   ))}
                 </ul>
               ) : <EmptyPanel>{t(messages, "farmSettings.noRecentRecords", "No operational records for this farm yet.")}</EmptyPanel>}
+            </Panel>
+
+            <Panel
+              eyebrow={t(messages, "farmSettings.handoffEyebrow", "Operator handoff")}
+              title={t(messages, "farmSettings.handoffTitle", "Latest operator context")}
+              body={t(messages, "farmSettings.handoffBody", "Use this note trail to understand what the operator team last changed or what the next shift should verify.")}
+            >
+              {settings.summary.latestHandoff ? (
+                <>
+                  <div className="notice">
+                    <strong>{t(messages, "farmSettings.latestHandoffTitle", "Latest note")}</strong>
+                    <span> {settings.summary.latestHandoff.note}</span>
+                    <span className={`pill ${handoffFreshnessState.className}`}>{handoffFreshnessState.label}</span>
+                    <span className="pill">{formatDateTime(settings.summary.latestHandoff.created_at)}</span>
+                  </div>
+                  {settings.summary.handoffHistory.length ? (
+                    <ul className="status-list">
+                      {settings.summary.handoffHistory.map((entry) => (
+                        <li className="mobile-list-row" key={entry.id}>
+                          <span>
+                            <strong>{entry.note}</strong>
+                          </span>
+                          <span className="list-meta">{formatDateTime(entry.created_at)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </>
+              ) : (
+                <EmptyPanel>{t(messages, "farmSettings.noHandoff", "No operator handoff notes are visible for this farm yet.")}</EmptyPanel>
+              )}
             </Panel>
 
             <Panel
