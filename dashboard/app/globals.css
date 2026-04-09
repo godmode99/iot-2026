@@ -2653,14 +2653,6 @@ body::before {
   gap: 24px;
   padding: clamp(28px, 4vw, 44px);
   background:
-    radial-gradient(ellipse at 50% 19%, rgba(245, 248, 251, 0.045) 0 26%, transparent 27%),
-    radial-gradient(ellipse at 50% 77%, rgba(245, 248, 251, 0.04) 0 26%, transparent 27%),
-    linear-gradient(135deg, transparent 0 45.8%, rgba(245, 248, 251, 0.028) 46%, rgba(245, 248, 251, 0.028) 47.2%, transparent 47.4%),
-    linear-gradient(225deg, transparent 0 45.8%, rgba(245, 248, 251, 0.028) 46%, rgba(245, 248, 251, 0.028) 47.2%, transparent 47.4%),
-    linear-gradient(45deg, transparent 0 52.6%, rgba(245, 248, 251, 0.024) 53%, rgba(245, 248, 251, 0.024) 54.2%, transparent 54.6%),
-    linear-gradient(-45deg, transparent 0 52.6%, rgba(245, 248, 251, 0.024) 53%, rgba(245, 248, 251, 0.024) 54.2%, transparent 54.6%),
-    linear-gradient(180deg, transparent 0 31%, rgba(255, 233, 179, 0.06) 40%, rgba(214, 168, 79, 0.085) 49.5%, rgba(255, 233, 179, 0.06) 59%, transparent 70%),
-    radial-gradient(circle at 50% 85%, rgba(214, 168, 79, 0.12), transparent 8rem),
     radial-gradient(circle at 78% 8%, rgba(214, 168, 79, 0.18), transparent 18rem),
     radial-gradient(circle at 50% 42%, rgba(245, 248, 251, 0.06), transparent 22rem),
     linear-gradient(180deg, #101828 0%, #111c2b 62%, #0a1220 100%);
@@ -2703,6 +2695,44 @@ body::before {
 .home-logo-stage {
   position: relative;
   min-height: clamp(220px, 28vw, 360px);
+}
+
+.home-hourglass {
+  position: absolute;
+  inset: 4% 20%;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  pointer-events: none;
+  opacity: 0.28;
+}
+
+.home-hourglass-top,
+.home-hourglass-bottom {
+  width: min(72%, 320px);
+  height: clamp(96px, 12vw, 132px);
+  border: 1px solid rgba(245, 248, 251, 0.14);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 243, 210, 0.08), transparent 62%),
+    linear-gradient(180deg, rgba(245, 248, 251, 0.02), rgba(245, 248, 251, 0.01));
+}
+
+.home-hourglass-top {
+  clip-path: polygon(6% 0, 94% 0, 62% 100%, 38% 100%);
+  border-radius: 20px 20px 12px 12px;
+}
+
+.home-hourglass-bottom {
+  clip-path: polygon(38% 0, 62% 0, 94% 100%, 6% 100%);
+  border-radius: 12px 12px 20px 20px;
+}
+
+.home-hourglass-neck {
+  width: 2px;
+  height: clamp(88px, 12vw, 118px);
+  margin-block: -2px;
+  background: linear-gradient(180deg, rgba(255, 243, 210, 0.08), rgba(214, 168, 79, 0.32), rgba(255, 243, 210, 0.08));
+  box-shadow: 0 0 12px rgba(214, 168, 79, 0.18);
 }
 
 .home-logo-stage::before {

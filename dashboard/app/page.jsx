@@ -50,6 +50,11 @@ export default async function HomePage() {
             <p className="muted">{t(messages, "home.panelBody")}</p>
           </div>
           <div className="home-logo-stage" aria-hidden="true">
+            <span className="home-hourglass">
+              <span className="home-hourglass-top" />
+              <span className="home-hourglass-neck" />
+              <span className="home-hourglass-bottom" />
+            </span>
             <span className="home-logo-aura" />
             <span className="home-logo-sheen" />
             <span className="home-gold-orbit" />
