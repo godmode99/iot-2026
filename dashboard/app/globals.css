@@ -2779,30 +2779,29 @@ body::before {
 
   .landing-shell .topbar .nav-links,
   .solutions-shell .topbar .nav-links {
-    justify-content: flex-start;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 2px;
-    scrollbar-width: none;
-  }
-
-  .landing-shell .topbar .nav-links::-webkit-scrollbar,
-  .solutions-shell .topbar .nav-links::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
   }
 
   .landing-shell .topbar .nav-link,
   .solutions-shell .topbar .nav-link {
-    min-height: 36px;
-    padding: 8px 10px;
+    min-height: 40px;
+    justify-content: center;
+    padding: 8px 12px;
     border-radius: 10px;
     background: rgba(16, 24, 40, 0.03);
+    text-align: center;
   }
 
   .landing-shell .topbar .button-secondary,
   .solutions-shell .topbar .button-secondary {
-    min-height: 36px;
-    padding: 8px 14px;
+    min-height: 42px;
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
     border-radius: 12px;
   }
 
@@ -2882,6 +2881,13 @@ body::before {
   .request-demo-brief-panel,
   .request-demo-template {
     border-radius: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .landing-shell .topbar .nav-links,
+  .solutions-shell .topbar .nav-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
