@@ -3,6 +3,7 @@
     "name": "ArayaShiki Lab"
   },
   "nav": {
+    "records": "บันทึกงาน",
     "login": "เข้าสู่พอร์ทัล"
   },
   "home": {
@@ -189,6 +190,60 @@
     "ctaBody": "วิธีนี้ทำให้ positioning ของบริษัทกว้างพอ แต่บทสนทนากับลูกค้ายังชัดและจับต้องได้",
     "ctaPrimary": "เปรียบเทียบแพ็กเกจ",
     "ctaSecondary": "กลับหน้าแรก"
+  },
+  "recordsPage": {
+    "eyebrow": "บันทึกงาน",
+    "title": "บันทึกงานประจำให้เป็นข้อมูลที่ใช้ต่อได้",
+    "body": "เก็บงานโรงเพาะ ฟาร์ม และงานวิจัยในรูปแบบที่เป็นระบบ เพื่อให้ต่อยอดไปสู่ monitoring และ automation ได้ในภายหลัง",
+    "metrics": {
+      "submitted": "รายการที่ส่งแล้ว",
+      "drafts": "ฉบับร่าง",
+      "templates": "เทมเพลตที่ใช้งาน"
+    },
+    "dataWarnings": "คำเตือนข้อมูลบันทึกงาน",
+    "newRecordEyebrow": "เริ่มต้น",
+    "newRecordTitle": "สร้างบันทึกงานรายการแรก",
+    "newRecordBody": "ใช้เทมเพลตแบบมีโครงสร้าง เพื่อให้งานประจำกลายเป็นข้อมูลที่นำไปใช้ต่อได้จริง",
+    "newRecordAction": "สร้างบันทึก",
+    "templatesEyebrow": "เทมเพลต",
+    "templatesTitle": "เทมเพลตบันทึกงาน Phase 1",
+    "historyEyebrow": "ประวัติ",
+    "historyTitle": "บันทึกล่าสุด",
+    "emptyEyebrow": "ยังไม่มีบันทึก",
+    "emptyTitle": "เริ่มจากบันทึกงานรายการแรก",
+    "emptyBody": "สร้างบันทึกงานแบบมีโครงสร้าง เพื่อให้ระบบเริ่มมีประวัติการทำงานที่ใช้ต่อได้",
+    "emptyAction": "สร้างบันทึก"
+  },
+  "recordCreatePage": {
+    "eyebrow": "บันทึกงานใหม่",
+    "title": "สร้างบันทึกงานแบบมีโครงสร้าง",
+    "body": "หน้านี้คือโครงเริ่มต้นของ flow บันทึกงานก่อนเชื่อม backend สำหรับ production schema เต็มรูปแบบ",
+    "backAction": "กลับไปหน้าบันทึกงาน",
+    "templatesEyebrow": "ตัวเลือกเทมเพลต",
+    "templatesTitle": "เทมเพลตที่ใช้งานได้",
+    "formEyebrow": "โครงสร้างฟอร์ม",
+    "formTitle": "หน้ากรอกข้อมูล Phase 1",
+    "fields": {
+      "farm": "ฟาร์ม",
+      "farmPlaceholder": "เลือกฟาร์ม",
+      "template": "เทมเพลตบันทึก",
+      "selectPlaceholder": "เลือกเทมเพลต",
+      "recordedDate": "วันที่บันทึก",
+      "summary": "สรุปบันทึก",
+      "summaryPlaceholder": "สรุปสิ่งที่พบ งานที่ทำ หรือผลลัพธ์สำคัญที่ควรแสดงในประวัติบันทึก",
+      "booleanPlaceholder": "เลือกสถานะ",
+      "booleanTrue": "เสร็จแล้ว"
+    },
+    "fieldsMap": {
+      "water_temperature_c": "อุณหภูมิน้ำ",
+      "salinity_ppt": "ความเค็ม",
+      "dissolved_oxygen_mg_l": "ออกซิเจนละลายน้ำ",
+      "checklist_completed": "เช็กลิสต์เสร็จแล้ว",
+      "observation_note": "บันทึกสังเกตการณ์"
+    },
+    "submitAction": "สร้างบันทึก",
+    "cancelAction": "ยกเลิก",
+    "nextStepNote": "รอบแรกนี้จะบันทึกตัว record ก่อน แล้วค่อยเชื่อม field แบบละเอียดลง record_entries ในขั้นถัดไป"
   },
   "aboutPage": {
     "nav": {

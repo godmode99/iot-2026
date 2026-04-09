@@ -4,6 +4,7 @@ const EMPTY_DASHBOARD = {
   farms: [],
   devices: [],
   openAlerts: [],
+  recentRecords: [],
   errors: []
 };
 
@@ -28,7 +29,7 @@ export async function loadCustomerDashboard() {
     return EMPTY_DASHBOARD;
   }
 
-  const [farmsResult, devicesResult, alertsResult] = await Promise.all([
+  const [farmsResult, devicesResult, alertsResult, recordsResult] = await Promise.all([
     supabase
       .from("farms")
       .select("id,name,created_at")
@@ -45,17 +46,24 @@ export async function loadCustomerDashboard() {
       .select("id,alert_type,severity,status,farm_id,device_id,opened_at,devices(device_id,serial_number)")
       .eq("status", "open")
       .order("opened_at", { ascending: false })
-      .limit(20)
+      .limit(20),
+    supabase
+      .from("operational_records")
+      .select("id,record_status,recorded_for_date,notes_summary,created_at,record_templates(name,code),farms(id,name)")
+      .order("recorded_for_date", { ascending: false })
+      .limit(10)
   ]);
 
   const farms = normalizeResult("farms", farmsResult);
   const devices = normalizeResult("devices", devicesResult);
   const openAlerts = normalizeResult("alerts", alertsResult);
+  const recentRecords = normalizeResult("operational_records", recordsResult);
 
   return {
     farms: farms.data,
     devices: devices.data,
     openAlerts: openAlerts.data,
-    errors: [farms.error, devices.error, openAlerts.error].filter(Boolean)
+    recentRecords: recentRecords.data,
+    errors: [farms.error, devices.error, openAlerts.error, recentRecords.error].filter(Boolean)
   };
 }

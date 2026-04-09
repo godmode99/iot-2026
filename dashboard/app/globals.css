@@ -2961,6 +2961,94 @@ body::before {
   box-shadow: 0 14px 32px rgba(16, 24, 40, 0.05);
 }
 
+.split-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.records-template-grid,
+.records-field-group-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.records-template-card,
+.records-field-group-card,
+.records-field-card {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+  padding: 20px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 248, 251, 0.82));
+  box-shadow: 0 14px 32px rgba(16, 24, 40, 0.05);
+}
+
+.records-form-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.records-filter-form {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+}
+
+.records-filter-actions {
+  display: flex;
+  align-items: end;
+}
+
+.records-history-link {
+  display: grid;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.records-history-link strong {
+  color: #101828;
+}
+
+.records-field-card span:first-child {
+  font-weight: 700;
+  color: #101828;
+}
+
+.record-detail-shell {
+  gap: 18px;
+}
+
+.record-summary-card {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 251, 0.84));
+}
+
+.record-summary-card p,
+.record-summary-card .eyebrow {
+  margin: 0;
+}
+
+.record-meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  color: rgba(16, 24, 40, 0.64);
+  font-size: 0.95rem;
+}
+
 .home-lane {
   gap: 18px;
   padding: 26px;

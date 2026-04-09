@@ -139,6 +139,16 @@ export default async function DashboardPage() {
       ) : null}
 
       <section className="dashboard-actions-grid dashboard-card" aria-label="Quick actions">
+        <Link className="action-card" href="/alerts">
+          <span className="eyebrow">{t(messages, "alertsPage.eyebrow", "Open alerts")}</span>
+          <strong>{t(messages, "alertsPage.title", "Monitor active alerts across customer farms")}</strong>
+          <span className="muted">{t(messages, "alertsPage.body", "Use this list to review open alert load, severity, and which farms or devices need attention first.")}</span>
+        </Link>
+        <Link className="action-card" href="/records">
+          <span className="eyebrow">{t(messages, "recordsPage.eyebrow", "Operational records")}</span>
+          <strong>{t(messages, "recordsPage.newRecordTitle", "Create structured records")}</strong>
+          <span className="muted">{t(messages, "recordsPage.newRecordBody", "Capture daily work in a structured operating record.")}</span>
+        </Link>
         <Link className="action-card" href="/provision">
           <span className="eyebrow">{t(messages, "nav.provision")}</span>
           <strong>{t(messages, "placeholder.provisionTitle")}</strong>
@@ -186,6 +196,34 @@ export default async function DashboardPage() {
         </div>
 
         <div className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.recentRecords", "Recent records")}</h2>
+            <Link className="button-secondary" href="/records">{t(messages, "dashboard.viewAllRecords", "View all records")}</Link>
+          </div>
+          {dashboard?.recentRecords.length ? (
+            <ul className="status-list">
+              {dashboard.recentRecords.map((record) => {
+                const template = firstRelated(record.record_templates);
+                const farm = firstRelated(record.farms);
+
+                return (
+                  <li className="mobile-list-row" key={record.id}>
+                    <span>
+                      <Link href={`/records/${record.id}`}>{template?.name ?? "Operational record"}</Link>
+                      <span className="list-meta">{farm?.name ?? "Farm"} · {formatDate(record.recorded_for_date ?? record.created_at)}</span>
+                      {record.notes_summary ? <span className="list-meta">{record.notes_summary}</span> : null}
+                    </span>
+                    <span className="pill">{record.record_status ?? "submitted"}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="muted">{t(messages, "dashboard.noRecords", "No records are visible for this account yet.")}</p>
+          )}
+        </div>
+
+        <div className="card">
           <h2>{t(messages, "dashboard.visibleDevices")}</h2>
           {dashboard?.devices.length ? (
             <ul className="status-list">
@@ -214,7 +252,10 @@ export default async function DashboardPage() {
 
       {dashboard?.openAlerts.length ? (
         <section className="card dashboard-card">
-          <h2>{t(messages, "dashboard.openAlerts")}</h2>
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.openAlerts")}</h2>
+            <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.viewAllAction", "View all alerts")}</Link>
+          </div>
           <ul className="status-list">
             {dashboard.openAlerts.map((alert) => {
               const device = firstRelated(alert.devices);
@@ -223,7 +264,7 @@ export default async function DashboardPage() {
               return (
                 <li className="mobile-list-row" key={alert.id}>
                   <span>
-                    <Link href={`/devices/${device?.device_id ?? alert.device_id}`}>{label(alert.alert_type)}</Link>
+                    <Link href={`/alerts/${alert.id}`}>{label(alert.alert_type)}</Link>
                     <span className="list-meta">{deviceLabel}</span>
                   </span>
                   <span className={`pill ${statusClass(alert.severity)}`}>{alert.severity}</span>
