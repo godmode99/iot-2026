@@ -30,22 +30,22 @@
     "secondary": "Compare packages",
     "panelLabel": "Flagship solution",
     "panelEyebrow": "Daily Complete",
-    "panelTitle": "The first operating layer inside the ArayaShiki ecosystem.",
-    "panelBody": "Daily Complete starts with real daily work, structured records, and monitoring. It is designed to grow into device integration, control logic, and more advanced automation.",
-    "panelPrimary": "Explore Daily Complete",
+    "panelTitle": "The first operating layer for Daily Complete.",
+    "panelBody": "Start with real daily work, structured records, and monitoring. Then grow into device integration, control logic, and deeper automation.",
+    "panelPrimary": "See Daily Complete",
     "panelSecondary": "Enter portal",
     "proof": {
       "audiences": {
-        "value": "3 audience groups",
-        "label": "Research, farm operations, and private sector teams"
+        "value": "3 core audiences",
+        "label": "Research, farm operators, and private sector teams"
       },
       "inputs": {
-        "value": "Human + board data",
-        "label": "Designed to accept records from people and devices"
+        "value": "People + devices",
+        "label": "Capture data from both staff and connected boards"
       },
       "readiness": {
-        "value": "Monitoring now",
-        "label": "Automation expands through the roadmap, not a rewrite"
+        "value": "Monitoring first",
+        "label": "Expand into automation through the roadmap"
       }
     },
     "lanesLabel": "Narrative highlights",

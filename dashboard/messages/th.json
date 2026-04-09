@@ -22,22 +22,22 @@
     "secondary": "เปรียบเทียบแพ็กเกจ",
     "panelLabel": "Flagship solution",
     "panelEyebrow": "Daily Complete",
-    "panelTitle": "ชั้นการทำงานแรกของ ArayaShiki ecosystem",
-    "panelBody": "Daily Complete เริ่มจากงานประจำจริง การบันทึกข้อมูลแบบมีโครงสร้าง และการมอนิเตอร์ ก่อนจะขยายไปสู่การเชื่อมอุปกรณ์ ตรรกะการควบคุม และอัตโนมัติที่ลึกขึ้น",
+    "panelTitle": "ชั้นการทำงานแรกของ Daily Complete",
+    "panelBody": "เริ่มจากงานที่ต้องใช้ทุกวัน เก็บข้อมูลให้เป็นระบบ มองเห็นสถานะหน้างานชัด แล้วค่อยต่อยอดไปสู่อุปกรณ์ การควบคุม และ automation",
     "panelPrimary": "ดู Daily Complete",
     "panelSecondary": "เข้าสู่พอร์ทัล",
     "proof": {
       "audiences": {
-        "value": "3 กลุ่มผู้ใช้",
-        "label": "สถาบันวิจัย เกษตรกร และภาคเอกชน"
+        "value": "3 กลุ่มหลัก",
+        "label": "วิจัย เกษตรกร และภาคเอกชน"
       },
       "inputs": {
-        "value": "คน + บอร์ด",
-        "label": "รองรับทั้งการบันทึกจากคนและข้อมูลจากอุปกรณ์"
+        "value": "คน + อุปกรณ์",
+        "label": "รองรับทั้งข้อมูลจากคนและบอร์ด"
       },
       "readiness": {
         "value": "เริ่มที่ monitoring",
-        "label": "ค่อยต่อยอด automation ตาม roadmap ไม่ใช่เริ่มใหม่"
+        "label": "ค่อยต่อยอดสู่ automation ตาม roadmap"
       }
     },
     "lanesLabel": "จุดเน้นของ narrative",
