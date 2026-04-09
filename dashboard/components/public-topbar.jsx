@@ -9,8 +9,7 @@ export function PublicTopbar({
   brandLabel,
   navItems,
   actionHref,
-  actionLabel,
-  menuLabel = "Menu"
+  actionLabel
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,7 +57,6 @@ export function PublicTopbar({
         <span />
         <span />
         <span />
-        <strong>{menuLabel}</strong>
       </button>
 
       <div className={`mobile-menu${menuOpen ? " is-open" : ""}`} id="public-mobile-menu">

@@ -2397,35 +2397,6 @@ body::before {
   display: none;
 }
 
-@keyframes gold-liquid-flow {
-  0% {
-    transform: translate3d(-12%, -8%, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(10%, 6%, 0) scale(1.08);
-  }
-  100% {
-    transform: translate3d(-8%, 10%, 0) scale(0.98);
-  }
-}
-
-@keyframes gold-sheen-sweep {
-  0% {
-    transform: translateX(-130%) skewX(-18deg);
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.55;
-  }
-  55% {
-    opacity: 0.18;
-  }
-  100% {
-    transform: translateX(160%) skewX(-18deg);
-    opacity: 0;
-  }
-}
-
 .landing-shell .topbar .brand,
 .solutions-shell .topbar .brand {
   min-width: 0;
@@ -2856,77 +2827,32 @@ body::before {
 
   .public-topbar .menu-toggle {
     display: inline-flex;
-    position: relative;
-    min-width: 110px;
-    height: 54px;
+    width: 46px;
+    height: 46px;
     align-items: center;
     justify-content: center;
     gap: 4px;
     flex-direction: column;
-    overflow: hidden;
-    isolation: isolate;
-    border: 1px solid rgba(193, 148, 51, 0.34);
-    border-radius: 18px;
-    background:
-      radial-gradient(circle at 24% 24%, rgba(255, 248, 217, 0.95), transparent 34%),
-      linear-gradient(135deg, #f8e3a2 0%, #d5a63b 46%, #f4d279 100%);
+    border: 1px solid rgba(16, 24, 40, 0.08);
+    border-radius: 14px;
+    background: rgba(16, 24, 40, 0.03);
     color: #101828;
-    box-shadow:
-      0 14px 28px rgba(193, 148, 51, 0.28),
-      inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    box-shadow: none;
     transition: transform 180ms ease, box-shadow 180ms ease;
   }
 
-  .public-topbar .menu-toggle::before {
-    content: "";
-    position: absolute;
-    inset: -22%;
-    z-index: -2;
-    border-radius: 42%;
-    background:
-      radial-gradient(circle at 28% 30%, rgba(255, 245, 204, 0.98), transparent 30%),
-      radial-gradient(circle at 72% 68%, rgba(193, 148, 51, 0.34), transparent 44%),
-      radial-gradient(circle at 52% 52%, rgba(255, 214, 113, 0.82), rgba(212, 161, 58, 0.94));
-    animation: gold-liquid-flow 5.8s ease-in-out infinite alternate;
-  }
-
-  .public-topbar .menu-toggle::after {
-    content: "";
-    position: absolute;
-    inset: -16%;
-    z-index: -1;
-    width: 54%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
-    filter: blur(1px);
-    animation: gold-sheen-sweep 3.8s ease-in-out infinite;
-  }
-
   .public-topbar .menu-toggle span {
-    position: relative;
-    z-index: 1;
-    width: 20px;
+    width: 18px;
     height: 2px;
     border-radius: 999px;
     background: currentColor;
     transition: transform 180ms ease, opacity 180ms ease;
   }
 
-  .public-topbar .menu-toggle strong {
-    position: relative;
-    z-index: 1;
-    margin-top: 3px;
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
   .public-topbar .menu-toggle:hover,
   .public-topbar .menu-toggle:focus-visible {
-    transform: translateY(-1px) scale(1.02);
-    box-shadow:
-      0 18px 34px rgba(193, 148, 51, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    background: rgba(16, 24, 40, 0.06);
+    box-shadow: 0 8px 20px rgba(16, 24, 40, 0.08);
   }
 
   .public-topbar.is-open .menu-toggle span:nth-child(1) {
@@ -2942,9 +2868,8 @@ body::before {
   }
 
   .public-topbar.is-open .menu-toggle {
-    box-shadow:
-      0 18px 34px rgba(193, 148, 51, 0.38),
-      inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    background: rgba(16, 24, 40, 0.08);
+    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.1);
   }
 
   .public-topbar .mobile-menu {
