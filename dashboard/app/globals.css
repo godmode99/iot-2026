@@ -604,6 +604,14 @@ h2 {
   line-height: 1.72;
 }
 
+.home-caption {
+  max-width: 29rem;
+  margin-top: 18px;
+  color: rgba(16, 24, 40, 0.68);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
 .home-signal-panel {
   min-height: clamp(680px, 78svh, 820px);
   display: grid;
@@ -825,6 +833,91 @@ h2 {
   line-height: 1.62;
 }
 
+.home-ecosystem,
+.home-solutions,
+.home-roadmap {
+  display: grid;
+  gap: 28px;
+  margin-top: clamp(26px, 5vw, 54px);
+  padding: clamp(28px, 4.4vw, 48px);
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  border-radius: clamp(30px, 4vw, 44px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 248, 251, 0.82));
+  box-shadow: 0 20px 70px rgba(16, 24, 40, 0.08);
+}
+
+.home-section-heading {
+  display: grid;
+  gap: 10px;
+  max-width: 780px;
+}
+
+.home-section-heading h2 {
+  max-width: 18ch;
+  margin-bottom: 0;
+}
+
+.home-section-heading .muted {
+  margin-bottom: 0;
+  line-height: 1.68;
+}
+
+.home-pillar-grid,
+.home-solution-grid,
+.home-roadmap-grid {
+  display: grid;
+  gap: 1px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(16, 24, 40, 0.1);
+}
+
+.home-pillar-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.home-solution-grid,
+.home-roadmap-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.home-pillar,
+.home-solution,
+.home-roadmap-step {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 220px;
+  padding: clamp(24px, 3vw, 34px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 251, 0.86));
+}
+
+.home-pillar > span {
+  width: 54px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), rgba(16, 24, 40, 0.58), transparent);
+}
+
+.home-pillar h3,
+.home-solution h3,
+.home-roadmap-step h3 {
+  margin: 0;
+  font-size: clamp(1.16rem, 2.2vw, 1.42rem);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+}
+
+.home-pillar p,
+.home-solution p,
+.home-roadmap-step p {
+  margin-bottom: 0;
+  line-height: 1.64;
+}
+
 .home-cta-panel {
   display: flex;
   align-items: center;
@@ -923,6 +1016,11 @@ h2 {
 
   .home-lanes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-solution-grid,
+  .home-roadmap-grid {
+    grid-template-columns: 1fr;
   }
 
   .home-lane:last-child {
@@ -1739,7 +1837,10 @@ h2 {
   }
 
   .home-hero,
-  .home-lanes {
+  .home-lanes,
+  .home-pillar-grid,
+  .home-solution-grid,
+  .home-roadmap-grid {
     grid-template-columns: 1fr;
   }
 

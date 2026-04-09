@@ -14,48 +14,113 @@
     "onboarding": "Onboarding"
   },
   "home": {
-    "eyebrow": "SB-00 farm monitoring portal",
-    "title": "Field status, built for the phone in your hand",
-    "body": "Monitor farms, bind devices, act on alerts, and give resellers scoped support access without exposing customer data.",
-    "primary": "Open dashboard",
-    "secondary": "Log in",
-    "panelLabel": "Portal coverage",
-    "panelEyebrow": "Production surface",
-    "panelTitle": "One protected workspace for farms, devices, alerts, and field support.",
+    "nav": {
+      "ecosystem": "Ecosystem",
+      "solutions": "Solutions",
+      "roadmap": "Roadmap"
+    },
+    "kicker": "Smart hatchery and aquaculture ecosystem",
+    "eyebrow": "Company overview",
+    "title": "Build one operating ecosystem before you split it into customer packages.",
+    "body": "ArayaShiki Lab connects human records, board data, monitoring, and future automation in one platform for farms, hatcheries, research institutes, and private operators.",
+    "caption": "Start with what works in the field today, then expand toward rule-based and process-level automation without rebuilding the system story every time.",
+    "primary": "View solutions",
+    "secondary": "See the ecosystem",
+    "panelLabel": "Flagship solution",
+    "panelEyebrow": "Daily Complete",
+    "panelTitle": "The first operating layer inside the ArayaShiki ecosystem.",
+    "panelBody": "Daily Complete starts with real daily work, structured records, and monitoring. It is designed to grow into device integration, control logic, and more advanced automation.",
+    "panelPrimary": "Explore Daily Complete",
+    "panelSecondary": "Enter portal",
     "proof": {
-      "roles": {
-        "value": "4 roles",
-        "label": "Customer, member, reseller, operator"
+      "audiences": {
+        "value": "3 audience groups",
+        "label": "Research, farm operations, and private sector teams"
       },
-      "mobile": {
-        "value": "Mobile-first",
-        "label": "Provisioning and monitoring"
+      "inputs": {
+        "value": "Human + board data",
+        "label": "Designed to accept records from people and devices"
       },
-      "secure": {
-        "value": "RLS scoped",
-        "label": "Farm data stays inside its boundary"
+      "readiness": {
+        "value": "Monitoring now",
+        "label": "Automation expands through the roadmap, not a rewrite"
       }
     },
-    "lanesLabel": "Portal lanes",
+    "lanesLabel": "Narrative highlights",
     "lanes": {
-      "customers": {
-        "title": "Customers monitor and act",
-        "body": "Farm owners can see device status, acknowledge alerts, invite members, and provision hardware from the same portal."
+      "ecosystem": {
+        "title": "More than smart farm monitoring",
+        "body": "The company story is not a single dashboard. It is a connected operating ecosystem for data capture, visibility, and future control."
       },
-      "resellers": {
-        "title": "Resellers support within scope",
-        "body": "Reseller access is assigned per farm, audited, and limited so support work does not become customer data ownership."
+      "flagship": {
+        "title": "Daily Complete is the first flagship solution",
+        "body": "Daily Complete anchors the first real workflow surface, then expands toward deeper device integration and automation over time."
       },
-      "operators": {
-        "title": "Operators keep the fleet healthy",
-        "body": "Ops users can review open alerts, command history, notification readiness, and device health from one console."
+      "roadmap": {
+        "title": "From monitoring to orchestration",
+        "body": "Today the system focuses on monitoring. The long-term platform moves toward rule-based actions and multi-step process control."
       }
     },
-    "ctaEyebrow": "Start clean",
-    "ctaTitle": "Create an account, then add a farm before binding the first device.",
-    "ctaBody": "The production flow keeps identity, farm membership, notification settings, and provisioning in the same permission model.",
-    "ctaPrimary": "Create account",
-    "ctaSecondary": "Provision device"
+    "ecosystemEyebrow": "Platform layers",
+    "ecosystemTitle": "One architecture that accepts manual work now and automation later.",
+    "ecosystemBody": "ArayaShiki Lab is building a platform that can serve different operating models without forcing every customer into the same level of automation on day one.",
+    "pillars": {
+      "human": {
+        "title": "Human data capture",
+        "body": "Daily work, research observations, and operational records stay structured from the moment someone enters them."
+      },
+      "board": {
+        "title": "Board and sensor input",
+        "body": "The same system is prepared to receive telemetry, device state, and machine-originated events from connected boards."
+      },
+      "rules": {
+        "title": "Rule-based automation",
+        "body": "Thresholds and simple if-then actions create the first bridge from monitoring into controlled responses."
+      },
+      "orchestration": {
+        "title": "Process orchestration",
+        "body": "The long-term direction is multi-step control such as water preparation, mixing, and traceable execution across devices."
+      }
+    },
+    "solutionsEyebrow": "Solution tracks",
+    "solutionsTitle": "The ecosystem is broad internally, but the market story should stay clear.",
+    "solutionsBody": "ArayaShiki Lab can build a full capability map behind the scenes, then present the right package for each audience instead of forcing one generic product pitch.",
+    "solutions": {
+      "research": {
+        "title": "Research & education",
+        "body": "Support repeatable observation, structured data collection, and learning environments for institutes and academic teams."
+      },
+      "operations": {
+        "title": "Farm operations",
+        "body": "Fit daily hatchery and farm work first, then improve visibility, monitoring, and practical operational control."
+      },
+      "enterprise": {
+        "title": "Enterprise & custom automation",
+        "body": "Extend into private-sector workflows, permissions, integrations, and future process automation where standard packages are not enough."
+      }
+    },
+    "roadmapEyebrow": "Capability roadmap",
+    "roadmapTitle": "The system grows in layers instead of pretending everything is already automated.",
+    "roadmapBody": "Current delivery is monitoring-led. The roadmap expands into rule-based control and later into complex operational automation such as salinity-controlled water mixing.",
+    "roadmap": {
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "SB-00 establishes the first production-ready monitoring surface and validates how records, telemetry, and visibility should work together."
+      },
+      "automation": {
+        "title": "Rule-based actions",
+        "body": "Next layers add condition-based on and off control, alert reactions, and safer automation patterns tied to real operating rules."
+      },
+      "process": {
+        "title": "Process automation",
+        "body": "Future workflows can calculate targets such as 25 ppt water preparation, drive pumps and valves, and record the completed operation in the same platform."
+      }
+    },
+    "ctaEyebrow": "Start with the right view",
+    "ctaTitle": "See the company as an ecosystem, then explore the first flagship solution.",
+    "ctaBody": "Use the ecosystem story to explain the whole direction, and use Daily Complete to prove how the first operational layer works in practice.",
+    "ctaPrimary": "Review solutions",
+    "ctaSecondary": "Enter portal"
   },
   "auth": {
     "loginTitle": "Log in",

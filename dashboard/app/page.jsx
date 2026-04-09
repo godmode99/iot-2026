@@ -3,13 +3,25 @@ import { getMessages, t } from "@/lib/i18n.js";
 
 export default async function HomePage() {
   const messages = await getMessages();
-  const proofItems = ["roles", "mobile", "secure"].map((item) => ({
+  const proofItems = ["audiences", "inputs", "readiness"].map((item) => ({
     label: t(messages, `home.proof.${item}.label`),
     value: t(messages, `home.proof.${item}.value`)
   }));
-  const lanes = ["customers", "resellers", "operators"].map((lane) => ({
+  const lanes = ["ecosystem", "flagship", "roadmap"].map((lane) => ({
     title: t(messages, `home.lanes.${lane}.title`),
     body: t(messages, `home.lanes.${lane}.body`)
+  }));
+  const pillars = ["human", "board", "rules", "orchestration"].map((item) => ({
+    title: t(messages, `home.pillars.${item}.title`),
+    body: t(messages, `home.pillars.${item}.body`)
+  }));
+  const solutions = ["research", "operations", "enterprise"].map((item) => ({
+    title: t(messages, `home.solutions.${item}.title`),
+    body: t(messages, `home.solutions.${item}.body`)
+  }));
+  const roadmap = ["monitoring", "automation", "process"].map((item) => ({
+    title: t(messages, `home.roadmap.${item}.title`),
+    body: t(messages, `home.roadmap.${item}.body`)
   }));
 
   return (
@@ -21,8 +33,10 @@ export default async function HomePage() {
           <span className="brand-wordmark-sub">Lab</span>
         </Link>
         <div className="nav-links">
-          <Link className="nav-link" href="/login">{t(messages, "nav.login")}</Link>
-          <Link className="button-secondary" href="/signup">{t(messages, "nav.signup")}</Link>
+          <Link className="nav-link" href="#ecosystem">{t(messages, "home.nav.ecosystem")}</Link>
+          <Link className="nav-link" href="#solutions">{t(messages, "home.nav.solutions")}</Link>
+          <Link className="nav-link" href="#roadmap">{t(messages, "home.nav.roadmap")}</Link>
+          <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
         </div>
       </nav>
 
@@ -31,6 +45,7 @@ export default async function HomePage() {
           <div className="home-stage-copy">
             <p className="eyebrow">{t(messages, "home.panelEyebrow")}</p>
             <h2>{t(messages, "home.panelTitle")}</h2>
+            <p className="muted">{t(messages, "home.panelBody")}</p>
           </div>
           <div className="home-logo-stage" aria-hidden="true">
             <span className="home-gold-orbit" />
@@ -43,8 +58,8 @@ export default async function HomePage() {
             />
           </div>
           <div className="action-row home-stage-actions">
-            <Link className="button" href="/dashboard">{t(messages, "home.primary")}</Link>
-            <Link className="button-secondary" href="/login">{t(messages, "home.secondary")}</Link>
+            <Link className="button" href="#solutions">{t(messages, "home.panelPrimary")}</Link>
+            <Link className="button-secondary" href="/login">{t(messages, "home.panelSecondary")}</Link>
           </div>
           <div className="home-proof-grid">
             {proofItems.map((item) => (
@@ -59,12 +74,17 @@ export default async function HomePage() {
         <div className="home-hero-copy">
           <div className="home-kicker" aria-label="Brand and product">
             <span>{t(messages, "brand.name")}</span>
-            <span>{t(messages, "home.eyebrow")}</span>
+            <span>{t(messages, "home.kicker")}</span>
           </div>
           <div className="home-hero-heading">
             <p className="eyebrow">{t(messages, "home.eyebrow")}</p>
             <h1>{t(messages, "home.title")}</h1>
             <p className="lede">{t(messages, "home.body")}</p>
+            <div className="action-row">
+              <Link className="button" href="#solutions">{t(messages, "home.primary")}</Link>
+              <Link className="button-secondary" href="#ecosystem">{t(messages, "home.secondary")}</Link>
+            </div>
+            <p className="home-caption">{t(messages, "home.caption")}</p>
           </div>
         </div>
       </section>
@@ -81,6 +101,55 @@ export default async function HomePage() {
         ))}
       </section>
 
+      <section className="home-ecosystem" id="ecosystem" aria-labelledby="ecosystem-title">
+        <div className="home-section-heading">
+          <p className="eyebrow">{t(messages, "home.ecosystemEyebrow")}</p>
+          <h2 id="ecosystem-title">{t(messages, "home.ecosystemTitle")}</h2>
+          <p className="muted">{t(messages, "home.ecosystemBody")}</p>
+        </div>
+        <div className="home-pillar-grid">
+          {pillars.map((pillar) => (
+            <article className="home-pillar" key={pillar.title}>
+              <span aria-hidden="true" />
+              <h3>{pillar.title}</h3>
+              <p className="muted">{pillar.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-solutions" id="solutions" aria-labelledby="solutions-title">
+        <div className="home-section-heading">
+          <p className="eyebrow">{t(messages, "home.solutionsEyebrow")}</p>
+          <h2 id="solutions-title">{t(messages, "home.solutionsTitle")}</h2>
+          <p className="muted">{t(messages, "home.solutionsBody")}</p>
+        </div>
+        <div className="home-solution-grid">
+          {solutions.map((solution) => (
+            <article className="home-solution" key={solution.title}>
+              <h3>{solution.title}</h3>
+              <p className="muted">{solution.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-roadmap" id="roadmap" aria-labelledby="roadmap-title">
+        <div className="home-section-heading">
+          <p className="eyebrow">{t(messages, "home.roadmapEyebrow")}</p>
+          <h2 id="roadmap-title">{t(messages, "home.roadmapTitle")}</h2>
+          <p className="muted">{t(messages, "home.roadmapBody")}</p>
+        </div>
+        <div className="home-roadmap-grid">
+          {roadmap.map((item) => (
+            <article className="home-roadmap-step" key={item.title}>
+              <h3>{item.title}</h3>
+              <p className="muted">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="home-cta-panel">
         <div>
           <p className="eyebrow">{t(messages, "home.ctaEyebrow")}</p>
@@ -88,8 +157,8 @@ export default async function HomePage() {
           <p className="muted">{t(messages, "home.ctaBody")}</p>
         </div>
         <div className="action-row">
-          <Link className="button" href="/signup">{t(messages, "home.ctaPrimary")}</Link>
-          <Link className="button-secondary" href="/provision">{t(messages, "home.ctaSecondary")}</Link>
+          <Link className="button" href="#solutions">{t(messages, "home.ctaPrimary")}</Link>
+          <Link className="button-secondary" href="/login">{t(messages, "home.ctaSecondary")}</Link>
         </div>
       </section>
     </main>

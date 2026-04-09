@@ -3,197 +3,115 @@
     "name": "ArayaShiki Lab"
   },
   "nav": {
-    "dashboard": "แดชบอร์ด",
-    "provision": "เพิ่มอุปกรณ์",
-    "ops": "Ops",
-    "login": "เข้าสู่ระบบ",
-    "signup": "สมัครใช้งาน",
-    "signout": "ออกจากระบบ",
-    "newFarm": "สร้างฟาร์ม",
-    "settings": "ตั้งค่าบัญชี",
-    "onboarding": "เริ่มต้นใช้งาน"
+    "login": "เข้าสู่พอร์ทัล"
   },
   "home": {
-    "eyebrow": "ระบบมอนิเตอร์ฟาร์ม",
-    "title": "ดูสถานะฟาร์มจากมือถือได้ทันที",
-    "body": "มอนิเตอร์ฟาร์ม ผูกอุปกรณ์ จัดการแจ้งเตือน และให้ reseller ช่วยดูแลแบบจำกัดสิทธิ์โดยไม่เปิดข้อมูลลูกค้าเกินจำเป็น",
-    "primary": "ไปแดชบอร์ด",
-    "secondary": "เข้าสู่ระบบ"
-  },
-  "auth": {
-    "loginTitle": "เข้าสู่ระบบ",
-    "signupTitle": "สร้างบัญชี",
-    "email": "อีเมล",
-    "password": "รหัสผ่าน",
-    "loginAction": "ดำเนินการต่อ",
-    "signupAction": "ดำเนินการต่อ",
-    "forgotPassword": "กู้คืนบัญชี",
-    "setupPending": "ยังไม่ได้ตั้งค่า Supabase Auth env สำหรับ frontend",
-    "forgotPasswordBody": "SB-00 ใช้การเข้าสู่ระบบผ่าน Google, Facebook และ Apple เท่านั้น ให้กู้คืนบัญชีจากผู้ให้บริการที่คุณใช้เข้าสู่ระบบ",
-    "sendResetAction": "ไปหน้ากู้คืนบัญชี",
-    "resetPassword": "กู้คืนบัญชี",
-    "resetPasswordBody": "การเปลี่ยนรหัสผ่านจะจัดการโดย Google, Facebook หรือ Apple เพราะระบบนี้ไม่เก็บรหัสผ่านลูกค้า",
-    "newPassword": "รหัสผ่านใหม่",
-    "confirmPassword": "ยืนยันรหัสผ่าน",
-    "updatePasswordAction": "อัปเดตรหัสผ่าน",
-    "oauthOnlyBody": "ใช้บัญชี Google, Facebook หรือ Apple เดิมทุกครั้ง เพื่อให้สิทธิ์ฟาร์มและอุปกรณ์ผูกกับตัวตนเดียวกัน",
-    "signupOauthBody": "สร้างบัญชีพอร์ทัลด้วย Google, Facebook หรือ Apple แล้วค่อยตั้งค่าโปรไฟล์และฟาร์มหลังเข้าสู่ระบบครั้งแรก",
-    "oauthOptions": "ตัวเลือกเข้าสู่ระบบ",
-    "providers": {
-      "google": "ดำเนินการต่อด้วย Google",
-      "facebook": "ดำเนินการต่อด้วย Facebook",
-      "apple": "ดำเนินการต่อด้วย Apple"
+    "nav": {
+      "ecosystem": "ภาพรวมระบบ",
+      "solutions": "โซลูชัน",
+      "roadmap": "โรดแมป"
     },
-    "oauthRecoveryBody": "พอร์ทัลนี้ใช้ OAuth เท่านั้น หากเข้าไม่ได้ ให้กู้คืนบัญชีจาก Google, Facebook หรือ Apple แล้วกลับมาเข้าสู่ระบบอีกครั้ง",
-    "backToLogin": "กลับไปเข้าสู่ระบบ"
-  },
-  "onboarding": {
-    "eyebrow": "ตั้งค่าครั้งแรก",
-    "title": "ตั้งค่าโปรไฟล์พอร์ทัล",
-    "body": "ยืนยันชื่อและภาษาที่ operator และสมาชิกฟาร์มจะเห็น ก่อนสร้างฟาร์มหรือผูกอุปกรณ์",
-    "nextSteps": "ขั้นตอนถัดไป",
-    "continueAction": "บันทึกและดำเนินการต่อ"
-  },
-  "dashboard": {
-    "eyebrow": "Customer dashboard",
-    "title": "ภาพรวมฟาร์ม",
-    "authPending": "Dashboard ถูก guard ไว้แล้ว แต่ยังไม่บังคับ login จนกว่าจะตั้งค่า NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "signedInAs": "เข้าสู่ระบบด้วย",
-    "emptyTitle": "พร้อมเชื่อมข้อมูลจริง",
-    "emptyBody": "ก้อนถัดไปจะต่อ device/farm API ด้วย session และ RLS จริง",
-    "farms": "ฟาร์ม",
-    "devices": "อุปกรณ์",
-    "openAlerts": "แจ้งเตือนที่เปิดอยู่",
-    "recentFarms": "ฟาร์มล่าสุด",
-    "visibleDevices": "อุปกรณ์ที่เห็นได้",
-    "noFarms": "บัญชีนี้ยังไม่เห็นฟาร์มใด",
-    "noDevices": "บัญชีนี้ยังไม่เห็นอุปกรณ์ใด",
-    "dataWarnings": "คำเตือนข้อมูล"
-  },
-  "placeholder": {
-    "provisionTitle": "เพิ่มอุปกรณ์",
-    "provisionBody": "สแกนหรือวาง QR payload ตรวจสอบอุปกรณ์ เลือกฟาร์มที่คุณเป็นเจ้าของ แล้วผูกอุปกรณ์ผ่าน flow ที่ตรวจสิทธิ์แล้ว",
-    "opsTitle": "Ops overview",
-    "opsBody": "ดูภาพรวม fleet, alert ที่เปิดอยู่, command activity และความพร้อมของ notification จากหน้า operator console",
-    "deviceTitle": "รายละเอียดอุปกรณ์",
-    "deviceBody": "ดู telemetry ล่าสุด สถานะ alert ประวัติ command และ action ของอุปกรณ์ที่มีสิทธิ์ใช้งาน"
-  },
-  "provision": {
-    "qrLabel": "QR payload หรือ device ID",
-    "resolveAction": "ตรวจอุปกรณ์",
-    "state": "สถานะ",
-    "stateBody": "ระบบจะตรวจอุปกรณ์และสิทธิ์ของฟาร์มก่อน bind",
-    "resolvedDevice": "อุปกรณ์ที่ตรวจพบ",
-    "chooseFarm": "เลือกฟาร์ม",
-    "bindAction": "ผูกอุปกรณ์",
-    "noOwnedFarms": "บัญชีนี้ยังไม่มีฟาร์มในสิทธิ์ owner สำหรับ bind อุปกรณ์"
-  },
-  "farmSettings": {
-    "eyebrow": "ตั้งค่าฟาร์ม",
-    "body": "จัดการสมาชิก, reseller scope, notification preferences และ audit visibility",
-    "notFoundTitle": "ไม่พบฟาร์ม",
-    "notFoundBody": "session ปัจจุบันยังไม่มีสิทธิ์เห็นฟาร์มนี้",
-    "viewOnly": "คุณดูฟาร์มนี้ได้ แต่ยังจัดการสมาชิกหรือ reseller scope ไม่ได้",
-    "members": "สมาชิก",
-    "noMembers": "ยังไม่พบสมาชิก",
-    "inviteMember": "เชิญสมาชิก",
-    "receiveAlerts": "รับแจ้งเตือน",
-    "manageAlerts": "จัดการแจ้งเตือน",
-    "sendCommands": "ส่งคำสั่ง",
-    "createInvite": "สร้าง invite",
-    "resellers": "Reseller",
-    "noResellers": "ยังไม่มี reseller assignment",
-    "assignReseller": "เพิ่ม reseller",
-    "resellerUserId": "Reseller user ID",
-    "sendSafeCommands": "ส่งคำสั่งที่ปลอดภัย",
-    "assignResellerAction": "Assign reseller",
-    "notificationPreferences": "การแจ้งเตือนของฉัน",
-    "criticalOnly": "เฉพาะ critical alerts",
-    "savePreference": "บันทึก preference",
-    "audit": "Audit log",
-    "noAudit": "ยังไม่มี audit entry",
-    "accessEyebrow": "สิทธิ์ทีม",
-    "membersBody": "ผู้ที่ดูหรือจัดการฟาร์มนี้ได้",
-    "partnerEyebrow": "สิทธิ์พาร์ทเนอร์",
-    "resellersBody": "ให้ reseller ช่วยดูแลเฉพาะขอบเขตที่กำหนดและตรวจสอบย้อนหลังได้",
-    "auditEyebrow": "ประวัติ",
-    "auditBody": "การเปลี่ยนแปลงล่าสุดที่เกี่ยวข้องกับฟาร์มนี้",
-    "inviteEyebrow": "เชิญสมาชิก",
-    "inviteBody": "เชิญด้วยอีเมลและเลือกสิทธิ์เท่าที่จำเป็น",
-    "resellerEyebrow": "Reseller",
-    "assignResellerBody": "ให้สิทธิ์สนับสนุนกับ reseller user ID ที่รู้จักเท่านั้น",
-    "notificationEyebrow": "การแจ้งเตือน",
-    "notificationBody": "เลือกช่องทางและเงื่อนไขที่คุณต้องการรับแจ้งเตือน",
-    "notificationChannels": "ช่องทาง",
-    "emailChannel": "อีเมล",
-    "lineChannel": "LINE",
-    "alertTypeGroup": "ประเภทแจ้งเตือน",
-    "permissionView": "ดูข้อมูล",
-    "permissionReceiveAlerts": "รับแจ้งเตือน",
-    "permissionManageAlerts": "จัดการแจ้งเตือน",
-    "permissionCommands": "ส่งคำสั่ง",
-    "permissionSafeCommands": "ส่งคำสั่งปลอดภัย",
-    "alertTypes": {
-      "threshold": "เกินค่ากำหนด",
-      "lowBattery": "แบตต่ำ",
-      "sensorFault": "เซนเซอร์ผิดปกติ",
-      "offline": "ออฟไลน์"
-    }
-  },
-  "farmCreate": {
-    "eyebrow": "เริ่มต้นฟาร์ม",
-    "title": "สร้างฟาร์ม",
-    "body": "สร้างขอบเขตฟาร์มของลูกค้าก่อนผูกอุปกรณ์หรือเชิญสมาชิก",
-    "name": "ชื่อฟาร์ม",
-    "namePlaceholder": "ฟาร์มบ่อเหนือ",
-    "alertEmail": "อีเมลแจ้งเตือนสำรอง",
-    "alertLine": "LINE recipient สำรอง",
-    "createAction": "สร้างฟาร์ม"
-  },
-  "inviteAccept": {
-    "eyebrow": "คำเชิญเข้าฟาร์ม",
-    "title": "เข้าร่วมฟาร์ม",
-    "body": "รับคำเชิญด้วยอีเมลเดียวกับที่เจ้าของฟาร์มเชิญ",
-    "token": "Invite token",
-    "acceptAction": "รับคำเชิญ",
-    "acceptLink": "เปิดลิงก์รับคำเชิญ",
-    "created": "สร้าง invite แล้ว ให้คัดลอกลิงก์นี้ทันที ระบบจะแสดงชั่วคราวเท่านั้น"
-  },
-  "deviceDetail": {
-    "eyebrow": "รายละเอียดอุปกรณ์",
-    "body": "ติดตาม telemetry, alert, battery และ action ที่มีสิทธิ์สำหรับอุปกรณ์นี้",
-    "notFoundBody": "session ปัจจุบันยังไม่มีสิทธิ์เห็นอุปกรณ์นี้",
-    "onlineState": "สถานะ online",
-    "battery": "แบตเตอรี่",
-    "signal": "สัญญาณ",
-    "variant": "รุ่น",
-    "latestTelemetry": "Telemetry ล่าสุด",
-    "commands": "คำสั่ง",
-    "commandType": "ประเภทคำสั่ง",
-    "commandNote": "หมายเหตุ",
-    "queueCommand": "เข้าคิวคำสั่ง",
-    "commandViewOnly": "คุณดูอุปกรณ์นี้ได้ แต่ยังส่งคำสั่งไม่ได้",
-    "alerts": "แจ้งเตือน",
-    "noAlerts": "ยังไม่มีแจ้งเตือนของอุปกรณ์นี้",
-    "commandLog": "ประวัติคำสั่ง",
-    "noCommands": "ยังไม่มีกิจกรรมคำสั่ง"
-  },
-  "ops": {
-    "eyebrow": "Operator console",
-    "title": "Fleet operations",
-    "body": "ติดตามสุขภาพ fleet, alert ที่เปิดอยู่, activity ของคำสั่ง และ contact สำหรับแจ้งเตือน",
-    "notAuthorized": "หน้านี้ใช้ได้เฉพาะ admin/operator",
-    "farms": "ฟาร์ม",
-    "devices": "อุปกรณ์",
-    "online": "online",
-    "attention": "ต้องดูแล",
-    "fleetSnapshot": "ภาพรวม fleet",
-    "noDevices": "session operator นี้ยังไม่เห็นอุปกรณ์",
-    "openAlerts": "แจ้งเตือนที่เปิดอยู่",
-    "noAlerts": "ไม่มีแจ้งเตือนที่เปิดอยู่",
-    "recentCommands": "คำสั่งล่าสุด",
-    "noCommands": "ยังไม่มีกิจกรรมคำสั่ง",
-    "notificationContacts": "ช่องทางแจ้งเตือน",
-    "noFarms": "session operator นี้ยังไม่เห็นฟาร์ม"
+    "kicker": "Smart hatchery and aquaculture ecosystem",
+    "eyebrow": "ภาพรวมบริษัท",
+    "title": "สร้าง ecosystem การทำงานให้ครบก่อน แล้วค่อยแตกเป็นแพ็กเกจที่ลูกค้าเลือก",
+    "body": "ArayaShiki Lab พัฒนาระบบนิเวศอัจฉริยะสำหรับโรงเพาะและฟาร์ม ที่เชื่อมข้อมูลจากคน ข้อมูลจากบอร์ด การมอนิเตอร์ และการต่อยอดไปสู่อัตโนมัติไว้ในแพลตฟอร์มเดียว",
+    "caption": "เริ่มจากสิ่งที่ใช้งานได้จริงในหน้างานวันนี้ แล้วค่อยขยายไปสู่ rule-based automation และ process automation โดยไม่ต้องเปลี่ยนเรื่องเล่าของระบบใหม่ทุกครั้ง",
+    "primary": "ดูโซลูชัน",
+    "secondary": "ดูภาพรวมระบบ",
+    "panelLabel": "Flagship solution",
+    "panelEyebrow": "Daily Complete",
+    "panelTitle": "ชั้นการทำงานแรกของ ArayaShiki ecosystem",
+    "panelBody": "Daily Complete เริ่มจากงานประจำวันจริง การบันทึกข้อมูลแบบมีโครงสร้าง และการมอนิเตอร์ ก่อนจะขยายไปสู่การเชื่อมอุปกรณ์ ตรรกะการควบคุม และอัตโนมัติที่ลึกขึ้น",
+    "panelPrimary": "ดู Daily Complete",
+    "panelSecondary": "เข้าสู่พอร์ทัล",
+    "proof": {
+      "audiences": {
+        "value": "3 กลุ่มผู้ใช้",
+        "label": "สถาบันวิจัย เกษตรกร และเอกชน"
+      },
+      "inputs": {
+        "value": "คน + บอร์ด",
+        "label": "รองรับทั้งการบันทึกจากคนและข้อมูลจากอุปกรณ์"
+      },
+      "readiness": {
+        "value": "เริ่มที่ monitoring",
+        "label": "ค่อยต่อยอด automation ตาม roadmap ไม่ใช่เริ่มใหม่"
+      }
+    },
+    "lanesLabel": "จุดเน้นของ narrative",
+    "lanes": {
+      "ecosystem": {
+        "title": "ไม่ใช่แค่ smart farm dashboard",
+        "body": "เรื่องเล่าของบริษัทต้องกว้างกว่าหน้า dashboard เดียว แต่เป็น ecosystem สำหรับการเก็บข้อมูล การมองเห็นภาพรวม และการควบคุมในอนาคต"
+      },
+      "flagship": {
+        "title": "Daily Complete คือ flagship solution ตัวแรก",
+        "body": "Daily Complete เป็น operational surface ตัวแรกที่จับงานจริงได้ แล้วค่อยขยายไปสู่งานเชื่อมอุปกรณ์และ automation ที่ลึกขึ้น"
+      },
+      "roadmap": {
+        "title": "จาก monitoring ไปสู่ orchestration",
+        "body": "วันนี้ระบบเน้น monitoring แต่เป้าหมายระยะยาวคือ rule-based actions และ multi-step process control"
+      }
+    },
+    "ecosystemEyebrow": "ชั้นของแพลตฟอร์ม",
+    "ecosystemTitle": "สถาปัตยกรรมเดียวที่รองรับงาน manual วันนี้ และ automation ในวันข้างหน้า",
+    "ecosystemBody": "ArayaShiki Lab กำลังสร้างแพลตฟอร์มที่รองรับรูปแบบการทำงานต่างกันได้ โดยไม่บังคับให้ลูกค้าทุกกลุ่มต้องเริ่มจาก automation ระดับเดียวกันตั้งแต่วันแรก",
+    "pillars": {
+      "human": {
+        "title": "Human data capture",
+        "body": "รองรับการบันทึกงานประจำ ข้อมูลงานวิจัย และข้อมูลปฏิบัติการจริงให้เป็นระบบตั้งแต่ต้นทาง"
+      },
+      "board": {
+        "title": "Board and sensor input",
+        "body": "รองรับข้อมูล telemetry, สถานะอุปกรณ์ และ event จากบอร์ดหรือเซนเซอร์ในระบบเดียวกัน"
+      },
+      "rules": {
+        "title": "Rule-based automation",
+        "body": "ใช้ threshold และ if-then logic เพื่อเชื่อมจากการมอนิเตอร์ไปสู่การตอบสนองแบบควบคุมได้"
+      },
+      "orchestration": {
+        "title": "Process orchestration",
+        "body": "ต่อยอดไปสู่การคุมกระบวนการหลายขั้น เช่น การผสมน้ำ การควบคุมปั๊ม และการบันทึกผลลัพธ์กลับเข้าแพลตฟอร์ม"
+      }
+    },
+    "solutionsEyebrow": "Solution tracks",
+    "solutionsTitle": "ภายในเราสร้าง capability ให้กว้าง แต่ภายนอกต้องเล่าให้ลูกค้าเข้าใจง่าย",
+    "solutionsBody": "ArayaShiki Lab สามารถพัฒนาฟีเจอร์ให้ครบในแกนกลาง แล้วค่อยจัดเป็น solution หรือ package ตามความต้องการของแต่ละกลุ่มลูกค้า",
+    "solutions": {
+      "research": {
+        "title": "Research & education",
+        "body": "รองรับการเก็บข้อมูลเชิงระบบ การทดลองที่ทำซ้ำได้ และการใช้งานในสถาบันการศึกษาและวิจัย"
+      },
+      "operations": {
+        "title": "Farm operations",
+        "body": "เริ่มจากงานโรงเพาะและฟาร์มจริงก่อน แล้วค่อยเพิ่ม visibility, monitoring และการควบคุมที่เหมาะกับหน้างาน"
+      },
+      "enterprise": {
+        "title": "Enterprise & custom automation",
+        "body": "รองรับงานเอกชน การเชื่อมระบบ สิทธิ์การเข้าถึง และงาน automation ที่ต้องออกแบบเฉพาะ"
+      }
+    },
+    "roadmapEyebrow": "Capability roadmap",
+    "roadmapTitle": "ระบบเติบโตเป็นชั้น ๆ แทนการพูดเหมือนทุกอย่าง automate ได้หมดแล้ว",
+    "roadmapBody": "สิ่งที่มีจริงตอนนี้คือ monitoring เป็นหลัก จากนั้นค่อยขยายไปสู่การควบคุมแบบ rule-based และต่อยอดเป็น automation ระดับกระบวนการ เช่น การผสมน้ำตามค่าความเค็มเป้าหมาย",
+    "roadmap": {
+      "monitoring": {
+        "title": "Monitoring",
+        "body": "SB-00 เป็นชั้น monitoring ตัวแรกที่ใช้พิสูจน์ว่าข้อมูลจากคน telemetry และการมองเห็นภาพรวมควรเชื่อมกันอย่างไร"
+      },
+      "automation": {
+        "title": "Rule-based actions",
+        "body": "ชั้นถัดไปคือการเพิ่มการสั่ง on/off ตามเงื่อนไข การตอบสนองต่อ alert และรูปแบบ automation ที่ปลอดภัยขึ้น"
+      },
+      "process": {
+        "title": "Process automation",
+        "body": "ในอนาคตระบบจะคำนวณงานอย่างการผสมน้ำ 25 ppt สั่งงานปั๊มหรือวาล์ว และบันทึกผลการทำงานกลับเข้าสู่ระบบเดียวกัน"
+      }
+    },
+    "ctaEyebrow": "เริ่มจากมุมมองที่ถูกต้อง",
+    "ctaTitle": "ให้ภาพบริษัทเป็น ecosystem ก่อน แล้วค่อยพาไปที่ flagship solution ตัวแรก",
+    "ctaBody": "ใช้เรื่องเล่าระดับ ecosystem เพื่ออธิบายทิศทางทั้งหมดของบริษัท และใช้ Daily Complete เพื่อแสดงว่าชั้นการทำงานแรกจับงานจริงได้อย่างไร",
+    "ctaPrimary": "ดูโซลูชัน",
+    "ctaSecondary": "เข้าสู่พอร์ทัล"
   }
 }

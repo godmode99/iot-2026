@@ -18,7 +18,7 @@ const brandFont = Sora({
 export const metadata = {
   metadataBase: new URL("https://iot-2026-dashboard.vercel.app"),
   title: "ArayaShiki Lab",
-  description: "Production frontend shell for the SB-00 farm monitoring product by ArayaShiki Lab",
+  description: "ArayaShiki Lab builds a smart hatchery and aquaculture ecosystem that connects records, monitoring, and automation.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -26,7 +26,7 @@ export const metadata = {
   },
   openGraph: {
     title: "ArayaShiki Lab",
-    description: "SB-00 farm monitoring portal by ArayaShiki Lab",
+    description: "Smart hatchery and aquaculture ecosystem for farms, hatcheries, research institutes, and private operators.",
     images: ["/brand/arayashiki-lab-logo-full-1024.png"]
   }
 };
