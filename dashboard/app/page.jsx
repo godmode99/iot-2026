@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicTopbar } from "@/components/public-topbar.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 
 export default async function HomePage() {
@@ -23,24 +24,23 @@ export default async function HomePage() {
     title: t(messages, `home.roadmap.${item}.title`),
     body: t(messages, `home.roadmap.${item}.body`)
   }));
+  const navItems = [
+    { href: "/about", label: t(messages, "home.nav.about") },
+    { href: "#ecosystem", label: t(messages, "home.nav.ecosystem") },
+    { href: "/solutions", label: t(messages, "home.nav.solutions") },
+    { href: "/packages", label: t(messages, "home.nav.packages") },
+    { href: "#roadmap", label: t(messages, "home.nav.roadmap") }
+  ];
 
   return (
     <main className="page-shell landing-shell">
-      <nav className="topbar" aria-label="Primary">
-        <Link className="brand brand-wordmark" href="/" aria-label={t(messages, "brand.name")}>
-          <span className="brand-wordmark-main">ArayaShiki</span>
-          <span className="brand-wordmark-sep" aria-hidden="true" />
-          <span className="brand-wordmark-sub">Lab</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/about">{t(messages, "home.nav.about")}</Link>
-          <Link className="nav-link" href="#ecosystem">{t(messages, "home.nav.ecosystem")}</Link>
-          <Link className="nav-link" href="/solutions">{t(messages, "home.nav.solutions")}</Link>
-          <Link className="nav-link" href="/packages">{t(messages, "home.nav.packages")}</Link>
-          <Link className="nav-link" href="#roadmap">{t(messages, "home.nav.roadmap")}</Link>
-          <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
-        </div>
-      </nav>
+      <PublicTopbar
+        actionHref="/login"
+        actionLabel={t(messages, "nav.login")}
+        ariaLabel="Primary"
+        brandLabel={t(messages, "brand.name")}
+        navItems={navItems}
+      />
 
       <section className="home-hero">
         <aside className="home-signal-panel home-brand-stage" aria-label={t(messages, "home.panelLabel")}>

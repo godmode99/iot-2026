@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicTopbar } from "@/components/public-topbar.jsx";
 import { getMessages, t } from "@/lib/i18n.js";
 
 export const metadata = {
@@ -16,23 +17,22 @@ export default async function SolutionsPage() {
     title: t(messages, `solutionsPage.layers.${item}.title`),
     body: t(messages, `solutionsPage.layers.${item}.body`)
   }));
+  const navItems = [
+    { href: "/about", label: t(messages, "solutionsPage.nav.about") },
+    { href: "/", label: t(messages, "solutionsPage.nav.home") },
+    { href: "/packages", label: t(messages, "solutionsPage.nav.packages") },
+    { href: "/#roadmap", label: t(messages, "solutionsPage.nav.roadmap") }
+  ];
 
   return (
     <main className="page-shell solutions-shell">
-      <nav className="topbar" aria-label="Solutions">
-        <Link className="brand brand-wordmark" href="/" aria-label={t(messages, "brand.name")}>
-          <span className="brand-wordmark-main">ArayaShiki</span>
-          <span className="brand-wordmark-sep" aria-hidden="true" />
-          <span className="brand-wordmark-sub">Lab</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/about">{t(messages, "solutionsPage.nav.about")}</Link>
-          <Link className="nav-link" href="/">{t(messages, "solutionsPage.nav.home")}</Link>
-          <Link className="nav-link" href="/packages">{t(messages, "solutionsPage.nav.packages")}</Link>
-          <Link className="nav-link" href="/#roadmap">{t(messages, "solutionsPage.nav.roadmap")}</Link>
-          <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
-        </div>
-      </nav>
+      <PublicTopbar
+        actionHref="/login"
+        actionLabel={t(messages, "nav.login")}
+        ariaLabel="Solutions"
+        brandLabel={t(messages, "brand.name")}
+        navItems={navItems}
+      />
 
       <section className="solutions-hero">
         <div className="solutions-hero-copy">

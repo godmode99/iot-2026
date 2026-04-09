@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicTopbar } from "@/components/public-topbar.jsx";
 import { RequestDemoForm } from "@/components/request-demo-form.jsx";
 import {
   getContactEmail,
@@ -26,6 +27,11 @@ export default async function RequestDemoPage() {
     title: t(messages, `requestDemoPage.checklist.${item}.title`),
     body: t(messages, `requestDemoPage.checklist.${item}.body`)
   }));
+  const navItems = [
+    { href: "/", label: t(messages, "requestDemoPage.nav.home") },
+    { href: "/solutions", label: t(messages, "requestDemoPage.nav.solutions") },
+    { href: "/packages", label: t(messages, "requestDemoPage.nav.packages") }
+  ];
   const formLabels = {
     eyebrow: t(messages, "requestDemoPage.formEyebrow"),
     title: t(messages, "requestDemoPage.formTitle"),
@@ -63,19 +69,13 @@ export default async function RequestDemoPage() {
 
   return (
     <main className="page-shell solutions-shell">
-      <nav className="topbar" aria-label="Request demo">
-        <Link className="brand brand-wordmark" href="/" aria-label={t(messages, "brand.name")}>
-          <span className="brand-wordmark-main">ArayaShiki</span>
-          <span className="brand-wordmark-sep" aria-hidden="true" />
-          <span className="brand-wordmark-sub">Lab</span>
-        </Link>
-        <div className="nav-links">
-          <Link className="nav-link" href="/">{t(messages, "requestDemoPage.nav.home")}</Link>
-          <Link className="nav-link" href="/solutions">{t(messages, "requestDemoPage.nav.solutions")}</Link>
-          <Link className="nav-link" href="/packages">{t(messages, "requestDemoPage.nav.packages")}</Link>
-          <Link className="button-secondary" href="/login">{t(messages, "nav.login")}</Link>
-        </div>
-      </nav>
+      <PublicTopbar
+        actionHref="/login"
+        actionLabel={t(messages, "nav.login")}
+        ariaLabel="Request demo"
+        brandLabel={t(messages, "brand.name")}
+        navItems={navItems}
+      />
 
       <section className="solutions-hero">
         <div className="solutions-hero-copy">
