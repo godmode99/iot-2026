@@ -8,9 +8,26 @@ import { createSupabaseServerClient } from "@/lib/supabase/server.js";
 import {
   assignResellerToFarm,
   createFarmMemberInvite,
-  saveNotificationPreference
+  saveNotificationPreference,
+  updateFarmDeliveryContacts
 } from "@/lib/backend/farm-settings.js";
 import { createMissingRecordAlert } from "@/lib/backend/device-ops.js";
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function optionalText(value) {
+  const normalized = String(value ?? "").trim();
+  return normalized ? normalized : null;
+}
+
+function safeReturnTo(value) {
+  const normalized = String(value ?? "").trim();
+  if (!normalized.startsWith("/ops")) {
+    return "";
+  }
+
+  return normalized;
+}
 
 async function requireFarmManager(farmId) {
   const { authConfigured, user } = await getCurrentUser();
@@ -95,6 +112,7 @@ export async function assignReseller(formData) {
 export async function updateOwnNotificationPreference(formData) {
   const farmId = String(formData.get("farm_id") ?? "");
   const user = await requireFarmManager(farmId);
+  const returnTo = safeReturnTo(formData.get("return_to"));
   const alertTypes = ["threshold", "low_battery", "sensor_fault", "offline"].filter((type) => checkboxValue(formData, `alert_${type}`));
   const result = await saveNotificationPreference({
     farmId,
@@ -110,7 +128,48 @@ export async function updateOwnNotificationPreference(formData) {
     redirect(withParams(`/farms/${farmId}`, { error: result.code ?? "notification_preference_failed" }));
   }
 
+  if (returnTo) {
+    redirect(withParams(returnTo, {
+      focus_farm: farmId,
+      focus_action: "dispatch_follow_up",
+      dispatch_result: "preferences"
+    }));
+  }
+
   redirect(withParams(`/farms/${farmId}`, { notification: "updated" }));
+}
+
+export async function updateFarmContactsAction(formData) {
+  const farmId = String(formData.get("farm_id") ?? "");
+  const user = await requireFarmManager(farmId);
+  const returnTo = safeReturnTo(formData.get("return_to"));
+  const alertEmailTo = optionalText(formData.get("alert_email_to"));
+  const alertLineUserId = optionalText(formData.get("alert_line_user_id"));
+
+  if (alertEmailTo && !emailPattern.test(alertEmailTo)) {
+    redirect(withParams(`/farms/${farmId}`, { error: "alert_email_invalid" }));
+  }
+
+  const result = await updateFarmDeliveryContacts({
+    farmId,
+    actorUserId: user.id,
+    alertEmailTo,
+    alertLineUserId
+  });
+
+  if (!result.ok) {
+    redirect(withParams(`/farms/${farmId}`, { error: result.code ?? "farm_contacts_update_failed" }));
+  }
+
+  if (returnTo) {
+    redirect(withParams(returnTo, {
+      focus_farm: farmId,
+      focus_action: "dispatch_follow_up",
+      dispatch_result: "contacts"
+    }));
+  }
+
+  redirect(withParams(`/farms/${farmId}`, { notification: "contacts_updated" }));
 }
 
 export async function createMissingRecordAlertAction(formData) {

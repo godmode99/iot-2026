@@ -90,6 +90,61 @@ function latestSeenAt(devices) {
   return new Date(Math.max(...timestamps)).toISOString();
 }
 
+function formatValue(value, suffix = "", digits = 0) {
+  if (value === null || value === undefined || value === "") {
+    return "N/A";
+  }
+
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return String(value);
+  }
+
+  return `${number.toFixed(digits)}${suffix}`;
+}
+
+function telemetryNextStepLabel(reason, messages) {
+  if (reason === "review_open_telemetry_alerts") {
+    return t(messages, "dashboard.telemetryNextStepAlerts", "Review open telemetry alerts");
+  }
+
+  if (reason === "create_follow_up_record") {
+    return t(messages, "dashboard.telemetryNextStepRecord", "Create follow-up record");
+  }
+
+  if (reason === "inspect_critical_heat") {
+    return t(messages, "dashboard.telemetryNextStepHeat", "Inspect farm telemetry");
+  }
+
+  if (reason === "inspect_low_battery") {
+    return t(messages, "dashboard.telemetryNextStepBattery", "Check battery pressure");
+  }
+
+  return t(messages, "dashboard.telemetryNextStepSnapshot", "Review farm snapshot");
+}
+
+function telemetryNextStepReason(reason, messages, templateName = "") {
+  if (reason === "review_open_telemetry_alerts") {
+    return t(messages, "dashboard.telemetryNextStepAlertsReason", "Active heat or open telemetry alerts should be reviewed before lower-priority follow-up.");
+  }
+
+  if (reason === "create_follow_up_record") {
+    return templateName
+      ? t(messages, "dashboard.telemetryNextStepRecordReasonWithTemplate", "This farm still needs a structured follow-up record. Start with {template} while the telemetry context is still fresh.").replace("{template}", templateName)
+      : t(messages, "dashboard.telemetryNextStepRecordReason", "This farm still needs a structured follow-up record, so capture one while the telemetry context is still fresh.");
+  }
+
+  if (reason === "inspect_critical_heat") {
+    return t(messages, "dashboard.telemetryNextStepHeatReason", "Temperature is drifting outside the preferred band and should be confirmed in farm context.");
+  }
+
+  if (reason === "inspect_low_battery") {
+    return t(messages, "dashboard.telemetryNextStepBatteryReason", "Low-battery devices can quickly turn into visibility gaps if they are left unattended.");
+  }
+
+  return t(messages, "dashboard.telemetryNextStepSnapshotReason", "Open the farm context to inspect the latest telemetry state.");
+}
+
 export default async function DashboardPage() {
   const messages = await getMessages();
   const { authConfigured, user } = await requireUser({ returnUrl: "/dashboard" });
@@ -112,6 +167,12 @@ export default async function DashboardPage() {
   const expectationTrends = dashboard?.expectationTrends ?? {
     byFarm: [],
     byTemplate: []
+  };
+  const telemetryPressure = dashboard?.telemetryPressure ?? {
+    reportingFarmCount: 0,
+    lowBatteryFarmCount: 0,
+    warmFarmCount: 0,
+    byFarm: []
   };
 
   return (
@@ -324,6 +385,71 @@ export default async function DashboardPage() {
               )}
             </article>
           </div>
+        </div>
+
+        <div className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "dashboard.telemetryGuidanceTitle", "Telemetry pressure and next steps")}</h2>
+            <span className="pill">{t(messages, "dashboard.telemetryPressureWindow", "Latest device telemetry")}</span>
+          </div>
+          <div className="records-field-group-grid">
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.reportingFarms", "Reporting farms")}</h3>
+              <p>{telemetryPressure.reportingFarmCount}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.warmFarms", "Warm farms")}</h3>
+              <p>{telemetryPressure.warmFarmCount}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "dashboard.lowBatteryFarms", "Low battery farms")}</h3>
+              <p>{telemetryPressure.lowBatteryFarmCount}</p>
+            </article>
+          </div>
+          {telemetryPressure.byFarm.length ? (
+            <ul className="status-list">
+              {telemetryPressure.byFarm.map((farm) => (
+                <li className="mobile-list-row" key={farm.farmId}>
+                  <span>
+                    <Link href={`/farms/${farm.farmId}`}>{farm.farmName}</Link>
+                    <span className="list-meta">
+                      {t(messages, "dashboard.telemetryDevicesReporting", "Devices reporting")}: {farm.reportingDeviceCount}
+                    </span>
+                    <span className="list-meta">
+                      {t(messages, "dashboard.telemetryAverageTemperature", "Avg temp")}: {formatValue(farm.averageTemperature, " C", 1)} · {t(messages, "dashboard.telemetryAverageBattery", "Avg battery")}: {formatValue(farm.averageBattery, "%", 0)}
+                    </span>
+                    <span className="list-meta">{t(messages, "dashboard.latestHeartbeat")}: {formatDate(farm.latestReportedAt)}</span>
+                    <span className="list-meta">
+                      {t(messages, "dashboard.nextStepLabel", "Next step")}: {telemetryNextStepLabel(farm.nextAction?.reason, messages)}
+                    </span>
+                    <span className="list-meta">
+                      {telemetryNextStepReason(farm.nextAction?.reason, messages, farm.nextAction?.templateName)}
+                    </span>
+                  </span>
+                  <span className="pill-row">
+                    {farm.criticalHeat ? <span className="pill is-offline">{t(messages, "dashboard.telemetryCriticalHeat", "Critical heat")}</span> : null}
+                    {farm.warm && !farm.criticalHeat ? <span className="pill is-stale">{t(messages, "dashboard.telemetryWarmDrift", "Temp drift")}</span> : null}
+                    {farm.batteryPressure ? <span className="pill is-stale">{t(messages, "dashboard.telemetryBatteryPressure", "Battery pressure")}</span> : null}
+                    {farm.openTelemetryAlertCount ? <span className="pill">{farm.openTelemetryAlertCount} {t(messages, "dashboard.telemetryOpenAlerts", "open telemetry alerts")}</span> : null}
+                    {farm.attentionCount ? <span className="pill">{farm.attentionCount} {t(messages, "dashboard.expectationsAttention", "Needs attention")}</span> : null}
+                    {farm.nextAction?.href ? (
+                      <Link className="button-secondary" href={farm.nextAction.href}>
+                        {telemetryNextStepLabel(farm.nextAction.reason, messages)}
+                      </Link>
+                    ) : null}
+                    <Link className="button-secondary" href={`/alerts?farmId=${encodeURIComponent(farm.farmId)}&source=device_telemetry`}>
+                      {t(messages, "dashboard.reviewTelemetryAlertsAction", "Review telemetry alerts")}
+                    </Link>
+                    <Link className="button-secondary" href={`/farms/${farm.farmId}`}>
+                      {t(messages, "dashboard.openFarmAction", "Open farm")}
+                    </Link>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">{t(messages, "dashboard.telemetryPressureEmpty", "No telemetry pressure summary is ready yet.")}</p>
+          )}
         </div>
 
         <div className="card">

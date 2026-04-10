@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { withParams } from "@/lib/auth/urls.js";
 import { getCurrentUser } from "@/lib/auth/guards.js";
+import { createOpsTelemetryOutcome } from "@/lib/backend/ops-workspace.js";
 import { createSupabaseServerClient } from "@/lib/supabase/server.js";
 import { updateAlertStatus } from "@/lib/backend/device-ops.js";
 
@@ -15,6 +16,14 @@ function safeReturnTo(value) {
   }
 
   return normalized;
+}
+
+function isTelemetryWorkspaceReturn(value) {
+  return String(value ?? "").includes("queue=telemetry-pressure");
+}
+
+function isNotificationDispatchWorkspaceReturn(value) {
+  return String(value ?? "").includes("queue=notification-dispatch");
 }
 
 export async function submitCustomerAlertAction(formData) {
@@ -62,12 +71,29 @@ export async function submitCustomerAlertAction(formData) {
     redirect(withParams(`/alerts/${alertId}`, { error: result.code ?? "alert_action_failed" }));
   }
 
+  if (returnTo && isTelemetryWorkspaceReturn(returnTo)) {
+    await createOpsTelemetryOutcome({
+      actorUserId: user.id,
+      farmId: alertResult.data.farm_id,
+      outcome: "alert_follow_up",
+      context: {
+        returnTo,
+        queue: "telemetry-pressure",
+        summary: `alert_${action}:${alertId}`
+      }
+    });
+  }
+
+  const focusAction = isNotificationDispatchWorkspaceReturn(returnTo)
+    ? "dispatch_follow_up"
+    : "alert_follow_up";
+
   if (returnTo) {
     redirect(withParams(returnTo, {
       alert_updated: alertId,
       alert_action: action,
       focus_farm: alertResult.data.farm_id,
-      focus_action: "alert_follow_up"
+      focus_action: focusAction
     }));
   }
 

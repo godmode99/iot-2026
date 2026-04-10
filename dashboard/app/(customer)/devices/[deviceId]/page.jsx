@@ -29,6 +29,52 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function average(values = []) {
+  if (!values.length) {
+    return null;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function telemetrySeries(history = [], key) {
+  return history
+    .map((row) => Number(row?.[key]))
+    .filter((value) => Number.isFinite(value));
+}
+
+function telemetrySummary(history = []) {
+  const temperatureValues = telemetrySeries(history, "temperature_c");
+  const batteryValues = telemetrySeries(history, "battery_percent");
+
+  return {
+    sampleCount: history.length,
+    temperatureAverage: average(temperatureValues),
+    temperatureMin: temperatureValues.length ? Math.min(...temperatureValues) : null,
+    temperatureMax: temperatureValues.length ? Math.max(...temperatureValues) : null,
+    batteryAverage: average(batteryValues),
+    batteryMin: batteryValues.length ? Math.min(...batteryValues) : null
+  };
+}
+
+function sparklinePath(points = []) {
+  if (!points.length) {
+    return "";
+  }
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+
+  return points
+    .map((point, index) => {
+      const x = (index / Math.max(points.length - 1, 1)) * 100;
+      const y = 100 - ((point - min) / range) * 100;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
+    })
+    .join(" ");
+}
+
 function statusClass(value) {
   if (value === "online" || value === "succeeded" || value === "resolved") {
     return "is-online";
@@ -124,6 +170,44 @@ function MiniHistory({ history }) {
           style={{ "--level": `${Math.max(10, Math.min(100, Number(row.temperature_c ?? 0) * 2.5))}%` }}
         />
       ))}
+    </div>
+  );
+}
+
+function TelemetryTrendCard({ history, labels }) {
+  if (!history.length) {
+    return <p className="muted">{labels.empty}</p>;
+  }
+
+  const temperatureValues = telemetrySeries(history, "temperature_c");
+  const batteryValues = telemetrySeries(history, "battery_percent");
+  const summary = telemetrySummary(history);
+
+  return (
+    <div className="telemetry-trend-card">
+      <div className="telemetry-trend-grid">
+        <article className="records-field-group-card">
+          <h3>{labels.temperatureTrend}</h3>
+          <svg className="telemetry-sparkline" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={labels.temperatureTrend}>
+            <path d={sparklinePath(temperatureValues)} />
+          </svg>
+          <div className="record-meta-list">
+            <span>{labels.average}: {formatValue(summary.temperatureAverage?.toFixed?.(1) ?? summary.temperatureAverage, " C")}</span>
+            <span>{labels.range}: {formatValue(summary.temperatureMin, " C")} - {formatValue(summary.temperatureMax, " C")}</span>
+          </div>
+        </article>
+        <article className="records-field-group-card">
+          <h3>{labels.batteryTrend}</h3>
+          <svg className="telemetry-sparkline telemetry-sparkline-battery" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={labels.batteryTrend}>
+            <path d={sparklinePath(batteryValues)} />
+          </svg>
+          <div className="record-meta-list">
+            <span>{labels.average}: {formatValue(summary.batteryAverage?.toFixed?.(0) ?? summary.batteryAverage, "%")}</span>
+            <span>{labels.lowest}: {formatValue(summary.batteryMin?.toFixed?.(0) ?? summary.batteryMin, "%")}</span>
+          </div>
+        </article>
+      </div>
+      <p className="muted">{labels.samples}: {summary.sampleCount}</p>
     </div>
   );
 }
@@ -225,6 +309,18 @@ export default async function DeviceDetailPage({ params, searchParams }) {
                 <Metric labelText="GPS" value={status?.last_lat && status?.last_lng ? `${Number(status.last_lat).toFixed(5)}, ${Number(status.last_lng).toFixed(5)}` : "N/A"} />
               </div>
               <MiniHistory history={detail.history} />
+              <TelemetryTrendCard
+                history={detail.history}
+                labels={{
+                  empty: t(messages, "deviceDetail.noTelemetryHistory", "No telemetry history yet."),
+                  temperatureTrend: t(messages, "deviceDetail.temperatureTrend", "Temperature trend"),
+                  batteryTrend: t(messages, "deviceDetail.batteryTrend", "Battery trend"),
+                  average: t(messages, "deviceDetail.average", "Average"),
+                  range: t(messages, "deviceDetail.range", "Range"),
+                  lowest: t(messages, "deviceDetail.lowest", "Lowest"),
+                  samples: t(messages, "deviceDetail.samples", "Samples")
+                }}
+              />
             </article>
 
             <article className="card">

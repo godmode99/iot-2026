@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/guards.js";
 import { withParams } from "@/lib/auth/urls.js";
 import { resolveMissingRecordAlertsForTemplate } from "@/lib/backend/device-ops.js";
+import { createOpsTelemetryOutcome } from "@/lib/backend/ops-workspace.js";
 import { createSupabaseServerClient } from "@/lib/supabase/server.js";
 
 function text(value, max = 2000) {
@@ -39,6 +40,10 @@ function safeReturnTo(value) {
   }
 
   return normalized;
+}
+
+function isTelemetryWorkspaceReturn(value) {
+  return String(value ?? "").includes("queue=telemetry-pressure");
 }
 
 function parseTemplateFieldValue(formData, field) {
@@ -212,6 +217,19 @@ export async function updateOperationalRecord(formData) {
     templateCode: templateResult.data.code,
     note: `record_updated:${recordId}`
   });
+
+  if (returnTo && isTelemetryWorkspaceReturn(returnTo)) {
+    await createOpsTelemetryOutcome({
+      actorUserId: user.id,
+      farmId,
+      outcome: "record_follow_up",
+      context: {
+        returnTo,
+        queue: "telemetry-pressure",
+        summary: `record_updated:${recordId}`
+      }
+    });
+  }
 
   if (returnTo) {
     redirect(withParams(returnTo, {

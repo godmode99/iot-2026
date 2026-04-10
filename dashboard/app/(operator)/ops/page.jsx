@@ -60,6 +60,27 @@ function alertSourceLabel(value, messages) {
   return t(messages, "dashboard.alertSources.system", "System");
 }
 
+function dispatchStateMeta(value, messages) {
+  if (value === "coverage-missing") {
+    return {
+      label: t(messages, "ops.notificationDispatchCoverageMissing", "Coverage missing"),
+      className: "is-offline"
+    };
+  }
+
+  if (value === "follow-up-first") {
+    return {
+      label: t(messages, "ops.notificationDispatchFollowUpFirst", "Follow-up first"),
+      className: "is-stale"
+    };
+  }
+
+  return {
+    label: t(messages, "ops.notificationDispatchReady", "Ready to review"),
+    className: "is-online"
+  };
+}
+
 function countDevicesByState(devices, state) {
   return devices.filter((device) => device.status?.online_state === state).length;
 }
@@ -76,6 +97,54 @@ function latestSeenAt(devices) {
   }
 
   return new Date(Math.max(...timestamps)).toISOString();
+}
+
+function formatValue(value, suffix = "", digits = 0) {
+  if (value === null || value === undefined || value === "") {
+    return "N/A";
+  }
+
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return String(value);
+  }
+
+  return `${number.toFixed(digits)}${suffix}`;
+}
+
+function telemetryNextStep(farm, messages) {
+  if (!farm) {
+    return {
+      label: t(messages, "ops.telemetryNextStepSnapshot", "Review farm snapshot"),
+      reason: t(messages, "ops.telemetryNextStepSnapshotReason", "Open the farm context to inspect the latest telemetry state.")
+    };
+  }
+
+  if (farm.criticalHeat || farm.openTelemetryAlertCount > 0) {
+    return {
+      label: t(messages, "ops.reviewTelemetryAlertsAction", "Review telemetry alerts"),
+      reason: t(messages, "ops.telemetryNextStepAlertsReason", "Active heat or open telemetry alerts should be reviewed before lower-priority follow-up.")
+    };
+  }
+
+  if (farm.batteryPressure) {
+    return {
+      label: t(messages, "ops.telemetryNextStepBattery", "Check battery pressure"),
+      reason: t(messages, "ops.telemetryNextStepBatteryReason", "Low-battery devices can quickly turn into visibility gaps if they are left unattended.")
+    };
+  }
+
+  if (farm.warm) {
+    return {
+      label: t(messages, "ops.telemetryNextStepHeat", "Inspect farm telemetry"),
+      reason: t(messages, "ops.telemetryNextStepHeatReason", "Temperature is drifting outside the preferred band and should be confirmed in farm context.")
+    };
+  }
+
+  return {
+    label: t(messages, "ops.telemetryNextStepSnapshot", "Review farm snapshot"),
+    reason: t(messages, "ops.telemetryNextStepSnapshotReason", "Open the farm context to inspect the latest telemetry state.")
+  };
 }
 
 function Metric({ labelText, value, meta }) {
@@ -159,6 +228,58 @@ export default async function OpsPage() {
           <section className="dashboard-grid">
             <article className="card">
               <div className="split-heading">
+                <h2>{t(messages, "ops.telemetryPressureTitle", "Telemetry pressure")}</h2>
+                <Link className="button-secondary" href="/ops/follow-ups?queue=telemetry-pressure">{t(messages, "ops.openFollowUpsAction", "Open follow-up workspace")}</Link>
+              </div>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryCriticalHeat", "Critical heat")}</h3>
+                  <p>{ops.telemetryPressure.criticalHeatFarmCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryWarmFarms", "Warm farms")}</h3>
+                  <p>{ops.telemetryPressure.warmFarmCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryLowBatteryFarms", "Low battery farms")}</h3>
+                  <p>{ops.telemetryPressure.lowBatteryFarmCount}</p>
+                </article>
+              </div>
+              {ops.telemetryPressure.byFarm.length ? (
+                <ul className="status-list">
+                  {ops.telemetryPressure.byFarm.map((farm) => {
+                    const nextStep = telemetryNextStep(farm, messages);
+
+                    return (
+                    <li className="mobile-list-row" key={farm.farmId}>
+                      <span>
+                        <Link href={`/farms/${farm.farmId}`}>{farm.farmName}</Link>
+                        <span className="list-meta">
+                          {t(messages, "ops.telemetryDevicesReporting", "Devices reporting")}: {farm.reportingDeviceCount}
+                        </span>
+                        <span className="list-meta">
+                          {t(messages, "ops.telemetryAverageTemperature", "Avg temp")}: {formatValue(farm.averageTemperature, " C", 1)} · {t(messages, "ops.telemetryAverageBattery", "Avg battery")}: {formatValue(farm.averageBattery, "%", 0)}
+                        </span>
+                        <span className="list-meta">
+                          {t(messages, "ops.followUpNextAction", "Next best action")}: {nextStep.label} Â· {nextStep.reason}
+                        </span>
+                      </span>
+                      <span className="pill-row">
+                        {farm.criticalHeat ? <span className="pill is-offline">{t(messages, "ops.telemetryCriticalHeat", "Critical heat")}</span> : null}
+                        {farm.warm && !farm.criticalHeat ? <span className="pill is-stale">{t(messages, "ops.telemetryWarmDrift", "Temp drift")}</span> : null}
+                        {farm.batteryPressure ? <span className="pill is-stale">{t(messages, "ops.telemetryBatteryPressure", "Battery pressure")}</span> : null}
+                        {farm.openTelemetryAlertCount ? <span className="pill">{farm.openTelemetryAlertCount} {t(messages, "ops.telemetryOpenAlerts", "open telemetry alerts")}</span> : null}
+                        <Link className="button-secondary" href={`/alerts?farmId=${farm.farmId}&source=device_telemetry&return_to=${encodeURIComponent("/ops")}`}>{t(messages, "ops.reviewTelemetryAlertsAction", "Review telemetry alerts")}</Link>
+                        <Link className="button-secondary" href={`/farms/${farm.farmId}`}>{t(messages, "ops.openFarmAction", "Open farm")}</Link>
+                      </span>
+                    </li>
+                  );})}
+                </ul>
+              ) : <p className="muted">{t(messages, "ops.telemetryPressureEmpty", "No telemetry pressure summary is ready yet.")}</p>}
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
                 <h2>{t(messages, "ops.followUpQueueTitle", "Follow-up queue")}</h2>
                 <div className="pill-row">
                   <span className="pill">{ops.followUpQueue.length}</span>
@@ -182,6 +303,93 @@ export default async function OpsPage() {
                   ))}
                 </ul>
               ) : <p className="muted">{t(messages, "ops.followUpQueueEmpty", "No follow-up queue items are ready right now.")}</p>}
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.notificationDispatchTitle", "Notification dispatch queue")}</h2>
+                <Link className="button-secondary" href="/alerts">{t(messages, "alertsPage.viewAllAction", "View all alerts")}</Link>
+              </div>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.notificationDispatchReady", "Ready to review")}</h3>
+                  <p>{ops.notificationDispatch.readyCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.notificationDispatchCoverageMissing", "Coverage missing")}</h3>
+                  <p>{ops.notificationDispatch.coverageMissingCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.notificationDispatchFollowUpFirst", "Follow-up first")}</h3>
+                  <p>{ops.notificationDispatch.followUpFirstCount}</p>
+                </article>
+              </div>
+              <p className="muted">{t(messages, "ops.notificationDispatchBody", "Use this queue to confirm whether open alerts are actually ready for delivery review, blocked by missing coverage, or should be handled operationally first.")}</p>
+              {ops.notificationDispatch.items.length ? (
+                <ul className="status-list">
+                  {ops.notificationDispatch.items.map((item) => {
+                    const state = dispatchStateMeta(item.state, messages);
+
+                    return (
+                      <li className="mobile-list-row" key={item.id}>
+                        <span>
+                          <Link href={`/alerts/${item.id}`}>{label(item.alertType)}</Link>
+                          <span className="list-meta">{item.farmName} · {alertSourceLabel(item.sourceLabel, messages)} · {item.severity}</span>
+                          <span className="list-meta">{item.reason}</span>
+                        </span>
+                        <span className="pill-row">
+                          <span className={`pill ${state.className}`}>{state.label}</span>
+                          <span className="pill">{item.recipientCount} {t(messages, "ops.notificationDispatchRecipients", "personal recipients")}</span>
+                          <span className="pill">{item.farmFallbackReady ? t(messages, "ops.notificationDispatchFallbackReady", "farm fallback ready") : t(messages, "ops.notificationDispatchFallbackMissing", "farm fallback missing")}</span>
+                          <Link className="button-secondary" href={item.primaryHref}>{item.primaryLabel}</Link>
+                          <Link className="button-secondary" href={item.secondaryHref}>{item.secondaryLabel}</Link>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : <p className="muted">{t(messages, "ops.notificationDispatchEmpty", "No open alerts are waiting in the dispatch review queue right now.")}</p>}
+            </article>
+
+            <article className="card">
+              <div className="split-heading">
+                <h2>{t(messages, "ops.telemetryOutcomeTrendsTitle", "Telemetry outcome trends")}</h2>
+                <span className="pill">{t(messages, "ops.expectationTrendsWindow", "Last 30 days")}</span>
+              </div>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.followUpCompletionAlert", "Resolved by alert action")}</h3>
+                  <p>{ops.telemetryOutcomeTrends.byOutcome.alert_follow_up}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.followUpCompletionRecord", "Resolved by record follow-up")}</h3>
+                  <p>{ops.telemetryOutcomeTrends.byOutcome.record_follow_up}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.followUpCompletionHandoff", "Resolved by handoff refresh")}</h3>
+                  <p>{ops.telemetryOutcomeTrends.byOutcome.handoff_follow_up}</p>
+                </article>
+              </div>
+              {ops.telemetryOutcomeTrends.byFarm.length ? (
+                <ul className="status-list">
+                  {ops.telemetryOutcomeTrends.byFarm.map((farm) => (
+                    <li className="mobile-list-row" key={farm.farmId}>
+                      <span>
+                        <Link href={`/ops/reports/farms/${farm.farmId}`}>{farm.farmName}</Link>
+                        <span className="list-meta">
+                          {t(messages, "ops.telemetryOutcomePattern", "Recent telemetry follow-up pattern")}: {farm.total} total
+                        </span>
+                        <span className="list-meta">
+                          {t(messages, "ops.followUpCompletionAlert", "Resolved by alert action")}: {farm.alert_follow_up} Â· {t(messages, "ops.followUpCompletionRecord", "Resolved by record follow-up")}: {farm.record_follow_up} Â· {t(messages, "ops.followUpCompletionHandoff", "Resolved by handoff refresh")}: {farm.handoff_follow_up}
+                        </span>
+                      </span>
+                      <span className="pill-row">
+                        <Link className="button-secondary" href={`/ops/reports/farms/${farm.farmId}`}>{t(messages, "ops.openFarmReportAction", "Open farm report")}</Link>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="muted">{t(messages, "ops.telemetryOutcomeTrendsEmpty", "Telemetry follow-up outcomes will appear here after the team works through telemetry pressure items.")}</p>}
             </article>
 
             <article className="card">
@@ -345,17 +553,24 @@ export default async function OpsPage() {
 
             <article className="card">
               <h2>{t(messages, "ops.notificationContacts")}</h2>
+              <div className="record-meta-list">
+                <span>{t(messages, "ops.contactsReady", "All farm contacts ready")}: {ops.metrics.farmsWithDeliveryCoverage}</span>
+                <span>{t(messages, "ops.notificationEmailCoverage", "Email coverage")}: {ops.notificationCoverage.emailEnabledFarmCount}</span>
+                <span>{t(messages, "ops.notificationLineCoverage", "LINE coverage")}: {ops.notificationCoverage.lineEnabledFarmCount}</span>
+              </div>
               {ops.farms.length ? (
                 <ul className="status-list">
-                  {ops.farms.slice(0, 16).map((farm) => (
-                    <li key={farm.id} className="stacked-row">
+                  {ops.notificationCoverage.byFarm.slice(0, 16).map((farm) => (
+                    <li key={farm.farmId} className="stacked-row">
                       <div>
-                        <Link href={`/farms/${farm.id}`}>{farm.name}</Link>
-                        <span className="muted">{formatDate(farm.updated_at)}</span>
+                        <Link href={`/farms/${farm.farmId}`}>{farm.farmName}</Link>
+                        <span className="muted">{farm.hasCoverage ? t(messages, "ops.notificationCoverageReady", "Delivery coverage ready") : t(messages, "ops.notificationCoverageMissing", "Delivery coverage missing")}</span>
                       </div>
                       <div className="pill-row">
-                        <span className="pill">{farm.alert_email_to || "no email"}</span>
-                        <span className="pill">{farm.alert_line_user_id || "no LINE"}</span>
+                        <span className="pill">{farm.farmEmailConfigured ? t(messages, "ops.notificationFarmEmailReady", "farm email") : t(messages, "ops.notificationFarmEmailMissing", "no farm email")}</span>
+                        <span className="pill">{farm.farmLineConfigured ? t(messages, "ops.notificationFarmLineReady", "farm LINE") : t(messages, "ops.notificationFarmLineMissing", "no farm LINE")}</span>
+                        <span className="pill">{farm.emailEnabledCount} {t(messages, "ops.notificationEmailRecipients", "email recipients")}</span>
+                        <span className="pill">{farm.lineEnabledCount} {t(messages, "ops.notificationLineRecipients", "LINE recipients")}</span>
                       </div>
                     </li>
                   ))}

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 const FOLLOW_UPS_RETURN_TO = "/ops/follow-ups";
 const FOLLOW_UP_SECTIONS = ["critical", "warning", "attention"];
-const FOLLOW_UP_QUEUE_FILTERS = ["critical-alerts", "record-discipline", "device-attention", "contact-gap"];
+const FOLLOW_UP_QUEUE_FILTERS = ["critical-alerts", "record-discipline", "device-attention", "contact-gap", "handoff-gap", "telemetry-pressure", "notification-dispatch"];
 
 function formatDateTime(value) {
   if (!value) {
@@ -112,6 +112,24 @@ function followUpPresets(messages) {
       label: t(messages, "ops.followUpPresets.readinessCleanup", "Readiness cleanup"),
       view: "attention",
       queueFilter: "contact-gap"
+    },
+    {
+      key: "handoff-coverage",
+      label: t(messages, "ops.followUpPresets.handoffCoverage", "Handoff coverage"),
+      view: "warning",
+      queueFilter: "handoff-gap"
+    },
+    {
+      key: "telemetry-pressure",
+      label: t(messages, "ops.followUpPresets.telemetryPressure", "Telemetry pressure"),
+      view: "warning",
+      queueFilter: "telemetry-pressure"
+    },
+    {
+      key: "notification-dispatch",
+      label: t(messages, "ops.followUpPresets.notificationDispatch", "Dispatch review"),
+      view: "warning",
+      queueFilter: "notification-dispatch"
     }
   ];
 }
@@ -206,7 +224,7 @@ function sortWithFocus(items = [], focusFarmId = "") {
   });
 }
 
-function applyCompletionSignal(items = [], focusFarmId = "", focusAction = "") {
+function applyCompletionSignal(items = [], focusFarmId = "", focusAction = "", updatedAlertId = "", dispatchResult = "") {
   if (!focusFarmId || !focusAction) {
     return items;
   }
@@ -224,8 +242,100 @@ function applyCompletionSignal(items = [], focusFarmId = "", focusAction = "") {
       return false;
     }
 
+    if (focusAction === "handoff_follow_up" && item.key === `${focusFarmId}-handoff-gap`) {
+      return false;
+    }
+
+    if (
+      focusAction === "dispatch_follow_up"
+      && updatedAlertId
+      && item.key === `${focusFarmId}-notification-dispatch-${updatedAlertId}`
+    ) {
+      return false;
+    }
+
+    if (
+      focusAction === "dispatch_follow_up"
+      && !updatedAlertId
+      && dispatchResult
+      && item.category === "notification-dispatch"
+      && item.dispatchState === "coverage-missing"
+    ) {
+      return false;
+    }
+
     return true;
   });
+}
+
+function followUpCompletionMeta(messages, focusAction = "", isTelemetryContext = false, dispatchResult = "") {
+  if (focusAction === "record_follow_up" && isTelemetryContext) {
+    return {
+      summary: t(messages, "ops.followUpTelemetryCompletionRecord", "Telemetry pressure resolved by record follow-up"),
+      body: t(messages, "ops.followUpTelemetryCompletionRecordBody", "A record was captured from the telemetry queue, so the farm now has fresh field context alongside the device signal.")
+    };
+  }
+
+  if (focusAction === "alert_follow_up" && isTelemetryContext) {
+    return {
+      summary: t(messages, "ops.followUpTelemetryCompletionAlert", "Telemetry pressure resolved by alert review"),
+      body: t(messages, "ops.followUpTelemetryCompletionAlertBody", "A telemetry alert was reviewed or resolved, so the queue now reflects the updated device incident state.")
+    };
+  }
+
+  if (focusAction === "handoff_follow_up" && isTelemetryContext) {
+    return {
+      summary: t(messages, "ops.followUpTelemetryCompletionHandoff", "Telemetry pressure resolved by handoff refresh"),
+      body: t(messages, "ops.followUpTelemetryCompletionHandoffBody", "The telemetry context was handed off clearly, so the next shift can continue from the same pressure diagnosis.")
+    };
+  }
+
+  if (focusAction === "record_follow_up") {
+    return {
+      summary: t(messages, "ops.followUpCompletionRecord", "Resolved by record follow-up"),
+      body: t(messages, "ops.followUpCompletionRecordBody", "A record was created or updated, so the queue now reflects the latest field context.")
+    };
+  }
+
+  if (focusAction === "alert_follow_up") {
+    return {
+      summary: t(messages, "ops.followUpCompletionAlert", "Resolved by alert action"),
+      body: t(messages, "ops.followUpCompletionAlertBody", "An alert was acknowledged or resolved, so the queue now reflects the updated incident state.")
+    };
+  }
+
+  if (focusAction === "handoff_follow_up") {
+    return {
+      summary: t(messages, "ops.followUpCompletionHandoff", "Resolved by handoff refresh"),
+      body: t(messages, "ops.followUpCompletionHandoffBody", "The operator handoff was refreshed, so the next shift now inherits current telemetry and farm context.")
+    };
+  }
+
+  if (focusAction === "dispatch_follow_up") {
+    if (dispatchResult === "contacts") {
+      return {
+        summary: t(messages, "ops.followUpCompletionDispatchContacts", "Resolved by farm contact update"),
+        body: t(messages, "ops.followUpCompletionDispatchContactsBody", "Farm fallback delivery contacts were updated, so the coverage gap was cleared from the dispatch workspace.")
+      };
+    }
+
+    if (dispatchResult === "preferences") {
+      return {
+        summary: t(messages, "ops.followUpCompletionDispatchPreferences", "Resolved by recipient preference update"),
+        body: t(messages, "ops.followUpCompletionDispatchPreferencesBody", "Personal delivery preferences were updated, so the dispatch workspace now reflects the improved recipient coverage.")
+      };
+    }
+
+    return {
+      summary: t(messages, "ops.followUpCompletionDispatch", "Resolved by dispatch review"),
+      body: t(messages, "ops.followUpCompletionDispatchBody", "The alert was reviewed from the dispatch queue, so that delivery-ready item was cleared from this workspace.")
+    };
+  }
+
+  return {
+    summary: t(messages, "ops.followUpCompletedTitle", "Follow-up moved forward"),
+    body: t(messages, "ops.followUpCompletedBody", "The matching follow-up item was cleared from the workspace for the farm you just handled.")
+  };
 }
 
 export default async function OpsFollowUpsPage({ searchParams }) {
@@ -239,10 +349,11 @@ export default async function OpsFollowUpsPage({ searchParams }) {
   const queueFilter = normalizeQueueFilter(typeof query?.queue === "string" ? query.queue : "");
   const farmSearch = typeof query?.farm_search === "string" ? query.farm_search : "";
   const pinnedFarmId = typeof query?.pin_farm === "string" ? query.pin_farm : "";
+  const dispatchResult = typeof query?.dispatch_result === "string" ? query.dispatch_result : "";
   const queueItems = filterByPinnedFarm(
-    filterByFarmSearch(
+      filterByFarmSearch(
       filterByQueueCategory(
-        applyCompletionSignal(ops?.followUpQueue ?? [], focusFarmId, focusAction),
+        applyCompletionSignal(ops?.followUpQueue ?? [], focusFarmId, focusAction, typeof query?.alert_updated === "string" ? query.alert_updated : "", dispatchResult),
         queueFilter
       ),
       farmSearch
@@ -285,6 +396,11 @@ export default async function OpsFollowUpsPage({ searchParams }) {
       ?? null
     : null;
   const handoffFreshnessState = handoffFreshness(handoffContextItem?.latestHandoff?.created_at, messages);
+  const isTelemetryCompletionContext =
+    queueFilter === "telemetry-pressure"
+    || focusedItem?.category === "telemetry-pressure"
+    || handoffContextItem?.category === "telemetry-pressure";
+  const completionMeta = followUpCompletionMeta(messages, focusAction, isTelemetryCompletionContext, dispatchResult);
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
@@ -327,14 +443,15 @@ export default async function OpsFollowUpsPage({ searchParams }) {
           <strong>{t(messages, "ops.followUpFocusTitle", "Latest follow-up context")}</strong>
           <span> {t(messages, "ops.followUpFocusBody", "The queue below is focused on the farm you just worked on so you can confirm what still needs follow-up.")}</span>
           <span className="pill">{focusedItem.farmName}</span>
+          {focusAction ? <span className="pill is-online">{completionMeta.summary}</span> : null}
           <div className="action-row">
             <Link className="button-secondary" href={withReturnTo(focusedItem.primaryHref, workspaceReturnTo)}>{t(messages, "ops.followUpNextAction", "Next best action")}: {focusedItem.primaryLabel}</Link>
           </div>
         </section>
       ) : focusFarmId ? (
         <section className="notice dashboard-card">
-          <strong>{t(messages, "ops.followUpCompletedTitle", "Follow-up moved forward")}</strong>
-          <span> {t(messages, "ops.followUpCompletedBody", "The matching follow-up item was cleared from the workspace for the farm you just handled.")}</span>
+          <strong>{completionMeta.summary}</strong>
+          <span> {completionMeta.body}</span>
         </section>
       ) : null}
       {pinnedFarmId ? (
@@ -441,7 +558,10 @@ export default async function OpsFollowUpsPage({ searchParams }) {
             <Link className={`pill ${queueFilter === "critical-alerts" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "critical-alerts", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.criticalAlerts", "Critical alerts")}</Link>
             <Link className={`pill ${queueFilter === "record-discipline" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "record-discipline", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.recordDiscipline", "Record discipline")}</Link>
             <Link className={`pill ${queueFilter === "device-attention" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "device-attention", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.deviceAttention", "Device attention")}</Link>
+            <Link className={`pill ${queueFilter === "telemetry-pressure" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "telemetry-pressure", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.telemetryPressure", "Telemetry pressure")}</Link>
+            <Link className={`pill ${queueFilter === "notification-dispatch" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "notification-dispatch", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.notificationDispatch", "Dispatch review")}</Link>
             <Link className={`pill ${queueFilter === "contact-gap" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "contact-gap", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.contactGap", "Contact gaps")}</Link>
+            <Link className={`pill ${queueFilter === "handoff-gap" ? "is-online" : ""}`} href={buildWorkspaceUrl({ view: activeView, queueFilter: "handoff-gap", focusFarmId, focusAction, createdRecordId, updatedRecordId, updatedAlertId, farmSearch, pinnedFarmId })}>{t(messages, "ops.followUpQueues.handoffGap", "Handoff coverage")}</Link>
           </div>
           <div>
             <p className="eyebrow">{t(messages, "ops.followUpPresetsEyebrow", "Quick presets")}</p>
@@ -528,13 +648,19 @@ export default async function OpsFollowUpsPage({ searchParams }) {
                         <strong>{item.title}</strong>
                         <span className="list-meta">{item.farmName}</span>
                         <span className="list-meta">{item.body}</span>
+                        {item.category === "telemetry-pressure" && item.whyNow ? (
+                          <span className="list-meta">{t(messages, "ops.followUpWhyNow", "Why now")}: {item.whyNow}</span>
+                        ) : null}
+                        {item.category === "telemetry-pressure" && item.recommendedEscalation ? (
+                          <span className="list-meta">{t(messages, "ops.followUpRecommendedEscalation", "Recommended escalation")}: {item.recommendedEscalation}</span>
+                        ) : null}
                         {item.latestHandoff?.note ? (
                           <span className="list-meta">{t(messages, "ops.followUpLatestHandoffInline", "Latest handoff")}: {item.latestHandoff.note}</span>
                         ) : null}
                       </span>
                       <span className="pill-row">
                         <span className={`pill ${handoffFreshness(item.latestHandoff?.created_at, messages).className}`}>{handoffFreshness(item.latestHandoff?.created_at, messages).label}</span>
-                        {item.farmId === focusFarmId ? <span className="pill is-online">{t(messages, "ops.followUpJustUpdated", "Just updated")}</span> : null}
+                        {item.farmId === focusFarmId ? <span className="pill is-online">{focusAction ? completionMeta.summary : t(messages, "ops.followUpJustUpdated", "Just updated")}</span> : null}
                         {item.farmId === pinnedFarmId ? <span className="pill">{t(messages, "ops.followUpPinnedChip", "Pinned farm")}</span> : null}
                         <Link className="button-secondary" href={withReturnTo(item.primaryHref, workspaceReturnTo)}>{item.primaryLabel}</Link>
                         <Link className="button-secondary" href={withReturnTo(item.secondaryHref, workspaceReturnTo)}>{item.secondaryLabel}</Link>

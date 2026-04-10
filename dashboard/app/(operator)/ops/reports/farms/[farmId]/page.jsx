@@ -88,6 +88,37 @@ function formatDateTime(value) {
   }).format(new Date(value));
 }
 
+function formatValue(value, suffix = "", digits = 0) {
+  if (value === null || value === undefined || value === "") {
+    return "N/A";
+  }
+
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return String(value);
+  }
+
+  return `${number.toFixed(digits)}${suffix}`;
+}
+
+function sparklinePath(points = []) {
+  if (!points.length) {
+    return "";
+  }
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+
+  return points
+    .map((point, index) => {
+      const x = (index / Math.max(points.length - 1, 1)) * 100;
+      const y = 100 - ((point - min) / range) * 100;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
+    })
+    .join(" ");
+}
+
 function handoffFreshness(value, messages) {
   if (!value) {
     return {
@@ -136,6 +167,149 @@ function alertSourceLabel(value, messages) {
   return t(messages, "dashboard.alertSources.system", "System");
 }
 
+function telemetryOutcomeLabel(value, messages) {
+  if (value === "alert_follow_up") {
+    return t(messages, "ops.followUpCompletionAlert", "Resolved by alert action");
+  }
+
+  if (value === "record_follow_up") {
+    return t(messages, "ops.followUpCompletionRecord", "Resolved by record follow-up");
+  }
+
+  if (value === "handoff_follow_up") {
+    return t(messages, "ops.followUpCompletionHandoff", "Resolved by handoff refresh");
+  }
+
+  return t(messages, "ops.telemetryOutcomeUnknown", "Unknown outcome");
+}
+
+function preferredTelemetryOutcome(report) {
+  const byOutcome = report?.telemetryOutcomeTrends?.byOutcome ?? {};
+  const candidates = [
+    { key: "record_follow_up", count: byOutcome.record_follow_up ?? 0 },
+    { key: "alert_follow_up", count: byOutcome.alert_follow_up ?? 0 },
+    { key: "handoff_follow_up", count: byOutcome.handoff_follow_up ?? 0 }
+  ].sort((left, right) => right.count - left.count);
+
+  return candidates[0]?.count > 0 ? candidates[0].key : "";
+}
+
+function buildTelemetrySuggestions({ report, farmId, reportWindow, severityFilter, returnTo, messages }) {
+  if (!report?.telemetryPressure && !report?.telemetryTimeline) {
+    return [];
+  }
+
+  const suggestions = [];
+  const telemetryPressure = report.telemetryPressure ?? null;
+  const timelineMetrics = report.telemetryTimeline?.metrics ?? {};
+  const latestHandoffAt = report?.latestHandoff?.created_at ?? null;
+  const handoffAge = latestHandoffAt ? Math.floor((Date.now() - new Date(latestHandoffAt).getTime()) / (1000 * 60 * 60 * 24)) : null;
+  const hasTelemetryAlerts = (telemetryPressure?.openTelemetryAlertCount ?? 0) > 0;
+  const hasRecordGap = (report?.metrics?.attentionTemplates ?? 0) > 0;
+  const averageTemperature = Number(timelineMetrics.averageTemperature ?? telemetryPressure?.averageTemperature);
+  const minimumBattery = Number(timelineMetrics.minBattery ?? telemetryPressure?.averageBattery);
+  const highestTemperature = Number(timelineMetrics.maxTemperature ?? telemetryPressure?.averageTemperature);
+  const preferredOutcome = preferredTelemetryOutcome(report);
+
+  if (telemetryPressure?.criticalHeat) {
+    suggestions.push({
+      key: "critical-heat",
+      urgencyClass: "is-offline",
+      label: t(messages, "ops.telemetrySuggestionUrgent", "Urgent"),
+      title: t(messages, "ops.telemetrySuggestionCriticalHeatTitle", "Escalate telemetry heat pressure first"),
+      body: t(messages, "ops.telemetrySuggestionCriticalHeatBody", "Average or peak temperature is in a critical range. Review telemetry alerts before handling lower-priority farm work."),
+      actionLabel: t(messages, "ops.reviewTelemetryAlertsAction", "Review telemetry alerts"),
+      href: `${farmAlertsLink({ farmId, reportWindow, severity: severityFilter, returnTo })}&source=device_telemetry`
+    });
+  } else if (telemetryPressure?.warm || (Number.isFinite(averageTemperature) && (averageTemperature < 26 || averageTemperature > 30))) {
+    suggestions.push({
+      key: "warm-drift",
+      urgencyClass: "is-stale",
+      label: t(messages, "ops.telemetrySuggestionSoon", "Soon"),
+      title: t(messages, "ops.telemetrySuggestionWarmTitle", "Inspect the farm telemetry snapshot"),
+      body: t(messages, "ops.telemetrySuggestionWarmBody", "Temperature is drifting outside the preferred band. Check the farm snapshot and confirm whether this is a real operating change or a temporary fluctuation."),
+      actionLabel: t(messages, "ops.openFarmSettingsAction", "Open farm settings"),
+      href: `/farms/${farmId}`
+    });
+  }
+
+  if (telemetryPressure?.batteryPressure || (Number.isFinite(minimumBattery) && minimumBattery <= 20)) {
+    suggestions.push({
+      key: "battery-pressure",
+      urgencyClass: "is-stale",
+      label: t(messages, "ops.telemetrySuggestionSoon", "Soon"),
+      title: t(messages, "ops.telemetrySuggestionBatteryTitle", "Check low-battery devices before they go stale"),
+      body: t(messages, "ops.telemetrySuggestionBatteryBody", "Battery pressure is building in this farm. Review the farm context and plan maintenance before device visibility drops."),
+      actionLabel: t(messages, "ops.openFarmSettingsAction", "Open farm settings"),
+      href: `/farms/${farmId}`
+    });
+  }
+
+  if (
+    hasRecordGap
+    && (
+      preferredOutcome === "record_follow_up"
+      || ((telemetryPressure?.criticalHeat || telemetryPressure?.warm || hasTelemetryAlerts) && preferredOutcome !== "alert_follow_up")
+    )
+  ) {
+    suggestions.push({
+      key: "record-follow-up",
+      urgencyClass: "is-online",
+      label: t(messages, "ops.telemetrySuggestionOperational", "Operational"),
+      title: preferredOutcome === "record_follow_up"
+        ? t(messages, "ops.telemetrySuggestionRecordFirstTitle", "This farm usually resolves telemetry pressure with a record first")
+        : t(messages, "ops.telemetrySuggestionRecordTitle", "Capture a follow-up record while the telemetry context is fresh"),
+      body: preferredOutcome === "record_follow_up"
+        ? t(messages, "ops.telemetrySuggestionRecordFirstBody", "Recent follow-up history suggests this farm usually needs structured field context to close telemetry pressure cleanly, so start with a record.")
+        : t(messages, "ops.telemetrySuggestionRecordBody", "This farm still has record expectations needing attention. Create a record now so the telemetry change is tied back to structured field context."),
+      actionLabel: t(messages, "ops.createRecordAction", "Create record"),
+      href: farmRecordCreateLink({ farmId, farmName: report?.farm?.name ?? "this farm", returnTo })
+    });
+  }
+
+  if (preferredOutcome === "handoff_follow_up" && (!latestHandoffAt || (handoffAge !== null && handoffAge > 1))) {
+    suggestions.push({
+      key: "handoff-pattern",
+      urgencyClass: "is-stale",
+      label: t(messages, "ops.telemetrySuggestionContext", "Context"),
+      title: t(messages, "ops.telemetrySuggestionHandoffPatternTitle", "This farm often needs a fresh handoff to close telemetry pressure"),
+      body: t(messages, "ops.telemetrySuggestionHandoffPatternBody", "Recent outcomes show this farm often stabilizes only after the operator context is refreshed, so leave the next shift a clear note."),
+      actionLabel: t(messages, "ops.followUpHandoffAction", "Save handoff note"),
+      href: "#farm-handoff-note"
+    });
+  }
+
+  if (!latestHandoffAt || (handoffAge !== null && handoffAge > 3)) {
+    suggestions.push({
+      key: "handoff-refresh",
+      urgencyClass: !latestHandoffAt ? "is-offline" : "is-stale",
+      label: t(messages, "ops.telemetrySuggestionContext", "Context"),
+      title: t(messages, "ops.telemetrySuggestionHandoffTitle", "Refresh the operator handoff before context drifts"),
+      body: !latestHandoffAt
+        ? t(messages, "ops.telemetrySuggestionHandoffMissingBody", "No recent handoff note is attached to this farm yet. Leave one after reviewing the telemetry state so the next shift inherits the same context.")
+        : t(messages, "ops.telemetrySuggestionHandoffStaleBody", "The latest handoff is getting stale. Refresh it after the telemetry review so the next operator sees the updated risk picture."),
+      actionLabel: t(messages, "ops.followUpHandoffAction", "Save handoff note"),
+      href: "#farm-handoff-note"
+    });
+  }
+
+  if (!suggestions.length) {
+    suggestions.push({
+      key: "monitor",
+      urgencyClass: "is-online",
+      label: t(messages, "ops.telemetrySuggestionSteady", "Steady"),
+      title: t(messages, "ops.telemetrySuggestionMonitorTitle", "Telemetry looks stable enough to keep monitoring"),
+      body: Number.isFinite(highestTemperature)
+        ? t(messages, "ops.telemetrySuggestionMonitorBody", "Telemetry is currently inside a manageable band. Keep watching the trend and only escalate if the next readings continue to drift.")
+        : t(messages, "ops.telemetrySuggestionMonitorEmptyBody", "There is not enough telemetry pressure right now to force a follow-up action. Keep the farm under routine review."),
+      actionLabel: t(messages, "ops.openFarmSettingsAction", "Open farm settings"),
+      href: `/farms/${farmId}`
+    });
+  }
+
+  return suggestions.slice(0, 5);
+}
+
 export default async function OpsFarmReportPage({ params, searchParams }) {
   const messages = await getMessages();
   const { farmId } = await params;
@@ -153,6 +327,7 @@ export default async function OpsFarmReportPage({ params, searchParams }) {
   const { authConfigured, user } = await requireUser({ returnUrl: `/ops/reports/farms/${farmId}` });
   const report = user ? await loadOpsFarmReport({ farmId, reportWindow, severityFilter, sourceFilter }) : null;
   const handoffFreshnessState = handoffFreshness(report?.latestHandoff?.created_at, messages);
+  const telemetrySuggestions = buildTelemetrySuggestions({ report, farmId, reportWindow, severityFilter, returnTo, messages });
 
   return (
     <AppShell currentPath="/ops" ariaLabel="Ops navigation">
@@ -257,6 +432,143 @@ export default async function OpsFarmReportPage({ params, searchParams }) {
       <section className="dashboard-grid">
         <article className="card">
           <div className="split-heading">
+            <h2>{t(messages, "ops.telemetryPressureTitle", "Telemetry pressure")}</h2>
+            <span className="pill">{report?.telemetryPressure?.reportingDeviceCount ?? 0}</span>
+          </div>
+          {report?.telemetryPressure ? (
+            <>
+              <div className="records-field-group-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryDevicesReporting", "Devices reporting")}</h3>
+                  <p>{report.telemetryPressure.reportingDeviceCount}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryAverageTemperature", "Avg temp")}</h3>
+                  <p>{formatValue(report.telemetryPressure.averageTemperature, " C", 1)}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryAverageBattery", "Avg battery")}</h3>
+                  <p>{formatValue(report.telemetryPressure.averageBattery, "%", 0)}</p>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryLowBatteryFarms", "Low battery farms")}</h3>
+                  <p>{report.telemetryPressure.lowBatteryDeviceCount ?? 0}</p>
+                </article>
+              </div>
+              <div className="pill-row">
+                {report.telemetryPressure.criticalHeat ? <span className="pill is-offline">{t(messages, "ops.telemetryCriticalHeat", "Critical heat")}</span> : null}
+                {report.telemetryPressure.warm && !report.telemetryPressure.criticalHeat ? <span className="pill is-stale">{t(messages, "ops.telemetryWarmDrift", "Temp drift")}</span> : null}
+                {report.telemetryPressure.batteryPressure ? <span className="pill is-stale">{t(messages, "ops.telemetryBatteryPressure", "Battery pressure")}</span> : null}
+                {report.telemetryPressure.openTelemetryAlertCount ? <span className="pill">{report.telemetryPressure.openTelemetryAlertCount} {t(messages, "ops.telemetryOpenAlerts", "open telemetry alerts")}</span> : null}
+                <span className="pill">{t(messages, "ops.latestHeartbeat")}: {formatDate(report.telemetryPressure.latestReportedAt)}</span>
+                <Link className="button-secondary" href={`${farmAlertsLink({ farmId, reportWindow, severity: severityFilter, returnTo })}&source=device_telemetry`}>
+                  {t(messages, "ops.reviewTelemetryAlertsAction", "Review telemetry alerts")}
+                </Link>
+              </div>
+            </>
+          ) : (
+            <p className="muted">{t(messages, "ops.telemetryPressureEmpty", "No telemetry pressure summary is ready yet.")}</p>
+          )}
+        </article>
+
+        <article className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "ops.telemetryTrendTitle", "Telemetry trend")}</h2>
+            <span className="pill">{report?.telemetryTimeline?.metrics.sampleCount ?? 0}</span>
+          </div>
+          {report?.telemetryTimeline?.history?.length ? (
+            <div className="telemetry-trend-card">
+              <div className="telemetry-trend-grid">
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryTemperatureTrend", "Temperature trend")}</h3>
+                  <svg className="telemetry-sparkline" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={t(messages, "ops.telemetryTemperatureTrend", "Temperature trend")}>
+                    <path d={sparklinePath(report.telemetryTimeline.history.map((item) => Number(item.temperature_c)).filter((value) => Number.isFinite(value)))} />
+                  </svg>
+                  <div className="record-meta-list">
+                    <span>{t(messages, "ops.telemetryAverageLabel", "Average")}: {formatValue(report.telemetryTimeline.metrics.averageTemperature, " C", 1)}</span>
+                    <span>{t(messages, "ops.telemetryRangeLabel", "Range")}: {formatValue(report.telemetryTimeline.metrics.minTemperature, " C", 1)} - {formatValue(report.telemetryTimeline.metrics.maxTemperature, " C", 1)}</span>
+                  </div>
+                </article>
+                <article className="records-field-group-card">
+                  <h3>{t(messages, "ops.telemetryBatteryTrend", "Battery trend")}</h3>
+                  <svg className="telemetry-sparkline telemetry-sparkline-battery" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={t(messages, "ops.telemetryBatteryTrend", "Battery trend")}>
+                    <path d={sparklinePath(report.telemetryTimeline.history.map((item) => Number(item.battery_percent)).filter((value) => Number.isFinite(value)))} />
+                  </svg>
+                  <div className="record-meta-list">
+                    <span>{t(messages, "ops.telemetryAverageLabel", "Average")}: {formatValue(report.telemetryTimeline.metrics.averageBattery, "%", 0)}</span>
+                    <span>{t(messages, "ops.telemetryLowestLabel", "Lowest")}: {formatValue(report.telemetryTimeline.metrics.minBattery, "%", 0)}</span>
+                  </div>
+                </article>
+              </div>
+              <p className="muted">{t(messages, "ops.telemetrySamplesLabel", "Samples")}: {report.telemetryTimeline.metrics.sampleCount}</p>
+            </div>
+          ) : (
+            <p className="muted">{t(messages, "ops.telemetryTrendEmpty", "No telemetry trend history is ready yet.")}</p>
+          )}
+        </article>
+
+        <article className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "ops.telemetrySuggestionsTitle", "Telemetry-driven next steps")}</h2>
+            <span className="pill">{telemetrySuggestions.length}</span>
+          </div>
+          <p className="muted">{t(messages, "ops.telemetrySuggestionsBody", "Use the pressure, trend, and handoff state together to decide what should happen next in this farm.")}</p>
+          <ul className="status-list">
+            {telemetrySuggestions.map((item) => (
+              <li className="mobile-list-row" key={item.key}>
+                <span>
+                  <strong>{item.title}</strong>
+                  <span className="list-meta">{item.body}</span>
+                </span>
+                <span className="pill-row">
+                  <span className={`pill ${item.urgencyClass}`}>{item.label}</span>
+                  <Link className="button-secondary" href={item.href}>{item.actionLabel}</Link>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="card">
+          <div className="split-heading">
+            <h2>{t(messages, "ops.telemetryOutcomeTrendsTitle", "Telemetry outcome trends")}</h2>
+            <span className="pill">{report?.telemetryOutcomeHistory?.length ?? 0}</span>
+          </div>
+          <div className="records-field-group-grid">
+            <article className="records-field-group-card">
+              <h3>{t(messages, "ops.followUpCompletionAlert", "Resolved by alert action")}</h3>
+              <p>{report?.telemetryOutcomeTrends?.byOutcome?.alert_follow_up ?? 0}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "ops.followUpCompletionRecord", "Resolved by record follow-up")}</h3>
+              <p>{report?.telemetryOutcomeTrends?.byOutcome?.record_follow_up ?? 0}</p>
+            </article>
+            <article className="records-field-group-card">
+              <h3>{t(messages, "ops.followUpCompletionHandoff", "Resolved by handoff refresh")}</h3>
+              <p>{report?.telemetryOutcomeTrends?.byOutcome?.handoff_follow_up ?? 0}</p>
+            </article>
+          </div>
+          {report?.telemetryOutcomeHistory?.length ? (
+            <ul className="status-list">
+              {report.telemetryOutcomeHistory.map((event) => (
+                <li className="mobile-list-row" key={event.id}>
+                  <span>
+                    <strong>{telemetryOutcomeLabel(event.outcome, messages)}</strong>
+                    {event.summary ? <span className="list-meta">{event.summary}</span> : null}
+                  </span>
+                  <span className="pill-row">
+                    <span className="pill">{formatDateTime(event.created_at)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">{t(messages, "ops.telemetryOutcomeTrendsEmpty", "Telemetry follow-up outcomes will appear here after the team works through telemetry pressure items.")}</p>
+          )}
+        </article>
+
+        <article className="card">
+          <div className="split-heading">
             <div>
               <p className="eyebrow">{t(messages, "ops.followUpHandoffEyebrow", "Operator handoff")}</p>
               <h2>{t(messages, "ops.followUpHandoffTitle", "Leave context for the next person")}</h2>
@@ -287,7 +599,7 @@ export default async function OpsFarmReportPage({ params, searchParams }) {
               </ul>
             </div>
           ) : null}
-          <form action={saveOpsHandoffNote} className="records-filter-form">
+          <form action={saveOpsHandoffNote} className="records-filter-form" id="farm-handoff-note">
             <input name="farm_id" type="hidden" value={farmId} />
             <input name="return_to" type="hidden" value={returnTo} />
             <input name="view" type="hidden" value="all" />

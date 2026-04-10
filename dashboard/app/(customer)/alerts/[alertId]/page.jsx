@@ -72,6 +72,63 @@ function formatEntryValue(entry) {
   return "N/A";
 }
 
+function preferenceTypeLabel(value, messages) {
+  if (value === "low_battery") {
+    return t(messages, "alertDetailPage.deliveryTypes.lowBattery", "Low battery");
+  }
+
+  if (value === "sensor_fault") {
+    return t(messages, "alertDetailPage.deliveryTypes.sensorFault", "Sensor fault");
+  }
+
+  if (value === "offline") {
+    return t(messages, "alertDetailPage.deliveryTypes.offline", "Offline");
+  }
+
+  return t(messages, "alertDetailPage.deliveryTypes.threshold", "Threshold");
+}
+
+function timelineLabel(value, messages) {
+  if (value === "opened") {
+    return t(messages, "alertDetailPage.timelineOpened", "Opened");
+  }
+
+  if (value === "acknowledge") {
+    return t(messages, "alertDetailPage.timelineAcknowledged", "Acknowledged");
+  }
+
+  if (value === "suppress") {
+    return t(messages, "alertDetailPage.timelineSuppressed", "Suppressed");
+  }
+
+  if (value === "resolve") {
+    return t(messages, "alertDetailPage.timelineResolved", "Resolved");
+  }
+
+  return t(messages, "alertDetailPage.timelineUpdated", "Updated");
+}
+
+function dispatchAuditMeta(value, messages) {
+  if (value === "coverage-missing") {
+    return {
+      label: t(messages, "alertDetailPage.dispatchStates.coverageMissing", "Coverage missing"),
+      className: "is-offline"
+    };
+  }
+
+  if (value === "follow-up-first") {
+    return {
+      label: t(messages, "alertDetailPage.dispatchStates.followUpFirst", "Follow-up first"),
+      className: "is-stale"
+    };
+  }
+
+  return {
+    label: t(messages, "alertDetailPage.dispatchStates.ready", "Ready to review"),
+    className: "is-online"
+  };
+}
+
 export default async function AlertDetailPage({ params, searchParams }) {
   const messages = await getMessages();
   const { alertId } = await params;
@@ -184,6 +241,109 @@ export default async function AlertDetailPage({ params, searchParams }) {
               />
             ) : (
               <p className="muted">{t(messages, "alertDetailPage.readOnlyBody", "This alert is already in a final state or the current account cannot manage alert actions.")}</p>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="split-heading">
+              <div>
+                <p className="eyebrow">{t(messages, "alertDetailPage.deliveryEyebrow", "Delivery preview")}</p>
+                <h2>{t(messages, "alertDetailPage.deliveryTitle", "Who should receive this alert")}</h2>
+              </div>
+            </div>
+            <p className="muted">{t(messages, "alertDetailPage.deliveryAuditBody", "This preview reflects the current farm contacts and notification preferences, so delivery can be audited before real sending is wired in.")}</p>
+            <div className="notice">
+              <strong>{t(messages, "alertDetailPage.dispatchAuditTitle", "Dispatch audit")}</strong>
+              <span className={`pill ${dispatchAuditMeta(detail.notificationDispatchAudit.state, messages).className}`}>{dispatchAuditMeta(detail.notificationDispatchAudit.state, messages).label}</span>
+              <span> {detail.notificationDispatchAudit.reason}</span>
+              <span className="list-meta">{detail.notificationDispatchAudit.recommendedAction}</span>
+            </div>
+            <div className="records-field-group-grid">
+              <article className="records-field-group-card">
+                <h3>{t(messages, "alertDetailPage.deliveryCards.type", "Preference type")}</h3>
+                <p>{preferenceTypeLabel(detail.notificationPreview.preferenceType, messages)}</p>
+              </article>
+              <article className="records-field-group-card">
+                <h3>{t(messages, "alertDetailPage.deliveryCards.recipients", "Personal recipients")}</h3>
+                <p>{detail.notificationPreview.personalRecipientCount}</p>
+              </article>
+              <article className="records-field-group-card">
+                <h3>{t(messages, "alertDetailPage.deliveryCards.email", "Email")}</h3>
+                <p>{detail.notificationPreview.emailRecipientCount}</p>
+              </article>
+              <article className="records-field-group-card">
+                <h3>{t(messages, "alertDetailPage.deliveryCards.line", "LINE")}</h3>
+                <p>{detail.notificationPreview.lineRecipientCount}</p>
+              </article>
+            </div>
+            <div className="record-meta-list">
+              <span className={`pill ${detail.notificationPreview.farmEmailConfigured ? "is-online" : "is-stale"}`}>
+                {detail.notificationPreview.farmEmailConfigured
+                  ? t(messages, "alertDetailPage.deliveryFarmEmailReady", "Farm email ready")
+                  : t(messages, "alertDetailPage.deliveryFarmEmailMissing", "Farm email missing")}
+              </span>
+              <span className={`pill ${detail.notificationPreview.farmLineConfigured ? "is-online" : "is-stale"}`}>
+                {detail.notificationPreview.farmLineConfigured
+                  ? t(messages, "alertDetailPage.deliveryFarmLineReady", "Farm LINE ready")
+                  : t(messages, "alertDetailPage.deliveryFarmLineMissing", "Farm LINE missing")}
+              </span>
+            </div>
+            {detail.notificationPreview.recipients.length ? (
+              <ul className="status-list">
+                {detail.notificationPreview.recipients.map((recipient) => (
+                  <li className="mobile-list-row" key={recipient.user_id}>
+                    <span>
+                      <strong>{recipient.display_name || recipient.user_id}</strong>
+                      <span className="list-meta">{recipient.role}</span>
+                    </span>
+                    <span className="pill-row">
+                      {recipient.email_enabled ? <span className="pill">{t(messages, "farmSettings.emailChannel", "Email")}</span> : null}
+                      {recipient.line_enabled ? <span className="pill">{t(messages, "farmSettings.lineChannel", "LINE")}</span> : null}
+                      {recipient.critical_only ? <span className="pill">{t(messages, "alertDetailPage.deliveryCriticalOnly", "Critical only")}</span> : null}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="empty-panel">
+                <div>
+                  <p className="eyebrow">{t(messages, "alertDetailPage.deliveryEmptyEyebrow", "No recipients")}</p>
+                  <h2>{t(messages, "alertDetailPage.deliveryEmptyTitle", "No personal recipients currently match this alert")}</h2>
+                  <p className="muted">{t(messages, "alertDetailPage.deliveryEmptyBody", "Review farm contacts and notification preferences if this alert should notify more people.")}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="split-heading">
+              <div>
+                <p className="eyebrow">{t(messages, "alertDetailPage.timelineEyebrow", "Alert timeline")}</p>
+                <h2>{t(messages, "alertDetailPage.timelineTitle", "What happened to this alert so far")}</h2>
+              </div>
+            </div>
+            {detail.alertTimeline.length ? (
+              <ul className="status-list">
+                {detail.alertTimeline.map((event) => (
+                  <li className="mobile-list-row" key={event.key}>
+                    <span>
+                      <strong>{timelineLabel(event.type, messages)}</strong>
+                      <span className="list-meta">{event.body}</span>
+                    </span>
+                    <span className="pill-row">
+                      <span className="pill">{formatDate(event.at)}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="empty-panel">
+                <div>
+                  <p className="eyebrow">{t(messages, "alertDetailPage.timelineEmptyEyebrow", "No timeline yet")}</p>
+                  <h2>{t(messages, "alertDetailPage.timelineEmptyTitle", "No timeline entries are available yet")}</h2>
+                  <p className="muted">{t(messages, "alertDetailPage.timelineEmptyBody", "Timeline entries will appear here as this alert is opened and worked through by the team.")}</p>
+                </div>
+              </div>
             )}
           </div>
 

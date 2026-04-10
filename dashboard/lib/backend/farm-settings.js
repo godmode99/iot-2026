@@ -466,6 +466,65 @@ export async function saveNotificationPreference({ farmId, userId, actorUserId, 
   });
 }
 
+export async function updateFarmDeliveryContacts({ farmId, actorUserId, alertEmailTo, alertLineUserId }) {
+  const sql = getDashboardDb();
+  const access = await requireFarmSettingsAccess(sql, actorUserId, farmId);
+  if (!access.ok) {
+    return access;
+  }
+
+  const normalizedEmail = normalizeEmail(alertEmailTo);
+  const normalizedLineUserId = String(alertLineUserId ?? "").trim();
+
+  if (normalizedEmail && !emailPattern.test(normalizedEmail)) {
+    return fail("alert_email_invalid", [normalizedEmail]);
+  }
+
+  return sql.begin(async (trx) => {
+    const farmRows = await trx`
+      update public.farms
+      set
+        alert_email_to = ${normalizedEmail || null},
+        alert_line_user_id = ${normalizedLineUserId || null},
+        updated_at = timezone('utc', now())
+      where id = ${farmId}::uuid
+      returning id, alert_email_to, alert_line_user_id, updated_at
+    `;
+
+    if (!farmRows[0]?.id) {
+      return fail("farm_not_found", [farmId], 404);
+    }
+
+    const actorType = await actorTypeForUser(trx, actorUserId);
+    await trx`
+      insert into public.audit_log (
+        actor_user_id,
+        actor_type,
+        farm_id,
+        action,
+        target_type,
+        target_id,
+        details_json
+      ) values (
+        ${actorUserId}::uuid,
+        ${actorType},
+        ${farmId}::uuid,
+        'farm_contacts.updated',
+        'farm',
+        ${farmId}::uuid,
+        ${trx.json({
+          alertEmailTo: farmRows[0]?.alert_email_to ?? null,
+          alertLineUserId: farmRows[0]?.alert_line_user_id ?? null
+        })}::jsonb
+      )
+    `;
+
+    return ok("farm_contacts_updated", {
+      farm: farmRows[0]
+    });
+  });
+}
+
 export async function listAuditLog({ farmId, actorUserId }) {
   const sql = getDashboardDb();
   const access = await requireFarmSettingsAccess(sql, actorUserId, farmId);

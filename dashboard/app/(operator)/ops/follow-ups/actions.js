@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/guards.js";
 import { withParams } from "@/lib/auth/urls.js";
-import { createOpsHandoffNote } from "@/lib/backend/ops-workspace.js";
+import { createOpsHandoffNote, createOpsTelemetryOutcome } from "@/lib/backend/ops-workspace.js";
 
 function text(value, max = 600) {
   return String(value ?? "").trim().slice(0, max);
@@ -16,6 +16,10 @@ function safeReturnTo(value) {
   }
 
   return normalized;
+}
+
+function isTelemetryWorkspaceReturn(value) {
+  return String(value ?? "").includes("queue=telemetry-pressure");
 }
 
 export async function saveOpsHandoffNote(formData) {
@@ -53,8 +57,22 @@ export async function saveOpsHandoffNote(formData) {
     }));
   }
 
+  if (isTelemetryWorkspaceReturn(returnTo)) {
+    await createOpsTelemetryOutcome({
+      actorUserId: user.id,
+      farmId,
+      outcome: "handoff_follow_up",
+      context: {
+        returnTo,
+        queue: "telemetry-pressure",
+        summary: "handoff_saved"
+      }
+    });
+  }
+
   redirect(withParams(returnTo, {
     handoff_saved: "1",
-    focus_farm: farmId
+    focus_farm: farmId,
+    focus_action: "handoff_follow_up"
   }));
 }

@@ -56,6 +56,7 @@ export default async function AlertsPage({ searchParams }) {
   const farmId = typeof query?.farmId === "string" ? query.farmId : typeof query?.farm === "string" ? query.farm : "";
   const severity = typeof query?.severity === "string" ? query.severity : "";
   const search = typeof query?.q === "string" ? query.q : "";
+  const source = typeof query?.source === "string" ? query.source : "";
   const dateRange = typeof query?.dateRange === "string" ? query.dateRange : "";
   const returnTo = typeof query?.return_to === "string" ? query.return_to : "";
 
@@ -64,9 +65,10 @@ export default async function AlertsPage({ searchParams }) {
     farmId,
     severity,
     search,
+    source,
     dateRange
   });
-  const hasFilters = Boolean(overview.filters.farmId || overview.filters.severity || overview.filters.search || overview.filters.dateRange !== "30d");
+  const hasFilters = Boolean(overview.filters.farmId || overview.filters.severity || overview.filters.search || overview.filters.source || overview.filters.dateRange !== "30d");
 
   return (
     <AppShell currentPath="/alerts" ariaLabel="Alerts navigation">
@@ -179,6 +181,16 @@ export default async function AlertsPage({ searchParams }) {
               <option value="critical">{t(messages, "alertsPage.filters.critical", "Critical")}</option>
               <option value="warning">{t(messages, "alertsPage.filters.warning", "Warning")}</option>
               <option value="info">{t(messages, "alertsPage.filters.info", "Info")}</option>
+            </select>
+          </label>
+          <label>
+            {t(messages, "alertsPage.filters.source", "Source")}
+            <select defaultValue={overview.filters.source} name="source">
+              <option value="">{t(messages, "alertsPage.filters.allSources", "All sources")}</option>
+              <option value="record_detail">{t(messages, "alertsPage.sources.record", "Record-driven")}</option>
+              <option value="device_telemetry">{t(messages, "alertsPage.sources.telemetry", "Telemetry-driven")}</option>
+              <option value="record_expectation">{t(messages, "alertsPage.sources.expectation", "Expectation-driven")}</option>
+              <option value="system">{t(messages, "alertsPage.sources.system", "System")}</option>
             </select>
           </label>
           <label>

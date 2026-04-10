@@ -14,6 +14,7 @@ const EMPTY_OPS_OVERVIEW = {
     attentionCount: 0,
     criticalAlertCount: 0,
     missingContactCount: 0,
+    farmsWithDeliveryCoverage: 0,
     missingHandoffCount: 0,
     expectationRecoveredCount: 0
   },
@@ -25,6 +26,20 @@ const EMPTY_OPS_OVERVIEW = {
       system: 0
     },
     topTypes: []
+  },
+  telemetryPressure: {
+    warmFarmCount: 0,
+    lowBatteryFarmCount: 0,
+    criticalHeatFarmCount: 0,
+    byFarm: []
+  },
+  telemetryOutcomeTrends: {
+    byOutcome: {
+      alert_follow_up: 0,
+      record_follow_up: 0,
+      handoff_follow_up: 0
+    },
+    byFarm: []
   },
   expectationMetrics: {
     currentCount: 0,
@@ -39,6 +54,17 @@ const EMPTY_OPS_OVERVIEW = {
   reports: {
     disciplineByFarm: [],
     alertPressureByFarm: []
+  },
+  notificationCoverage: {
+    byFarm: [],
+    emailEnabledFarmCount: 0,
+    lineEnabledFarmCount: 0
+  },
+  notificationDispatch: {
+    readyCount: 0,
+    coverageMissingCount: 0,
+    followUpFirstCount: 0,
+    items: []
   },
   errors: []
 };
@@ -135,6 +161,14 @@ function normalizeAlert(alert) {
     source: alert?.details_json?.source ?? "system",
     sourceLabel: normalizeAlertSource(alert?.details_json?.source)
   };
+}
+
+function average(values = []) {
+  if (!values.length) {
+    return null;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
 function isTemplateAvailableForFarm(template, farmId) {
@@ -237,6 +271,10 @@ function buildExpectationTrends({ alerts = [], farms = [] }) {
   };
 }
 
+function handoffAgeDays(value) {
+  return daysSince(value);
+}
+
 function buildReportRows({
   farms = [],
   devices = [],
@@ -318,15 +356,502 @@ function buildReportRows({
   };
 }
 
-function buildFollowUpQueue({ farms = [], reportRows = { disciplineByFarm: [], alertPressureByFarm: [] } }) {
+function buildTelemetryPressure({ farms = [], devices = [], telemetry = [], openAlerts = [] }) {
+  const farmNameMap = new Map(farms.map((farm) => [farm.id, farm.name]));
+  const latestByDevice = new Map();
+  const telemetryAlertCounts = openAlerts.reduce((accumulator, alert) => {
+    if (alert.sourceLabel !== "telemetry" || !alert.farm_id) {
+      return accumulator;
+    }
+
+    accumulator[alert.farm_id] = (accumulator[alert.farm_id] ?? 0) + 1;
+    return accumulator;
+  }, {});
+
+  for (const row of telemetry) {
+    if (!latestByDevice.has(row.device_id)) {
+      latestByDevice.set(row.device_id, row);
+    }
+  }
+
+  const grouped = devices.reduce((accumulator, device) => {
+    if (!device.farm_id) {
+      return accumulator;
+    }
+
+    const current = accumulator.get(device.farm_id) ?? {
+      farmId: device.farm_id,
+      farmName: farmNameMap.get(device.farm_id) ?? "Unknown farm",
+      reportingDeviceCount: 0,
+      lowBatteryDeviceCount: 0,
+      temperatures: [],
+      batteries: [],
+      latestReportedAt: null
+    };
+
+    const latestTelemetry = latestByDevice.get(device.id) ?? null;
+    if (latestTelemetry) {
+      current.reportingDeviceCount += 1;
+
+      const temperature = Number(latestTelemetry.temperature_c);
+      const battery = Number(latestTelemetry.battery_percent);
+
+      if (Number.isFinite(temperature)) {
+        current.temperatures.push(temperature);
+      }
+
+      if (Number.isFinite(battery)) {
+        current.batteries.push(battery);
+        if (battery <= 20) {
+          current.lowBatteryDeviceCount += 1;
+        }
+      }
+
+      if (!current.latestReportedAt || new Date(latestTelemetry.recorded_at).getTime() > new Date(current.latestReportedAt).getTime()) {
+        current.latestReportedAt = latestTelemetry.recorded_at;
+      }
+    }
+
+    accumulator.set(device.farm_id, current);
+    return accumulator;
+  }, new Map());
+
+  const byFarm = Array.from(grouped.values())
+    .map((farm) => {
+      const averageTemperature = average(farm.temperatures);
+      const averageBattery = average(farm.batteries);
+      const warm = averageTemperature !== null && (averageTemperature < 26 || averageTemperature > 30);
+      const criticalHeat = averageTemperature !== null && (averageTemperature < 24 || averageTemperature > 32);
+      const batteryPressure = farm.lowBatteryDeviceCount > 0;
+
+      return {
+        farmId: farm.farmId,
+        farmName: farm.farmName,
+        reportingDeviceCount: farm.reportingDeviceCount,
+        averageTemperature,
+        averageBattery,
+        lowBatteryDeviceCount: farm.lowBatteryDeviceCount,
+        latestReportedAt: farm.latestReportedAt,
+        openTelemetryAlertCount: telemetryAlertCounts[farm.farmId] ?? 0,
+        warm,
+        criticalHeat,
+        batteryPressure,
+        pressureScore: (criticalHeat ? 3 : warm ? 2 : 0) + (batteryPressure ? 1 : 0) + ((telemetryAlertCounts[farm.farmId] ?? 0) > 0 ? 1 : 0)
+      };
+    })
+    .filter((farm) => farm.reportingDeviceCount > 0)
+    .sort((left, right) => {
+      if (right.pressureScore !== left.pressureScore) {
+        return right.pressureScore - left.pressureScore;
+      }
+
+      return right.reportingDeviceCount - left.reportingDeviceCount;
+    })
+    .slice(0, 8);
+
+  return {
+    warmFarmCount: byFarm.filter((farm) => farm.warm).length,
+    lowBatteryFarmCount: byFarm.filter((farm) => farm.batteryPressure).length,
+    criticalHeatFarmCount: byFarm.filter((farm) => farm.criticalHeat).length,
+    byFarm
+  };
+}
+
+function buildTelemetryOutcomeTrends({ events = [], farms = [] }) {
+  const farmNameMap = new Map(farms.map((farm) => [farm.id, farm.name]));
+  const byOutcome = {
+    alert_follow_up: 0,
+    record_follow_up: 0,
+    handoff_follow_up: 0
+  };
+
+  const byFarm = Object.values(
+    events.reduce((accumulator, event) => {
+      const outcome = String(event.details_json?.outcome ?? "").trim();
+      if (!outcome) {
+        return accumulator;
+      }
+
+      if (outcome in byOutcome) {
+        byOutcome[outcome] += 1;
+      }
+
+      const farmId = event.farm_id ?? "unknown";
+      const key = String(farmId);
+      const current = accumulator[key] ?? {
+        farmId,
+        farmName: farmNameMap.get(farmId) ?? "Unknown farm",
+        total: 0,
+        alert_follow_up: 0,
+        record_follow_up: 0,
+        handoff_follow_up: 0
+      };
+      current.total += 1;
+      if (outcome in current) {
+        current[outcome] += 1;
+      }
+      accumulator[key] = current;
+      return accumulator;
+    }, {})
+  )
+    .sort((left, right) => right.total - left.total)
+    .slice(0, 6);
+
+  return {
+    byOutcome,
+    byFarm
+  };
+}
+
+function preferredTelemetryOutcomeForFarm(telemetryOutcomeTrends, farmId) {
+  const farm = (telemetryOutcomeTrends?.byFarm ?? []).find((item) => item.farmId === farmId);
+  if (!farm) {
+    return "";
+  }
+
+  const candidates = [
+    ["record_follow_up", farm.record_follow_up ?? 0],
+    ["alert_follow_up", farm.alert_follow_up ?? 0],
+    ["handoff_follow_up", farm.handoff_follow_up ?? 0]
+  ].sort((left, right) => right[1] - left[1]);
+
+  return candidates[0]?.[1] > 0 ? candidates[0][0] : "";
+}
+
+function startOfHourIso(value) {
+  const date = toDateValue(value);
+  if (!date) {
+    return null;
+  }
+
+  date.setMinutes(0, 0, 0);
+  return date.toISOString();
+}
+
+function buildTelemetryTimeline(telemetry = []) {
+  const buckets = new Map();
+
+  for (const row of telemetry) {
+    const bucketKey = startOfHourIso(row.recorded_at);
+    if (!bucketKey) {
+      continue;
+    }
+
+    const current = buckets.get(bucketKey) ?? {
+      bucket: bucketKey,
+      temperatures: [],
+      batteries: [],
+      sampleCount: 0
+    };
+
+    const temperature = Number(row.temperature_c);
+    const battery = Number(row.battery_percent);
+
+    if (Number.isFinite(temperature)) {
+      current.temperatures.push(temperature);
+    }
+
+    if (Number.isFinite(battery)) {
+      current.batteries.push(battery);
+    }
+
+    current.sampleCount += 1;
+    buckets.set(bucketKey, current);
+  }
+
+  const history = Array.from(buckets.values())
+    .map((bucket) => ({
+      bucket: bucket.bucket,
+      temperature_c: average(bucket.temperatures),
+      battery_percent: average(bucket.batteries),
+      sampleCount: bucket.sampleCount
+    }))
+    .sort((left, right) => new Date(left.bucket).getTime() - new Date(right.bucket).getTime())
+    .slice(-12);
+
+  const temperatures = history.map((item) => item.temperature_c).filter((value) => Number.isFinite(value));
+  const batteries = history.map((item) => item.battery_percent).filter((value) => Number.isFinite(value));
+
+  return {
+    history,
+    metrics: {
+      sampleCount: history.reduce((sum, item) => sum + (item.sampleCount ?? 0), 0),
+      averageTemperature: average(temperatures),
+      minTemperature: temperatures.length ? Math.min(...temperatures) : null,
+      maxTemperature: temperatures.length ? Math.max(...temperatures) : null,
+      averageBattery: average(batteries),
+      minBattery: batteries.length ? Math.min(...batteries) : null
+    }
+  };
+}
+
+function mergeTelemetryIntoReports(reports, telemetryPressure) {
+  const telemetryByFarmId = new Map((telemetryPressure?.byFarm ?? []).map((farm) => [farm.farmId, farm]));
+
+  const attachTelemetry = (rows = []) =>
+    rows.map((row) => {
+      const telemetry = telemetryByFarmId.get(row.farmId) ?? null;
+
+      return {
+        ...row,
+        telemetryReportingDevices: telemetry?.reportingDeviceCount ?? 0,
+        telemetryAverageTemperature: telemetry?.averageTemperature ?? null,
+        telemetryAverageBattery: telemetry?.averageBattery ?? null,
+        telemetryLowBatteryDevices: telemetry?.lowBatteryDeviceCount ?? 0,
+        telemetryOpenAlerts: telemetry?.openTelemetryAlertCount ?? 0,
+        telemetryWarm: telemetry?.warm ?? false,
+        telemetryCriticalHeat: telemetry?.criticalHeat ?? false,
+        telemetryBatteryPressure: telemetry?.batteryPressure ?? false,
+        telemetryLatestReportedAt: telemetry?.latestReportedAt ?? ""
+      };
+    });
+
+  return {
+    disciplineByFarm: attachTelemetry(reports?.disciplineByFarm),
+    alertPressureByFarm: attachTelemetry(reports?.alertPressureByFarm)
+  };
+}
+
+function mergeTelemetryOutcomesIntoReports(reports, telemetryOutcomeTrends) {
+  const outcomeByFarmId = new Map((telemetryOutcomeTrends?.byFarm ?? []).map((farm) => [farm.farmId, farm]));
+
+  const attachOutcomes = (rows = []) =>
+    rows.map((row) => {
+      const outcomes = outcomeByFarmId.get(row.farmId) ?? null;
+
+      return {
+        ...row,
+        telemetryOutcomeTotal: outcomes?.total ?? 0,
+        telemetryOutcomeAlerts: outcomes?.alert_follow_up ?? 0,
+        telemetryOutcomeRecords: outcomes?.record_follow_up ?? 0,
+        telemetryOutcomeHandoffs: outcomes?.handoff_follow_up ?? 0
+      };
+    });
+
+  return {
+    disciplineByFarm: attachOutcomes(reports?.disciplineByFarm),
+    alertPressureByFarm: attachOutcomes(reports?.alertPressureByFarm)
+  };
+}
+
+function buildNotificationCoverage({ farms = [], preferences = [] }) {
+  const preferencesByFarmId = preferences.reduce((accumulator, item) => {
+    if (!item?.farm_id) {
+      return accumulator;
+    }
+
+    const current = accumulator.get(item.farm_id) ?? {
+      farmId: item.farm_id,
+      preferenceCount: 0,
+      emailEnabledCount: 0,
+      lineEnabledCount: 0,
+      criticalOnlyCount: 0
+    };
+
+    current.preferenceCount += 1;
+    if (item.email_enabled) {
+      current.emailEnabledCount += 1;
+    }
+    if (item.line_enabled) {
+      current.lineEnabledCount += 1;
+    }
+    if (item.critical_only) {
+      current.criticalOnlyCount += 1;
+    }
+
+    accumulator.set(item.farm_id, current);
+    return accumulator;
+  }, new Map());
+
+  const byFarm = farms.map((farm) => {
+    const current = preferencesByFarmId.get(farm.id) ?? {
+      preferenceCount: 0,
+      emailEnabledCount: 0,
+      lineEnabledCount: 0,
+      criticalOnlyCount: 0
+    };
+
+    return {
+      farmId: farm.id,
+      farmName: farm.name,
+      farmEmailConfigured: Boolean(farm.alert_email_to),
+      farmLineConfigured: Boolean(farm.alert_line_user_id),
+      preferenceCount: current.preferenceCount,
+      emailEnabledCount: current.emailEnabledCount,
+      lineEnabledCount: current.lineEnabledCount,
+      criticalOnlyCount: current.criticalOnlyCount,
+      hasCoverage: Boolean(farm.alert_email_to || farm.alert_line_user_id || current.preferenceCount > 0)
+    };
+  });
+
+  return {
+    byFarm,
+    emailEnabledFarmCount: byFarm.filter((farm) => farm.farmEmailConfigured || farm.emailEnabledCount > 0).length,
+    lineEnabledFarmCount: byFarm.filter((farm) => farm.farmLineConfigured || farm.lineEnabledCount > 0).length
+  };
+}
+
+function buildNotificationDispatchQueue({
+  alerts = [],
+  reportRows = { disciplineByFarm: [], alertPressureByFarm: [] },
+  telemetryOutcomeTrends = { byFarm: [] },
+  notificationCoverage = { byFarm: [] }
+}) {
+  const coverageByFarmId = new Map((notificationCoverage.byFarm ?? []).map((farm) => [farm.farmId, farm]));
+  const disciplineByFarmId = new Map((reportRows.disciplineByFarm ?? []).map((row) => [row.farmId, row]));
+  const pressureByFarmId = new Map((reportRows.alertPressureByFarm ?? []).map((row) => [row.farmId, row]));
+
+  const items = alerts.map((alert) => {
+    const farmId = alert.farm_id;
+    const farmCoverage = coverageByFarmId.get(farmId);
+    const disciplineRow = disciplineByFarmId.get(farmId);
+    const pressureRow = pressureByFarmId.get(farmId);
+    const preferredTelemetryOutcome = preferredTelemetryOutcomeForFarm(telemetryOutcomeTrends, farmId);
+    const handoffAge = handoffAgeDays(pressureRow?.latestHandoffAt);
+    const handoffMissingOrStale = !pressureRow?.latestHandoffAt || (handoffAge !== null && handoffAge > 3);
+
+    let state = "ready";
+    let primaryHref = `/alerts/${alert.id}`;
+    let primaryLabel = "Review alert";
+    let reason = "Coverage is ready, so this alert can move into delivery review immediately.";
+
+    if (!farmCoverage?.hasCoverage) {
+      state = "coverage-missing";
+      primaryHref = `/farms/${farmId}?return_to=${encodeURIComponent("/ops/follow-ups?queue=notification-dispatch")}`;
+      primaryLabel = "Update delivery coverage";
+      reason = "This farm still has no reliable delivery path, so fix contacts or recipient coverage before relying on dispatch.";
+    } else if (
+      alert.sourceLabel === "expectation"
+      || (
+        alert.sourceLabel === "telemetry"
+        && preferredTelemetryOutcome === "record_follow_up"
+        && (disciplineRow?.attentionTemplates ?? 0) > 0
+      )
+      || (
+        alert.sourceLabel === "telemetry"
+        && preferredTelemetryOutcome === "handoff_follow_up"
+        && handoffMissingOrStale
+      )
+    ) {
+      state = "follow-up-first";
+      primaryHref = `/ops/reports/farms/${farmId}`;
+      primaryLabel =
+        alert.sourceLabel === "expectation"
+          ? "Review record discipline"
+          : preferredTelemetryOutcome === "handoff_follow_up"
+            ? "Update handoff first"
+            : "Create record first";
+      reason =
+        alert.sourceLabel === "expectation"
+          ? "This alert comes from a missing expected record, so operational follow-up should happen before delivery review."
+          : preferredTelemetryOutcome === "handoff_follow_up"
+            ? "This farm usually closes telemetry pressure after the operator context is refreshed, so handoff should happen first."
+            : "This farm usually needs structured field context before telemetry delivery review is useful, so capture the record first.";
+    }
+
+    return {
+      id: alert.id,
+      farmId,
+      farmName: pressureRow?.farmName ?? disciplineRow?.farmName ?? "Unknown farm",
+      alertType: alert.alert_type,
+      severity: alert.severity,
+      sourceLabel: alert.sourceLabel,
+      openedAt: alert.opened_at,
+      state,
+      reason,
+      primaryHref,
+      primaryLabel,
+      secondaryHref: `/alerts/${alert.id}`,
+      secondaryLabel: "Open alert",
+      recipientCount: (farmCoverage?.emailEnabledCount ?? 0) + (farmCoverage?.lineEnabledCount ?? 0),
+      farmFallbackReady: Boolean(farmCoverage?.farmEmailConfigured || farmCoverage?.farmLineConfigured)
+    };
+  });
+
+  const rank = {
+    "coverage-missing": 3,
+    "follow-up-first": 2,
+    ready: 1
+  };
+
+  const sorted = items
+    .sort((left, right) => {
+      if (rank[right.state] !== rank[left.state]) {
+        return rank[right.state] - rank[left.state];
+      }
+      if (left.severity !== right.severity) {
+        return left.severity === "critical" ? -1 : 1;
+      }
+      return new Date(right.openedAt ?? 0).getTime() - new Date(left.openedAt ?? 0).getTime();
+    })
+    .slice(0, 10);
+
+  return {
+    readyCount: items.filter((item) => item.state === "ready").length,
+    coverageMissingCount: items.filter((item) => item.state === "coverage-missing").length,
+    followUpFirstCount: items.filter((item) => item.state === "follow-up-first").length,
+    items: sorted
+  };
+}
+
+function mergeNotificationDispatchIntoReports(reports, notificationDispatch) {
+  const byFarm = (notificationDispatch?.items ?? []).reduce((accumulator, item) => {
+    const current = accumulator.get(item.farmId) ?? {
+      dispatchReadyCount: 0,
+      dispatchCoverageMissingCount: 0,
+      dispatchFollowUpFirstCount: 0
+    };
+
+    if (item.state === "coverage-missing") {
+      current.dispatchCoverageMissingCount += 1;
+    } else if (item.state === "follow-up-first") {
+      current.dispatchFollowUpFirstCount += 1;
+    } else {
+      current.dispatchReadyCount += 1;
+    }
+
+    accumulator.set(item.farmId, current);
+    return accumulator;
+  }, new Map());
+
+  const attachDispatch = (rows = []) =>
+    rows.map((row) => {
+      const dispatch = byFarm.get(row.farmId) ?? {
+        dispatchReadyCount: 0,
+        dispatchCoverageMissingCount: 0,
+        dispatchFollowUpFirstCount: 0
+      };
+
+      return {
+        ...row,
+        ...dispatch
+      };
+    });
+
+  return {
+    disciplineByFarm: attachDispatch(reports?.disciplineByFarm),
+    alertPressureByFarm: attachDispatch(reports?.alertPressureByFarm)
+  };
+}
+
+function buildFollowUpQueue({
+  farms = [],
+  reportRows = { disciplineByFarm: [], alertPressureByFarm: [] },
+  telemetryPressure = { byFarm: [] },
+  telemetryOutcomeTrends = { byFarm: [] },
+  notificationCoverage = { byFarm: [] },
+  notificationDispatch = { items: [] }
+}) {
   const farmById = new Map(farms.map((farm) => [farm.id, farm]));
   const pressureByFarmId = new Map(reportRows.alertPressureByFarm.map((row) => [row.farmId, row]));
   const disciplineByFarmId = new Map(reportRows.disciplineByFarm.map((row) => [row.farmId, row]));
+  const notificationCoverageByFarmId = new Map((notificationCoverage.byFarm ?? []).map((farm) => [farm.farmId, farm]));
   const items = [];
 
   for (const [farmId, alertRow] of pressureByFarmId.entries()) {
     const farm = farmById.get(farmId);
     const disciplineRow = disciplineByFarmId.get(farmId);
+    const farmCoverage = notificationCoverageByFarmId.get(farmId);
     const farmName = farm?.name ?? alertRow.farmName ?? "Unknown farm";
 
     if ((alertRow.criticalAlerts ?? 0) > 0) {
@@ -380,7 +905,7 @@ function buildFollowUpQueue({ farms = [], reportRows = { disciplineByFarm: [], a
       });
     }
 
-    if (farm && !farm.alert_email_to && !farm.alert_line_user_id) {
+    if (!farmCoverage?.hasCoverage) {
       items.push({
         key: `${farmId}-contact-gap`,
         category: "contact-gap",
@@ -389,13 +914,176 @@ function buildFollowUpQueue({ farms = [], reportRows = { disciplineByFarm: [], a
         priority: "attention",
         priorityScore: 300,
         title: `Notification contacts are missing at ${farmName}`,
-        body: "This farm still has no alert email or LINE contact configured, so escalations may not reach the team reliably.",
+        body: "This farm still has no farm contact or recipient delivery coverage configured, so escalations may not reach the team reliably.",
         primaryHref: `/farms/${farmId}`,
         primaryLabel: "Update farm contacts",
         secondaryHref: `/ops/reports/farms/${farmId}`,
         secondaryLabel: "Open farm report"
       });
     }
+
+    const handoffAge = handoffAgeDays(alertRow.latestHandoffAt);
+    const hasNoHandoff = !alertRow.latestHandoffAt;
+    const hasStaleHandoff = handoffAge !== null && handoffAge > 3;
+
+    if (hasNoHandoff || hasStaleHandoff) {
+      const priority = hasNoHandoff || (alertRow.openAlerts ?? 0) > 0 ? "warning" : "attention";
+      const title = hasNoHandoff
+        ? `Operator handoff is missing at ${farmName}`
+        : `Operator handoff is getting stale at ${farmName}`;
+      const body = hasNoHandoff
+        ? "No recent operator handoff note is attached to this farm yet, so the next shift may be missing context."
+        : `The latest operator handoff is ${handoffAge} days old and should be refreshed before context drifts.`;
+
+      items.push({
+        key: `${farmId}-handoff-gap`,
+        category: "handoff-gap",
+        farmId,
+        farmName,
+        priority,
+        priorityScore: hasNoHandoff ? 420 : 380,
+        title,
+        body,
+        primaryHref: `/ops/reports/farms/${farmId}`,
+        primaryLabel: "Update handoff",
+        secondaryHref: `/farms/${farmId}`,
+        secondaryLabel: "Open farm settings"
+      });
+    }
+  }
+
+  for (const telemetryFarm of telemetryPressure.byFarm) {
+    if (!telemetryFarm.criticalHeat && !telemetryFarm.batteryPressure) {
+      continue;
+    }
+
+    const disciplineRow = disciplineByFarmId.get(telemetryFarm.farmId);
+    const alertRow = pressureByFarmId.get(telemetryFarm.farmId);
+    const preferredOutcome = preferredTelemetryOutcomeForFarm(telemetryOutcomeTrends, telemetryFarm.farmId);
+    const priority = telemetryFarm.criticalHeat ? "critical" : "warning";
+    const bodyParts = [];
+    let primaryHref = `/alerts?farmId=${telemetryFarm.farmId}&source=device_telemetry&return_to=${encodeURIComponent("/ops")}`;
+    let primaryLabel = "Review telemetry alerts";
+    let secondaryHref = `/ops/reports/farms/${telemetryFarm.farmId}`;
+    let secondaryLabel = "Open farm report";
+    let whyNow = "Telemetry pressure is already visible at the farm level and should be reviewed before it spreads into broader ops risk.";
+    let recommendedEscalation = telemetryFarm.criticalHeat
+      ? "Escalate through telemetry alerts first."
+      : "Review the farm report and confirm whether this pressure needs structured follow-up.";
+
+    if (telemetryFarm.criticalHeat) {
+      bodyParts.push(`avg temp ${telemetryFarm.averageTemperature?.toFixed?.(1) ?? telemetryFarm.averageTemperature} C`);
+      whyNow = "Temperature is already in a critical band, so this farm can move from drift into incident territory quickly.";
+      recommendedEscalation = "Start with open telemetry alerts and then confirm field context in the farm report.";
+    } else if (telemetryFarm.warm) {
+      bodyParts.push(`temp drift ${telemetryFarm.averageTemperature?.toFixed?.(1) ?? telemetryFarm.averageTemperature} C`);
+      whyNow = "Temperature is drifting outside the preferred band, which usually needs confirmation before it becomes a harder incident.";
+    }
+
+    if (telemetryFarm.batteryPressure) {
+      bodyParts.push(`${telemetryFarm.lowBatteryDeviceCount} low-battery devices`);
+      recommendedEscalation = "Check the farm report and maintenance context before device visibility drops further.";
+    }
+
+    if (
+      (disciplineRow?.attentionTemplates ?? 0) > 0
+      && (
+        preferredOutcome === "record_follow_up"
+        || !(telemetryFarm.criticalHeat || telemetryFarm.openTelemetryAlertCount > 0 || preferredOutcome === "alert_follow_up")
+      )
+    ) {
+      const params = new URLSearchParams();
+      params.set("farmId", telemetryFarm.farmId);
+      params.set("recorded_for_date", new Date().toISOString().slice(0, 10));
+      params.set("summary", `Created from telemetry pressure follow-up for ${telemetryFarm.farmName}.`);
+      params.set("return_to", `/ops/follow-ups?queue=telemetry-pressure&focus_farm=${encodeURIComponent(telemetryFarm.farmId)}`);
+      primaryHref = `/records/new?${params.toString()}`;
+      primaryLabel = "Create record";
+      bodyParts.push(
+        preferredOutcome === "record_follow_up"
+          ? "recent telemetry follow-ups at this farm usually need a record first"
+          : `${disciplineRow.attentionTemplates} record expectations still need attention`
+      );
+      recommendedEscalation =
+        preferredOutcome === "record_follow_up"
+          ? "This farm usually closes telemetry pressure more cleanly after a structured record is added."
+          : "Capture a structured record now so this telemetry pressure is tied to field context while it is still fresh.";
+    } else if (
+      preferredOutcome === "handoff_follow_up"
+      && !alertRow?.latestHandoffAt
+      && telemetryFarm.openTelemetryAlertCount === 0
+    ) {
+      primaryHref = `/ops/reports/farms/${telemetryFarm.farmId}`;
+      primaryLabel = "Update handoff";
+      bodyParts.push("recent telemetry follow-ups at this farm often need a refreshed handoff");
+      recommendedEscalation = "This farm often stabilizes after the next shift inherits clear telemetry context.";
+    } else if (!alertRow?.latestHandoffAt && telemetryFarm.openTelemetryAlertCount === 0) {
+      primaryHref = `/ops/reports/farms/${telemetryFarm.farmId}`;
+      primaryLabel = "Update handoff";
+      bodyParts.push("operator handoff is still missing");
+      recommendedEscalation = "Refresh the operator handoff so the next shift sees the telemetry risk without reopening the same diagnosis.";
+    }
+
+    items.push({
+      key: `${telemetryFarm.farmId}-telemetry-pressure`,
+      category: "telemetry-pressure",
+      farmId: telemetryFarm.farmId,
+      farmName: telemetryFarm.farmName,
+      priority,
+      priorityScore: telemetryFarm.criticalHeat ? 860 : 640,
+      title: `Telemetry pressure needs review at ${telemetryFarm.farmName}`,
+      body: `${bodyParts.join(" and ")}${telemetryFarm.openTelemetryAlertCount ? `, ${telemetryFarm.openTelemetryAlertCount} telemetry alerts already open.` : "."}`,
+      whyNow,
+      recommendedEscalation,
+      primaryHref,
+      primaryLabel,
+      secondaryHref,
+      secondaryLabel
+    });
+  }
+
+  for (const dispatchItem of notificationDispatch.items ?? []) {
+    const priority =
+      dispatchItem.state === "coverage-missing"
+        ? "warning"
+        : dispatchItem.severity === "critical"
+          ? "critical"
+          : "attention";
+
+    items.push({
+      key: `${dispatchItem.farmId}-notification-dispatch-${dispatchItem.id}`,
+      category: "notification-dispatch",
+      dispatchState: dispatchItem.state,
+      farmId: dispatchItem.farmId,
+      farmName: dispatchItem.farmName,
+      priority,
+      priorityScore:
+        dispatchItem.state === "coverage-missing"
+          ? 560
+          : dispatchItem.state === "follow-up-first"
+            ? 520
+            : dispatchItem.severity === "critical"
+              ? 480
+              : 340,
+      title: `Notification dispatch needs review at ${dispatchItem.farmName}`,
+      body: dispatchItem.reason,
+      whyNow:
+        dispatchItem.state === "coverage-missing"
+          ? "This alert still has no reliable delivery path behind it."
+          : dispatchItem.state === "follow-up-first"
+            ? "This alert should be supported by fresher farm follow-up before delivery review."
+            : "Delivery coverage is ready, so the alert can move into dispatch review now.",
+      recommendedEscalation:
+        dispatchItem.state === "coverage-missing"
+          ? "Update farm contacts or personal recipient coverage first."
+          : dispatchItem.state === "follow-up-first"
+            ? "Finish the operational follow-up path before treating this alert as dispatch-ready."
+            : "Open the alert and confirm the delivery path.",
+      primaryHref: dispatchItem.primaryHref,
+      primaryLabel: dispatchItem.primaryLabel,
+      secondaryHref: dispatchItem.secondaryHref,
+      secondaryLabel: dispatchItem.secondaryLabel
+    });
   }
 
   return items
@@ -445,6 +1133,27 @@ function emptyOpsFarmReport(reportWindow = "30d") {
     openAlerts: [],
     recentRecords: [],
     topExpectationTemplates: [],
+    telemetryPressure: null,
+    telemetryTimeline: {
+      history: [],
+      metrics: {
+        sampleCount: 0,
+        averageTemperature: null,
+        minTemperature: null,
+        maxTemperature: null,
+        averageBattery: null,
+        minBattery: null
+      }
+    },
+    telemetryOutcomeTrends: {
+      byOutcome: {
+        alert_follow_up: 0,
+        record_follow_up: 0,
+        handoff_follow_up: 0
+      },
+      byFarm: []
+    },
+    telemetryOutcomeHistory: [],
     latestHandoff: null,
     handoffHistory: [],
     errors: []
@@ -484,7 +1193,8 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
     templatesResult,
     expectationHistoryResult,
     resolvedExpectationAlertsResult,
-    handoffNotesResult
+    handoffNotesResult,
+    telemetryOutcomeEventsResult
   ] = await Promise.all([
     supabase
       .from("farms")
@@ -542,7 +1252,15 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
       .eq("farm_id", farmId)
       .eq("action", "ops.handoff_noted")
       .order("created_at", { ascending: false })
-      .limit(12)
+      .limit(12),
+    supabase
+      .from("audit_log")
+      .select("id,farm_id,details_json,created_at")
+      .eq("farm_id", farmId)
+      .eq("action", "ops.telemetry_follow_up_completed")
+      .gte("created_at", lastWindowIso)
+      .order("created_at", { ascending: false })
+      .limit(24)
   ]);
 
   const farm = farmResult.error
@@ -556,6 +1274,16 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
   const expectationHistory = listResult("expectation_history", expectationHistoryResult);
   const resolvedExpectationAlerts = listResult("resolved_expectation_alerts", resolvedExpectationAlertsResult);
   const handoffNotes = listResult("handoff_notes", handoffNotesResult);
+  const telemetryOutcomeEvents = listResult("telemetry_outcomes", telemetryOutcomeEventsResult);
+  const telemetryResult = devices.data.length
+    ? await supabase
+        .from("telemetry")
+        .select("id,device_id,recorded_at,temperature_c,battery_percent")
+        .in("device_id", devices.data.map((device) => device.id))
+        .order("recorded_at", { ascending: false })
+        .limit(180)
+    : { data: [], error: null };
+  const telemetry = listResult("telemetry", telemetryResult);
 
   const mergedDevices = mergeDeviceStatus(
     devices.data,
@@ -625,6 +1353,25 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
     note: note.details_json?.note ?? "",
     created_at: note.created_at ?? null
   }));
+  const telemetryPressure = buildTelemetryPressure({
+    farms: farm.data ? [farm.data] : [],
+    devices: mergedDevices,
+    telemetry: telemetry.data,
+    openAlerts: normalizedAlerts
+  }).byFarm[0] ?? null;
+  const telemetryTimeline = buildTelemetryTimeline(telemetry.data);
+  const telemetryOutcomeTrends = buildTelemetryOutcomeTrends({
+    events: telemetryOutcomeEvents.data,
+    farms: farm.data ? [farm.data] : []
+  });
+  const telemetryOutcomeHistory = telemetryOutcomeEvents.data
+    .map((event) => ({
+      id: event.id,
+      outcome: event.details_json?.outcome ?? "",
+      summary: event.details_json?.workspace_context?.summary ?? "",
+      created_at: event.created_at ?? null
+    }))
+    .slice(0, 8);
 
   return {
     authorized,
@@ -636,6 +1383,10 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
     openAlerts: filteredAlerts,
     recentRecords: records.data.slice(0, 20),
     topExpectationTemplates,
+    telemetryPressure,
+    telemetryTimeline,
+    telemetryOutcomeTrends,
+    telemetryOutcomeHistory,
     latestHandoff: normalizedHandoffHistory[0] ?? null,
     handoffHistory: normalizedHandoffHistory.slice(0, 5),
     errors: [
@@ -647,7 +1398,9 @@ export async function loadOpsFarmReport({ farmId, reportWindow = "30d", severity
       templates.error,
       expectationHistory.error,
       resolvedExpectationAlerts.error,
-      handoffNotes.error
+      handoffNotes.error,
+      telemetryOutcomeEvents.error,
+      telemetry.error
     ].filter(Boolean)
   };
 }
@@ -686,7 +1439,8 @@ export async function loadOpsOverview(options = {}) {
     recordsResult,
     expectationHistoryResult,
     resolvedExpectationAlertsResult,
-    handoffNotesResult
+    handoffNotesResult,
+    notificationPreferencesResult
   ] = await Promise.all([
     supabase
       .from("farms")
@@ -746,7 +1500,24 @@ export async function loadOpsOverview(options = {}) {
       .select("id,farm_id,details_json,created_at")
       .eq("action", "ops.handoff_noted")
       .order("created_at", { ascending: false })
-      .limit(120)
+      .limit(120),
+    supabase
+      .from("notification_preferences")
+      .select("farm_id,user_id,email_enabled,line_enabled,critical_only,updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(240),
+    supabase
+      .from("audit_log")
+      .select("id,farm_id,details_json,created_at")
+      .eq("action", "ops.telemetry_follow_up_completed")
+      .gte("created_at", lastWindowIso)
+      .order("created_at", { ascending: false })
+      .limit(200),
+    supabase
+      .from("telemetry")
+      .select("id,device_id,recorded_at,temperature_c,battery_percent")
+      .order("recorded_at", { ascending: false })
+      .limit(320)
   ]);
 
   const farms = listResult("farms", farmsResult);
@@ -759,6 +1530,9 @@ export async function loadOpsOverview(options = {}) {
   const expectationHistory = listResult("expectation_history", expectationHistoryResult);
   const resolvedExpectationAlerts = listResult("resolved_expectation_alerts", resolvedExpectationAlertsResult);
   const handoffNotes = listResult("handoff_notes", handoffNotesResult);
+  const notificationPreferences = listResult("notification_preferences", notificationPreferencesResult);
+  const telemetryOutcomeEvents = listResult("telemetry_outcomes", telemetryOutcomeEventsResult);
+  const telemetry = listResult("telemetry", telemetryResult);
 
   const mergedDevices = mergeDeviceStatus(devices.data, statuses.data);
   const normalizedAlerts = alerts.data.map(normalizeAlert);
@@ -784,6 +1558,10 @@ export async function loadOpsOverview(options = {}) {
   const attentionCount = mergedDevices.filter((device) => ["stale", "offline"].includes(device.status?.online_state)).length;
   const criticalAlertCount = normalizedAlerts.filter((alert) => alert.severity === "critical").length;
   const missingContactCount = farms.data.filter((farm) => !farm.alert_email_to && !farm.alert_line_user_id).length;
+  const notificationCoverage = buildNotificationCoverage({
+    farms: farms.data,
+    preferences: notificationPreferences.data
+  });
   const expectationMetrics = buildExpectationSummary({
     farms: farms.data,
     templates: normalizedTemplates,
@@ -806,7 +1584,7 @@ export async function loadOpsOverview(options = {}) {
       created_at: note.created_at ?? null
     });
   }
-  const reports = buildReportRows({
+  const baseReports = buildReportRows({
     farms: farms.data,
     devices: mergedDevices,
     openAlerts: filteredAlerts,
@@ -817,6 +1595,20 @@ export async function loadOpsOverview(options = {}) {
     latestHandoffByFarmId,
     reportWindowDays
   });
+  const telemetryPressure = buildTelemetryPressure({
+    farms: farms.data,
+    devices: mergedDevices,
+    telemetry: telemetry.data,
+    openAlerts: normalizedAlerts
+  });
+  const telemetryOutcomeTrends = buildTelemetryOutcomeTrends({
+    events: telemetryOutcomeEvents.data,
+    farms: farms.data
+  });
+  let reports = mergeTelemetryOutcomesIntoReports(
+    mergeTelemetryIntoReports(baseReports, telemetryPressure),
+    telemetryOutcomeTrends
+  );
   const handoffHistoryByFarmId = new Map();
   for (const note of handoffNotes.data) {
     if (!note?.farm_id) {
@@ -840,9 +1632,20 @@ export async function loadOpsOverview(options = {}) {
     }
   }
 
+  const notificationDispatch = buildNotificationDispatchQueue({
+    alerts: filteredAlerts,
+    reportRows: reports,
+    telemetryOutcomeTrends,
+    notificationCoverage
+  });
+  reports = mergeNotificationDispatchIntoReports(reports, notificationDispatch);
   const followUpQueue = buildFollowUpQueue({
     farms: farms.data,
-    reportRows: reports
+    reportRows: reports,
+    telemetryPressure,
+    telemetryOutcomeTrends,
+    notificationCoverage,
+    notificationDispatch
   }).map((item) => ({
     ...item,
     latestHandoff: latestHandoffByFarmId.get(item.farmId) ?? null,
@@ -865,6 +1668,7 @@ export async function loadOpsOverview(options = {}) {
       attentionCount,
       criticalAlertCount,
       missingContactCount,
+      farmsWithDeliveryCoverage: notificationCoverage.byFarm.filter((farm) => farm.hasCoverage).length,
       missingHandoffCount: Math.max(farms.data.length - latestHandoffByFarmId.size, 0),
       expectationRecoveredCount: resolvedExpectationAlerts.data.length
     },
@@ -885,6 +1689,10 @@ export async function loadOpsOverview(options = {}) {
         .slice(0, 6)
         .map(([alertType, count]) => ({ alertType, count }))
     },
+    notificationCoverage,
+    notificationDispatch,
+    telemetryPressure,
+    telemetryOutcomeTrends,
     expectationMetrics,
     expectationTrends,
     followUpQueue,
@@ -899,7 +1707,10 @@ export async function loadOpsOverview(options = {}) {
       records.error,
       expectationHistory.error,
       resolvedExpectationAlerts.error,
-      handoffNotes.error
+      handoffNotes.error,
+      notificationPreferences.error,
+      telemetryOutcomeEvents.error,
+      telemetry.error
     ].filter(Boolean)
   };
 }

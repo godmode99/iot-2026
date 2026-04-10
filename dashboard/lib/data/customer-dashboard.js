@@ -24,6 +24,12 @@ const EMPTY_DASHBOARD = {
     },
     topTypes: []
   },
+  telemetryPressure: {
+    reportingFarmCount: 0,
+    lowBatteryFarmCount: 0,
+    warmFarmCount: 0,
+    byFarm: []
+  },
   errors: []
 };
 
@@ -121,6 +127,7 @@ function buildExpectationSummary({ farms = [], templates = [], records = [] }) {
       const status = latestRecord && latestAgeDays !== null && latestAgeDays <= 7 ? "healthy" : "attention";
 
       return {
+        templateId: template.id,
         templateName: template.name,
         templateCode: template.code,
         latestRecordId: latestRecord?.id ?? null,
@@ -139,6 +146,7 @@ function buildExpectationSummary({ farms = [], templates = [], records = [] }) {
   });
 
   return {
+    byFarm: farmSummaries,
     farmsNeedingAttention: farmSummaries
       .filter((farm) => farm.attentionCount > 0)
       .sort((left, right) => right.attentionCount - left.attentionCount)
@@ -200,6 +208,170 @@ function buildExpectationTrends({ alerts = [], farms = [] }) {
   };
 }
 
+function average(values = []) {
+  if (!values.length) {
+    return null;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function buildTelemetryPressure({ farms = [], devices = [], telemetry = [], openAlerts = [], expectationSummary = { byFarm: [] } }) {
+  const farmNameMap = new Map(farms.map((farm) => [farm.id, farm.name]));
+  const expectationByFarmId = new Map((expectationSummary.byFarm ?? []).map((farm) => [farm.farmId, farm]));
+  const latestByDevice = new Map();
+  const telemetryAlertCounts = openAlerts.reduce((accumulator, alert) => {
+    if (normalizeAlertSource(alert?.details_json?.source ?? "system") !== "telemetry") {
+      return accumulator;
+    }
+
+    if (!alert.farm_id) {
+      return accumulator;
+    }
+
+    accumulator[alert.farm_id] = (accumulator[alert.farm_id] ?? 0) + 1;
+    return accumulator;
+  }, {});
+
+  for (const row of telemetry) {
+    if (!latestByDevice.has(row.device_id)) {
+      latestByDevice.set(row.device_id, row);
+    }
+  }
+
+  const grouped = devices.reduce((accumulator, device) => {
+    const farmId = device.farm_id;
+    if (!farmId) {
+      return accumulator;
+    }
+
+    const latestTelemetry = latestByDevice.get(device.id) ?? null;
+    const current = accumulator.get(farmId) ?? {
+      farmId,
+      farmName: farmNameMap.get(farmId) ?? "Unknown farm",
+      readings: [],
+      reportingDeviceCount: 0,
+      lowBatteryDeviceCount: 0,
+      latestReportedAt: null
+    };
+
+    if (latestTelemetry) {
+      current.reportingDeviceCount += 1;
+
+      const temperature = Number(latestTelemetry.temperature_c);
+      const battery = Number(latestTelemetry.battery_percent);
+      if (Number.isFinite(temperature) || Number.isFinite(battery)) {
+        current.readings.push({
+          temperature_c: Number.isFinite(temperature) ? temperature : null,
+          battery_percent: Number.isFinite(battery) ? battery : null
+        });
+      }
+
+      if (Number.isFinite(battery) && battery <= 20) {
+        current.lowBatteryDeviceCount += 1;
+      }
+
+      if (!current.latestReportedAt || new Date(latestTelemetry.recorded_at).getTime() > new Date(current.latestReportedAt).getTime()) {
+        current.latestReportedAt = latestTelemetry.recorded_at;
+      }
+    }
+
+    accumulator.set(farmId, current);
+    return accumulator;
+  }, new Map());
+
+  const byFarm = Array.from(grouped.values())
+    .map((item) => {
+      const temperatures = item.readings.map((reading) => reading.temperature_c).filter((value) => Number.isFinite(value));
+      const batteries = item.readings.map((reading) => reading.battery_percent).filter((value) => Number.isFinite(value));
+      const averageTemperature = average(temperatures);
+      const averageBattery = average(batteries);
+      const warm = averageTemperature !== null && (averageTemperature < 26 || averageTemperature > 30);
+      const criticalHeat = averageTemperature !== null && (averageTemperature < 24 || averageTemperature > 32);
+      const batteryPressure = item.lowBatteryDeviceCount > 0;
+      const pressureScore = (criticalHeat ? 3 : warm ? 2 : 0) + (batteryPressure ? 1 : 0);
+
+      return {
+        farmId: item.farmId,
+        farmName: item.farmName,
+        reportingDeviceCount: item.reportingDeviceCount,
+        averageTemperature,
+        averageBattery,
+        lowBatteryDeviceCount: item.lowBatteryDeviceCount,
+        latestReportedAt: item.latestReportedAt,
+        openTelemetryAlertCount: telemetryAlertCounts[item.farmId] ?? 0,
+        warm,
+        criticalHeat,
+        batteryPressure,
+        pressureScore
+      };
+    })
+    .filter((item) => item.reportingDeviceCount > 0)
+    .sort((left, right) => {
+      if (right.pressureScore !== left.pressureScore) {
+        return right.pressureScore - left.pressureScore;
+      }
+
+      return right.reportingDeviceCount - left.reportingDeviceCount;
+    })
+    .slice(0, 6);
+
+  const enrichedByFarm = byFarm.map((farm) => {
+    const expectation = expectationByFarmId.get(farm.farmId) ?? null;
+    const firstAttentionTemplate = expectation?.expectations?.find((item) => item.status === "attention") ?? null;
+    let nextAction = {
+      type: "farm",
+      href: `/farms/${farm.farmId}`,
+      reason: "review_snapshot"
+    };
+
+    if (farm.openTelemetryAlertCount > 0) {
+      nextAction = {
+        type: "alerts",
+        href: `/alerts?farmId=${encodeURIComponent(farm.farmId)}&source=device_telemetry`,
+        reason: "review_open_telemetry_alerts"
+      };
+    } else if ((farm.criticalHeat || farm.warm || farm.batteryPressure) && firstAttentionTemplate) {
+      const params = new URLSearchParams();
+      params.set("farmId", farm.farmId);
+      params.set("templateId", firstAttentionTemplate.templateId);
+      params.set("recorded_for_date", new Date().toISOString().slice(0, 10));
+      params.set("summary", `Created from dashboard telemetry follow-up for ${farm.farmName} using template ${firstAttentionTemplate.templateName}.`);
+      nextAction = {
+        type: "record",
+        href: `/records/new?${params.toString()}`,
+        reason: "create_follow_up_record",
+        templateName: firstAttentionTemplate.templateName
+      };
+    } else if (farm.criticalHeat) {
+      nextAction = {
+        type: "farm",
+        href: `/farms/${farm.farmId}`,
+        reason: "inspect_critical_heat"
+      };
+    } else if (farm.batteryPressure) {
+      nextAction = {
+        type: "farm",
+        href: `/farms/${farm.farmId}`,
+        reason: "inspect_low_battery"
+      };
+    }
+
+    return {
+      ...farm,
+      attentionCount: expectation?.attentionCount ?? 0,
+      nextAction
+    };
+  });
+
+  return {
+    reportingFarmCount: byFarm.length,
+    lowBatteryFarmCount: enrichedByFarm.filter((item) => item.batteryPressure).length,
+    warmFarmCount: enrichedByFarm.filter((item) => item.warm).length,
+    byFarm: enrichedByFarm
+  };
+}
+
 export async function loadCustomerDashboard() {
   const supabase = await createSupabaseServerClient();
 
@@ -207,7 +379,7 @@ export async function loadCustomerDashboard() {
     return EMPTY_DASHBOARD;
   }
 
-  const [farmsResult, devicesResult, alertsResult, expectationHistoryResult, resolvedExpectationAlertsResult, recordsResult, templatesResult] = await Promise.all([
+  const [farmsResult, devicesResult, alertsResult, expectationHistoryResult, resolvedExpectationAlertsResult, recordsResult, templatesResult, telemetryResult] = await Promise.all([
     supabase
       .from("farms")
       .select("id,name,created_at")
@@ -250,7 +422,12 @@ export async function loadCustomerDashboard() {
       .select("id,code,name,scope_type,is_active,record_template_farm_assignments(farm_id)")
       .eq("is_active", true)
       .order("name", { ascending: true })
-      .limit(50)
+      .limit(50),
+    supabase
+      .from("telemetry")
+      .select("id,device_id,recorded_at,temperature_c,battery_percent")
+      .order("recorded_at", { ascending: false })
+      .limit(240)
   ]);
 
   const farms = normalizeResult("farms", farmsResult);
@@ -260,6 +437,7 @@ export async function loadCustomerDashboard() {
   const resolvedExpectationAlerts = normalizeResult("resolved_expectation_alerts", resolvedExpectationAlertsResult);
   const recentRecords = normalizeResult("operational_records", recordsResult);
   const templates = normalizeResult("record_templates", templatesResult);
+  const telemetry = normalizeResult("telemetry", telemetryResult);
   const normalizedOpenAlerts = openAlerts.data.map(normalizeAlert);
   const normalizedTemplates = templates.data.map((template) => ({
     ...template,
@@ -275,6 +453,13 @@ export async function loadCustomerDashboard() {
   const expectationTrends = buildExpectationTrends({
     alerts: expectationHistory.data,
     farms: farms.data
+  });
+  const telemetryPressure = buildTelemetryPressure({
+    farms: farms.data,
+    devices: devices.data,
+    telemetry: telemetry.data,
+    openAlerts: normalizedOpenAlerts,
+    expectationSummary
   });
 
   return {
@@ -304,6 +489,7 @@ export async function loadCustomerDashboard() {
         .slice(0, 4)
         .map(([alertType, count]) => ({ alertType, count }))
     },
-    errors: [farms.error, devices.error, openAlerts.error, expectationHistory.error, resolvedExpectationAlerts.error, recentRecords.error, templates.error].filter(Boolean)
+    telemetryPressure,
+    errors: [farms.error, devices.error, openAlerts.error, expectationHistory.error, resolvedExpectationAlerts.error, recentRecords.error, templates.error, telemetry.error].filter(Boolean)
   };
 }

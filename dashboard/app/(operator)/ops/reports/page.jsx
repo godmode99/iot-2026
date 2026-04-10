@@ -196,6 +196,14 @@ export default async function OpsReportsPage({ searchParams }) {
                       <th>{t(messages, "ops.reportColumns.recordsInWindow", "Records")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationAlertsInWindow", "Missing")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationRecoveredLast7Days", "Recovered 7d")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryAvgTemp", "Avg temp")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryBatteryDevices", "Low battery")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeRecords", "Telemetry -> record")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeAlerts", "Telemetry -> alert")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeHandoffs", "Telemetry -> handoff")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchReady", "Dispatch ready")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchCoverageMissing", "Dispatch coverage")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchFollowUpFirst", "Dispatch follow-up")}</th>
                       <th>{t(messages, "ops.reportColumns.latestHandoff", "Latest handoff")}</th>
                       <th>{t(messages, "ops.reportColumns.actions", "Actions")}</th>
                     </tr>
@@ -210,6 +218,24 @@ export default async function OpsReportsPage({ searchParams }) {
                         <td>{row.recordsInWindow}</td>
                         <td>{row.expectationAlertsInWindow}</td>
                         <td>{row.expectationRecoveredLast7Days}</td>
+                        <td>
+                          <span className="pill-row">
+                            <span>{row.telemetryAverageTemperature === null ? "N/A" : `${Number(row.telemetryAverageTemperature).toFixed(1)} C`}</span>
+                            {row.telemetryCriticalHeat ? <span className="pill is-offline">{t(messages, "ops.telemetryCriticalHeat", "Critical heat")}</span> : row.telemetryWarm ? <span className="pill is-stale">{t(messages, "ops.telemetryWarmDrift", "Temp drift")}</span> : null}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="pill-row">
+                            <span>{row.telemetryLowBatteryDevices}</span>
+                            {row.telemetryBatteryPressure ? <span className="pill is-stale">{t(messages, "ops.telemetryBatteryPressure", "Battery pressure")}</span> : null}
+                          </span>
+                        </td>
+                        <td>{row.telemetryOutcomeRecords}</td>
+                        <td>{row.telemetryOutcomeAlerts}</td>
+                        <td>{row.telemetryOutcomeHandoffs}</td>
+                        <td>{row.dispatchReadyCount}</td>
+                        <td>{row.dispatchCoverageMissingCount}</td>
+                        <td>{row.dispatchFollowUpFirstCount}</td>
                         <td>
                           <span className="pill-row">
                             <span className={`pill ${handoffFreshness(row.latestHandoffAt, messages).className}`}>{handoffFreshness(row.latestHandoffAt, messages).label}</span>
@@ -250,6 +276,14 @@ export default async function OpsReportsPage({ searchParams }) {
                       <th>{t(messages, "ops.reportColumns.criticalAlerts", "Critical")}</th>
                       <th>{t(messages, "ops.reportColumns.recordAlerts", "Record")}</th>
                       <th>{t(messages, "ops.reportColumns.telemetryAlerts", "Telemetry")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryAvgTemp", "Avg temp")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryBatteryDevices", "Low battery")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeRecords", "Telemetry -> record")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeAlerts", "Telemetry -> alert")}</th>
+                      <th>{t(messages, "ops.reportColumns.telemetryOutcomeHandoffs", "Telemetry -> handoff")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchReady", "Dispatch ready")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchCoverageMissing", "Dispatch coverage")}</th>
+                      <th>{t(messages, "ops.reportColumns.dispatchFollowUpFirst", "Dispatch follow-up")}</th>
                       <th>{t(messages, "ops.reportColumns.expectationAlertsOpen", "Expectation")}</th>
                       <th>{t(messages, "ops.reportColumns.latestHandoff", "Latest handoff")}</th>
                       <th>{t(messages, "ops.reportColumns.actions", "Actions")}</th>
@@ -265,6 +299,24 @@ export default async function OpsReportsPage({ searchParams }) {
                         <td>{row.criticalAlerts}</td>
                         <td>{row.recordAlerts}</td>
                         <td>{row.telemetryAlerts}</td>
+                        <td>
+                          <span className="pill-row">
+                            <span>{row.telemetryAverageTemperature === null ? "N/A" : `${Number(row.telemetryAverageTemperature).toFixed(1)} C`}</span>
+                            {row.telemetryCriticalHeat ? <span className="pill is-offline">{t(messages, "ops.telemetryCriticalHeat", "Critical heat")}</span> : row.telemetryWarm ? <span className="pill is-stale">{t(messages, "ops.telemetryWarmDrift", "Temp drift")}</span> : null}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="pill-row">
+                            <span>{row.telemetryLowBatteryDevices}</span>
+                            {row.telemetryBatteryPressure ? <span className="pill is-stale">{t(messages, "ops.telemetryBatteryPressure", "Battery pressure")}</span> : null}
+                          </span>
+                        </td>
+                        <td>{row.telemetryOutcomeRecords}</td>
+                        <td>{row.telemetryOutcomeAlerts}</td>
+                        <td>{row.telemetryOutcomeHandoffs}</td>
+                        <td>{row.dispatchReadyCount}</td>
+                        <td>{row.dispatchCoverageMissingCount}</td>
+                        <td>{row.dispatchFollowUpFirstCount}</td>
                         <td>{row.expectationAlertsOpen}</td>
                         <td>
                           <span className="pill-row">
